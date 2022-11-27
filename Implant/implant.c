@@ -9,7 +9,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 char servername[]="placeholder";
 void tasks(){
     while(1){
-        sleep(60);
+        sleep(SLEEP);
         char tasks[]=gettasks();
 
 
