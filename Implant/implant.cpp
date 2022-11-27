@@ -77,7 +77,14 @@ char* random_id(){
 }
 
 
+char* make_base_payload(char* implant_id){
+    
+    char payload[51] = "{\"implant_id\": }";
+    char * payloadptr = payload;
+    strcat(payload, implant_id);
+    return payloadptr;
 
+}
 
 
 
