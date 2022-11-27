@@ -40,7 +40,11 @@ void tasks(){
 }
 
 char * execute(){
-    //execute, return json of responses
+    //create json for results
+    //parse commands
+    //execute each command
+    //add execution result//data to json of results
+    //return json of results
 }
 
 int sendresults(){
