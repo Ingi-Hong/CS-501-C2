@@ -6,7 +6,6 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <string.h>
 #include <curl/curl.h>
 
-char servername[]="placeholder";
 void tasks(){
     while(1){
         sleep(SLEEP);
@@ -16,10 +15,12 @@ void tasks(){
 
 }
 }
+
+#define SERVERNAME "placeholder"
 char * gettasks(){
     auto curl = curl_easy_init();
     if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "placeholder");
+        curl_easy_setopt(curl, CURLOPT_URL, SERVERNAME);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
         curl_easy_setopt(curl, CURLOPT_USERPWD, "user:pass");
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.42.0");
