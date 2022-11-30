@@ -4,14 +4,36 @@ import os
 
 import psycopg2
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+from flask_jwt_extended import create_access_token,get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/login": {"origins": "http://localhost:3000"}})
 
 host = os.environ['host']
 password = os.environ['password']
 username = os.environ['username']
 port = os.environ['thePort']
 database = os.environ['database']
+
+
+# Code taken from https://dev.to/nagatodev/how-to-add-login-authentication-to-a-flask-and-react-application-23i7
+app.config["JWT_SECRET_KEY"] = "change-me"
+jwt = JWTManager(app) 
+
+@app.route('/login', methods=["POST"])
+def create_token():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    if email != "test" or password != "test": #hardcoded login, compare to database
+        return {"msg": "Wrong email or password"}, 401
+
+    access_token = create_access_token(identity=email)
+    response = {"access_token":access_token}
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response 
+
+
 def load():
     # Connect to C2
     try:
