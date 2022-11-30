@@ -12,10 +12,10 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/login": {"origins": "http://localhost:3000"}})
 
 host = config('host')
-password = config['password']
-username = config['username']
-port = config['thePort']
-database = config['database']
+password = config('password')
+username = config('username')
+port = config('thePort')
+database = config('database')
 
 
 # Code taken from https://dev.to/nagatodev/how-to-add-login-authentication-to-a-flask-and-react-application-23i7
