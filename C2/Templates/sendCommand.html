@@ -1,0 +1,17 @@
+<head>
+  <title>Send a command</title>
+</head>
+<body>
+    {%if message%}
+    <div>Error sending last command</div>
+    {% endif %}
+  <form method="post" action="{{ url_for('queueCommand')}}">
+    <label for="implantID">Implant</label>
+    <input type="text" id="implantID" /><input />
+    <label for="cmd">Command</label>
+    <input type="cmd" id="cmd" /><input />
+    <input type="submit" />
+  </form>
+</body>
+
+<a href="/">Home</a>

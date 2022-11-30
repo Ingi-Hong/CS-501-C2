@@ -3,7 +3,7 @@
 import os
 
 import psycopg2
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import create_access_token,get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 
@@ -21,7 +21,7 @@ database = os.environ['database']
 app.config["JWT_SECRET_KEY"] = "change-me"
 jwt = JWTManager(app) 
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["GET, POST"])
 @cross_origin()
 def create_token():
     print(request.json)
@@ -76,13 +76,18 @@ def handle_test():
     return ("<p>%s</p>" % stuff)
 
 @app.route("/")
-def hello():
-    return "<p>Hello, World!</p>"
+def home(message):
+    return render_template('sendCommand.html', message=message)
 
-@app.route("/execute", methods=["POST"])
+@app.route("/queueCommand", methods=["POST"])
 def handle_execute():
-    pass 
+    try:
+        implant_id = request.form.get('implantID')
+    
+    except:
+        print("Failure sending commands")
+        return redirect(url_for('home', message="Failed to send message"))
 
-@app.route("/getCommands", methods=["GET"])
-def get_commands():
+@app.route("/getCommands/<id>", methods=["GET"])
+def get_commands(id):
     pass
