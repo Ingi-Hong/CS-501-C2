@@ -6,6 +6,7 @@ import psycopg2
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import create_access_token,get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
+from decouple import config
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/login": {"origins": "http://localhost:3000"}})
