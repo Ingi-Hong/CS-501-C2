@@ -8,3 +8,4 @@ psycopg2-binary==2.9.5
 Werkzeug==2.2.2
 flask-CORS==3.0.10
 Six==1.16.0
+flask_jwt_extended
