@@ -29,8 +29,8 @@ def create_token():
     returnThis = None
     try:
         print(request.json)
-        username = request.json.get("username", None)
-        password = request.json.get("password", None)
+        username = request.get_json("username", force=True)
+        password = request.get_json("password", force=True)
         if username != "test" or password != "test":  # hardcoded login, compare to database
             return {"msg": "Wrong email or password"}, 401
 
