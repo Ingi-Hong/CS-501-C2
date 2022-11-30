@@ -7,7 +7,6 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-print(os.environ)
 host = os.environ['host']
 password = os.environ['password']
 username = os.environ['username']
@@ -17,8 +16,8 @@ def load():
     # Connect to C2
     try:
         print("Connecting")
-        conn = psycopg2.connect(dbname=database, user=username, password=password, host=host, port=port, connect_timeout=10)
-        print("Success? Should be 0: ", conn.closed)
+        conn = psycopg2.connect(dbname=database, user=username, password=password, host=host, port=port, connect_timeout=20)
+        print("Success? Should be 0 -> ", conn.closed)
         cursor = conn.cursor()
     except:
         print("failed to connect")
