@@ -23,16 +23,15 @@ jwt = JWTManager(app)
 
 @app.route('/login', methods=["POST"])
 def create_token():
-    email = request.json.get("email", None)
+    username = request.json.get("username", None)
     password = request.json.get("password", None)
-    if email != "test" or password != "test": #hardcoded login, compare to database
+    if username != "test" or password != "test": #hardcoded login, compare to database
         return {"msg": "Wrong email or password"}, 401
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=username)
     response = {"access_token":access_token}
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response 
-
 
 def load():
     # Connect to C2
