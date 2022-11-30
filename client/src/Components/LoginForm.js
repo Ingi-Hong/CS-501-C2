@@ -20,15 +20,15 @@ function LoginForm() {
         {
           method: "POST",
           body: JSON.stringify({
-            username: username,
-            password: password,
+            "username": username,
+            "password": password,
           }),
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
         });
-
+        console.log(response);
         let resJson = await response.json(); 
         if (resJson.status === 200){
             setMessage("Login succesful");
@@ -45,7 +45,7 @@ function LoginForm() {
   };
 
   if (isLoading) return (<div>Loading...</div>)
-  if (error) return (<div>{error}</div>)
+  if (error) return (<div>error: {error}</div>)
   return (
     <div>
         <div>{message}</div>
