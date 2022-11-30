@@ -77,7 +77,7 @@ def handle_test():
 
 @app.route("/")
 def home(message=""):
-    return render_template('sendCommand.html', message=message)
+    return render_template('./Templates/sendCommand.html', message=message)
 
 @app.route("/queueCommand", methods=["POST"])
 def handle_execute():
