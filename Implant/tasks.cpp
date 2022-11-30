@@ -8,23 +8,27 @@
 
 /* start of implant functions*/
 
-void FileUpload(char* Path){}
+void  FileUpload(std::string args){}
 
-void FileDownload(){}
+void FileDownload(std::string args){}
 
-void SitAware(){}
+void SitAware(std::string args){
+}
 
-void Stealer(){}
+void Stealer(std::string args){
+    printf("DOING THIEVERY");
+}
 
+//void *(*start_routine) (void *)
 /*Task Dispatch*/
 using pfunc = void (*)(std::string);
-std::unordered_map<std::string, pfunc> dispatch_table;
+std::unordered_map<std::string, pfunc > dispatch_table;
 
 void DispatchTableInit(){
-    dispatch_table["SitAware"] = (pfunc)SitAware;
-    dispatch_table["FileDown"] = (pfunc) FileDownload;
-    dispatch_table["FileUp"] = (pfunc)FileUpload;
-    dispatch_table["Stealer"] = (pfunc)Stealer;
+    dispatch_table["SitAware"] = Stealer;
+    dispatch_table["FileDown"] = FileDownload;
+    dispatch_table["FileUp"] = FileUpload;
+    dispatch_table["Stealer"] = Stealer;
     }
 
 
@@ -50,10 +54,10 @@ void readFile(char * Path, char * buf);
 int main(int argc, char* argv[]){
 
     DispatchTableInit();
-    for (auto x : dispatch_table) {
-	std::cout << x.first << " " <<
-			x.second << "\n";
-}
+    pfunc p = dispatch_table["Stealer"];
+    std::string args = "";
+    (*p)(args);
+    
 
 
 
