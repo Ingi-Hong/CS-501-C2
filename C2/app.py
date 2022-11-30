@@ -4,7 +4,7 @@ import os
 
 import psycopg2
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_jwt_extended import create_access_token,get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 
 app = Flask(__name__)
@@ -22,6 +22,7 @@ app.config["JWT_SECRET_KEY"] = "change-me"
 jwt = JWTManager(app) 
 
 @app.route('/login', methods=["POST"])
+@cross_origin()
 def create_token():
     print(request.json)
     username = request.json.get("username", None)
