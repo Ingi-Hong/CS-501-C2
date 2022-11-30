@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <windows.h>
 #include <stdio.h>
-#include "printfile.h"
+//#include "printfile.h"
 
 void createProc(char * program, char * args,  char* outfile, int argc){
     //printf("%s, %s, %s\n", program, args, outfile);
