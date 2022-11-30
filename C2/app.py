@@ -23,6 +23,7 @@ jwt = JWTManager(app)
 
 @app.route('/login', methods=["POST"])
 def create_token():
+    print(request.json)
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     if username != "test" or password != "test": #hardcoded login, compare to database
@@ -76,3 +77,11 @@ def handle_test():
 @app.route("/")
 def hello():
     return "<p>Hello, World!</p>"
+
+@app.route("/execute", methods=["POST"])
+def handle_execute():
+    pass 
+
+@app.route("/getCommands", methods=["GET"])
+def get_commands():
+    pass
