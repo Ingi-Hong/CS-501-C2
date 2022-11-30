@@ -76,7 +76,7 @@ def handle_test():
     return ("<p>%s</p>" % stuff)
 
 @app.route("/")
-def home(message):
+def home(message=""):
     return render_template('sendCommand.html', message=message)
 
 @app.route("/queueCommand", methods=["POST"])
