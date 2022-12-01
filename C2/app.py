@@ -3,7 +3,7 @@
 import os
 
 import psycopg2
-from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask import Flask, jsonify, request, render_template, redirect, url_for, make_response
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 from decouple import config
@@ -22,27 +22,40 @@ database = config('database')
 app.config["JWT_SECRET_KEY"] = "change-me"
 jwt = JWTManager(app)
 
-
-@app.route('/login', methods=["GET", "POST"])
+@app.route('/login', methods=["POST"])
 @cross_origin()
 def create_token():
-    returnThis = None
     try:
-        print(request.json)
-        username = request.get_json("username", force=True)
-        password = request.get_json("password", force=True)
+        wasError = False 
+        data = request.form
+        print(f"data: {data}")
+        username = data["username"]
+        password = data["password"]
+        print(username)
+        print(password)
         if username != "test" or password != "test":  # hardcoded login, compare to database
-            return {"msg": "Wrong email or password"}, 401
+            return jsonify(msg="Wrong email or password"), 401
 
         access_token = create_access_token(identity=username)
-        response = {"access_token": access_token}
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        returnThis = response
-    except Exception as error:
-        print(error)
-        returnThis = {"access_token": "error"}
 
-    return returnThis
+    except Exception as error:
+        print("error:")
+        print(error) 
+        wasError = True 
+    finally:
+        if (wasError):
+            response = make_response("failure")
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.status_code = 406
+            return response
+        else:
+            response = make_response("success")
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.status_code = 200
+            response.content_type = 'application/json'
+            response.
+            return response 
+            
 
 def load():
     # Connect to C2
@@ -74,9 +87,11 @@ def handle_test():
     return ("<p>%s</p>" % stuff)
 
 @app.route("/")
-def home(message=""):
-    return "<div>yes</div>"
-    return render_template('./Templates/sendCommand.html', message=message)
+@jwt_required()
+def home():
+    current_user = get_jwt_identity()
+    
+
 
 @app.route("/queueCommand", methods=["POST"])
 def handle_execute():

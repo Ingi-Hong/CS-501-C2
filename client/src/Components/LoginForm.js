@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 function LoginForm() {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -9,33 +8,33 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-
-
   let handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(
-        "https://sea-lion-app-f5nrq.ondigitalocean.app/login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            "username": username,
-            "password": password,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        });
-        console.log(response);
-        let resJson = await response.json(); 
-        if (resJson.status === 200){
+      fetch("http://127.0.0.1:5000/login", {
+        method: "POST",
+        mode: "cors",
+        body: new URLSearchParams({
+          username: username,
+          password: password,
+        }),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+        .then(response => response.json())
+        .then((data) => {
+          console.log("status: " + data.status);
+
+          if (data.status === 200) {
             setMessage("Login succesful");
-        }
-        else{
-            setMessage("Error occured when logging in")
-        }
+          } else {
+            setMessage("Error occured when logging in");
+          }
+
+        });
+
 
     } catch (error) {
       setError(error.message);
@@ -44,19 +43,19 @@ function LoginForm() {
     }
   };
 
-  if (isLoading) return (<div>Loading...</div>)
-  if (error) return (<div>error: {error}</div>)
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>error: {error}</div>;
   return (
     <div>
-        <div>{message}</div>
+      <div>{message}</div>
       <form onSubmit={handleSubmit}>
         <label>
-          username: 
+          username:
           <input
             name="username"
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.username)}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </label>
         <br />
@@ -66,7 +65,7 @@ function LoginForm() {
             name="password"
             type="text"
             value={password}
-            onChange={(e) => setPassword(e.target.password)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </label>
         <button type="submit">Login</button>
