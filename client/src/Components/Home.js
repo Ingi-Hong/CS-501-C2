@@ -1,13 +1,13 @@
+import QueueCommandForm from "./QueueCommandForm" 
 function Home(){
 
     return (
-        <div>
-            <ul>
-                <li>
-                    <button>List implants</button>
-                </li>
-            </ul>
+        <div className="home-content-container">
+            hi!
+            <QueueCommandForm />
         </div>
+
+        
     );
 };
 
