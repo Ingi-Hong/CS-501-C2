@@ -121,6 +121,7 @@ std::string readFile(char * fileName){
 int main(int argc, char* argv[]){
 
     DispatchTableInit();
+    //example of how to call the right function
     pfunc p = dispatch_table["Stealer"];
     std::string args = "";
     (*p)(args);
