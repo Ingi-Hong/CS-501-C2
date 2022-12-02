@@ -1,7 +1,5 @@
 #include "aes_gcm.h"
-#include <windows.h>
-#include <bcrypt.h>
-#include <stdio.h>
+
 
 AESGCM:: ~AESGCM() {
     Cleanup();
@@ -53,7 +51,6 @@ AESGCM::AESGCM(BYTE key[AES_256_KEY_SIZE]) {
         Cleanup();
         return;
     }
-    
     DWORD cbResult = 0;
     nStatus = ::BCryptGetProperty(
         hAlg,
@@ -71,15 +68,32 @@ AESGCM::AESGCM(BYTE key[AES_256_KEY_SIZE]) {
 
 
 void AESGCM::Decrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen, BYTE* macTag, size_t macTagLen) {
-    // change me
+    // BCryptDecrypt - function decrypts a block a data
+    ULONG cbOutput;
+    BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo;
+    pPaddingInfo.pbNonce = (PUCHAR)nonce;
+    pPaddingInfo.cbNonce = (ULONG)nonceLen;
+    pPaddingInfo.pbMacContext = (PUCHAR)macTag;
+    pPaddingInfo.cbMacContext = (ULONG)macTagLen;
+
+    NTSTATUS Decryption = (hKey, data, dataLen, &pPaddingInfo, 0, 0, data, dataLen, &cbOutput, 0);
+    
 }
 
 void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
-    // change me
+    // BCryptEncrypt - function encrypts a block of data
+    ULONG cbOutput;
+
+    BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo;
+    pPaddingInfo.pbNonce = (PUCHAR) nonce;
+    pPaddingInfo.cbNonce = (ULONG) nonceLen;
+
+    NTSTATUS Encryption = (hKey, data, dataLen, &pPaddingInfo, 0, 0, data, dataLen, &cbOutput, 0);
+
 }
 
 void AESGCM::Cleanup() {
-    if (this->hAlg) {
+    if (hAlg) {
         ::BCryptCloseAlgorithmProvider(hAlg, 0);
         hAlg = NULL;
     }
