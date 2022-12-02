@@ -76,8 +76,8 @@ void AESGCM::Decrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen, B
     pPaddingInfo.pbMacContext = (PUCHAR)macTag;
     pPaddingInfo.cbMacContext = (ULONG)macTagLen;
 
-    NTSTATUS Decryption = (hKey, data, dataLen, &pPaddingInfo, 0, 0, data, dataLen, &cbOutput, 0);
-    
+    NTSTATUS Decryption = BCryptDecrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, plaintext, ptBufferSize, &cbOutput, 0);
+
 }
 
 void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
@@ -85,10 +85,10 @@ void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
     ULONG cbOutput;
 
     BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo;
-    pPaddingInfo.pbNonce = (PUCHAR) nonce;
-    pPaddingInfo.cbNonce = (ULONG) nonceLen;
+    pPaddingInfo.pbNonce = (PUCHAR)nonce;
+    pPaddingInfo.cbNonce = (ULONG)nonceLen;
 
-    NTSTATUS Encryption = (hKey, data, dataLen, &pPaddingInfo, 0, 0, data, dataLen, &cbOutput, 0);
+    NTSTATUS Encryption = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, ciphertext, ctBufferSize, &cbOutput, BCRYPT_BLOCK_PADDING);
 
 }
 
