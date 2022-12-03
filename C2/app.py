@@ -7,9 +7,10 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for, m
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 from decouple import config
+from datetime import datetime
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/login": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 host = config('host')
 password = config('password')
@@ -17,16 +18,16 @@ username = config('username')
 port = config('thePort')
 database = config('database')
 
-
 # Code taken from https://dev.to/nagatodev/how-to-add-login-authentication-to-a-flask-and-react-application-23i7
 app.config["JWT_SECRET_KEY"] = "change-me"
+app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
 @app.route('/login', methods=["POST"])
-@cross_origin()
 def create_token():
+    wasError = False 
+    access_token = ""
     try:
-        wasError = False 
         data = request.form
         print(f"data: {data}")
         username = data["username"]
@@ -34,27 +35,22 @@ def create_token():
         print(username)
         print(password)
         if username != "test" or password != "test":  # hardcoded login, compare to database
-            return jsonify(msg="Wrong email or password"), 401
+            return {"msg": "Wrong email or password"}, 401, {'Access-Control-Allow-Origin': '*'}
 
         access_token = create_access_token(identity=username)
-
+        print(f"success logging in: {access_token}")
+        return ({'access_token':access_token}, 200, {'Access-Control-Allow-Origin': '*'})
     except Exception as error:
         print("error:")
         print(error) 
-        wasError = True 
-    finally:
-        if (wasError):
-            response = make_response("failure")
-            response.headers['Access-Control-Allow-Origin'] = "*"
-            response.status_code = 406
-            return response
-        else:
-            response = make_response("success")
-            response.headers['Access-Control-Allow-Origin'] = "*"
-            response.status_code = 200
-            response.content_type = 'application/json'
-            response.
-            return response 
+        print("failure logging in")
+        response = make_response("failure")
+        response.headers['Access-Control-Allow-Origin'] = "*"
+        response.status_code = 406
+        return response
+    
+
+
             
 
 def load():
@@ -84,23 +80,25 @@ def executeQuery(query):
 @app.route("/test", methods=["GET"])
 def handle_test():
     stuff = executeQuery("SELECT * from command_queue")
-    return ("<p>%s</p>" % stuff)
+    return jsonify(stuff)
 
 @app.route("/")
-@jwt_required()
 def home():
-    current_user = get_jwt_identity()
-    
-
+    pass
 
 @app.route("/queueCommand", methods=["POST"])
 def handle_execute():
     try:
-        implant_id = request.form.get('implantID')
+        target_implant_id = request.form.get('implantID')
+        command = request.form.get('command')
+        created_on = datetime.now()
 
+        
     except:
         print("Failure sending commands")
-        return redirect(url_for('home', message="Failed to send message"))
+        return "Error when queueing command", 400
+
+
 
 @app.route("/getCommands/<id>", methods=["GET"])
 def get_commands(id):
@@ -121,11 +119,3 @@ def get_commands(id):
     else:
         return "<div>Failure</div>"
 
-
-@app.route("/works")
-def handle_works():
-    return "<div>works</div>"
-
-@app.route("/")
-def admin():
-    return "Admin privs granted"

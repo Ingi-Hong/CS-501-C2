@@ -12,7 +12,7 @@ function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      fetch("http://127.0.0.1:5000/login", {
+      let response = await fetch("http://127.0.0.1:5000/login", {
         method: "POST",
         mode: "cors",
         body: new URLSearchParams({
@@ -22,20 +22,17 @@ function LoginForm() {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-      })
-        .then(response => response.json())
-        .then((data) => {
-          console.log("status: " + data.status);
+      });
+      let data = await response.json();
+      console.log("access_code: " + Object.keys(data));
 
-          if (data.status === 200) {
-            setMessage("Login succesful");
-          } else {
-            setMessage("Error occured when logging in");
-          }
-
-        });
-
-
+      if (response.status === 200) {
+        setMessage("Login succesful");
+      } else if (response.status === 401) {
+        setMessage("Wrong username or password");
+      } else {
+        setMessage("Error logging in");
+      }
     } catch (error) {
       setError(error.message);
     } finally {
