@@ -7,6 +7,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <iostream>
 #include <windows.h>
 #include <winhttp.h>
+#include <future> 
 #define SERVERNAME "placeholder"
 #define SLEEP 10
 
@@ -38,17 +39,17 @@ auto parseTasks(auto toParse){
 return 1;
 }
 
+//TODO
 auto executeTasks(auto tasks){
     
     return 1;
 }
 
 void runLoop(bool isRunning){
-    
     while (isRunning) {
         try {
-            const auto serverResponse = getTasks();
-            auto parsedTasks = parseTasks(serverResponse);
+            const auto serverResponse = std::async(std::launch::async, getTasks);
+            auto parsedTasks = parseTasks(serverResponse.get());
             auto success = executeTasks(parsedTasks);
         }
         catch (const std::exception& e) {
