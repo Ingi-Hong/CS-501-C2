@@ -16,7 +16,8 @@ stealer:
 	$(CXX)  stealer.cpp   sqlite3.o $(LDFLAGS) -o stealer.exe 
 file:
 	$(CC)  filestuff.c   sqlite3.o $(LDFLAGS) -o f.exe 
-
+sqtest:
+	$(CXX) sqtest.cpp sqlite3.o $(LDFLAGS) -o sqt.exe
 sqlite3:
 	$(CC) -c sqlite3.c
 clean:
