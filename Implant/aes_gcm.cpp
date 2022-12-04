@@ -71,11 +71,13 @@ void AESGCM::Decrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen, B
     // BCryptDecrypt - function decrypts a block a data
     ULONG cbOutput;
     BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo;
+    BCRYPT_INIT_AUTH_MODE_INFO(pPaddingInfo);
     pPaddingInfo.pbNonce = (PUCHAR)nonce;
     pPaddingInfo.cbNonce = (ULONG)nonceLen;
-    pPaddingInfo.pbMacContext = (PUCHAR)macTag;
-    pPaddingInfo.cbMacContext = (ULONG)macTagLen;
-
+    //pPaddingInfo.pbMacContext = (PUCHAR)macTag;
+    //pPaddingInfo.cbMacContext = (ULONG)macTagLen;
+    //Add iv???
+    //Is this using block padding by passing 0 as dwflags https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptdecrypt. IF so bad
     NTSTATUS Decryption = BCryptDecrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, plaintext, ptBufferSize, &cbOutput, 0);
 
 }
@@ -87,8 +89,9 @@ void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
     BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo;
     pPaddingInfo.pbNonce = (PUCHAR)nonce;
     pPaddingInfo.cbNonce = (ULONG)nonceLen;
-
-    NTSTATUS Encryption = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, ciphertext, ctBufferSize, &cbOutput, BCRYPT_BLOCK_PADDING);
+//the size of the plaintext specified in the cbInput parameter must be a multiple of the algorithm's block size,, datalen must be multiple of 96 (block size)
+//need an iv, 96 random bytes (block size)
+    NTSTATUS Encryption = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, ciphertext, ctBufferSize, &cbOutput, 0);
 
 }
 

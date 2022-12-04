@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import AuthService from "./AuthService";
+import { Navigate } from "react-router-dom";
+import "./Stylesheets/loginform.css";
 
 function LoginForm() {
   const [username, setUsername] = useState("");
@@ -8,8 +11,7 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  let handleSubmit = async (e) => {
-    e.preventDefault();
+  async function handleSubmit() {
     setIsLoading(true);
     try {
       let response = await fetch("http://127.0.0.1:5000/login", {
@@ -25,7 +27,7 @@ function LoginForm() {
       });
       let data = await response.json();
       console.log("access_code: " + Object.keys(data));
-
+      AuthService.login(data.access_token);
       if (response.status === 200) {
         setMessage("Login succesful");
       } else if (response.status === 401) {
@@ -38,14 +40,29 @@ function LoginForm() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  const onClick = async (e) => {
+    e.preventDefault();
+    await handleSubmit();
+    if (isLoading) {
+      return <div>Loading...</div>;
+    } else {
+      return <Navigate to="/" />;
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>error: {error}</div>;
+  if (message === "Login succesful") return <Navigate to="/" />
   return (
-    <div>
+    <div className="form-wrapper">
       <div>{message}</div>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={async (e) => {
+          onClick(e);
+        }}
+      >
         <label>
           username:
           <input
