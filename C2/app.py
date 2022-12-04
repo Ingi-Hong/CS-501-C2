@@ -26,7 +26,6 @@ app.config["JWT_SECRET_KEY"] = "change-me"
 app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
-
 @app.route('/logout', methods=["POST"])
 def logout():
     response = jsonify({"msg": "logout success"})
