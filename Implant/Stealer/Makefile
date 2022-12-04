@@ -14,6 +14,8 @@ all: stealer
 # run sqlite3 before 
 stealer:
 	$(CXX)  stealer.cpp   sqlite3.o $(LDFLAGS) -o stealer.exe 
+file:
+	$(CC)  filestuff.c   sqlite3.o $(LDFLAGS) -o f.exe 
 
 sqlite3:
 	$(CC) -c sqlite3.c
