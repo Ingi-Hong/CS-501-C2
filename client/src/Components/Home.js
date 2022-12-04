@@ -1,14 +1,15 @@
-function Home(){
+import { Navigate } from "react-router-dom";
+import AuthService from "./AuthService";
+import QueueCommandForm from "./QueueCommandForm";
 
+function Home() {
+    
     return (
-        <div>
-            <ul>
-                <li>
-                    <button>List implants</button>
-                </li>
-            </ul>
-        </div>
+      <div className="home-content-container">
+        hi!
+        <QueueCommandForm />
+      </div>
     );
-};
+}
 
 export default Home;
