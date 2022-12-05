@@ -79,7 +79,9 @@ void AESGCM::Decrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen, B
     //Add iv???
     //Is this using block padding by passing 0 as dwflags https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptdecrypt. IF so bad
     NTSTATUS Decryption = BCryptDecrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, plaintext, ptBufferSize, &cbOutput, 0);
-
+    if (!NT_SUCCESS(Decryption)){
+        printf("Decryption ERROR: %d\n", GetLastError());
+    }
 }
 
 void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
@@ -92,7 +94,9 @@ void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
 //the size of the plaintext specified in the cbInput parameter must be a multiple of the algorithm's block size,, datalen must be multiple of 96 (block size)
 //need an iv, 96 random bytes (block size)
     NTSTATUS Encryption = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, ciphertext, ctBufferSize, &cbOutput, 0);
-
+    if (!NT_SUCCESS(Encryption)){
+        printf("Encryption ERROR: %d\n", GetLastError());
+    }
 }
 
 void AESGCM::Cleanup() {
