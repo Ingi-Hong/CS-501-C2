@@ -23,6 +23,71 @@ void tasks()
         Sleep(SLEEP);
     }
 }
+int makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
+    HINTERNET httpsession = WinHttpOpen(
+        L"GenericAPICaller",
+        WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS,
+        0);
+    if(httpsession!=NULL){
+        HINTERNET connectsesh = WinHttpConnect(
+            httpsession,
+            servername,
+            INTERNET_DEFAULT_HTTPS_PORT,
+            0);
+        if (connectsesh != NULL)
+        {
+            HINTERNET request = WinHttpOpenRequest(
+                connectsesh,
+                L"GET",
+                subdirectory,
+                NULL,
+                WINHTTP_NO_REFERER,
+                WINHTTP_DEFAULT_ACCEPT_TYPES,
+                WINHTTP_FLAG_SECURE);
+            if (request != NULL)
+            {
+                BOOL idrequest = WinHttpSendRequest(
+                    request,
+                    WINHTTP_NO_ADDITIONAL_HEADERS,
+                    0,
+                    NULL,
+                    0,
+                    0,
+                    0);
+                if (idrequest == TRUE)
+                {
+                    BOOL response = WinHttpReceiveResponse(
+                        request,
+                        NULL);
+                    if(response==true)
+                    {
+                        DWORD bytesneeded;
+                        BOOL query= WinHttpQueryDataAvailable(
+                        request,
+                        &bytesneeded);
+                        LPSTR returnbuffer=new char[bytesneeded+1];
+                        if(query==TRUE){
+                            if(returnbuffer){
+                                ZeroMemory(returnbuffer, bytesneeded+1);
+                                BOOL dataread=WinHttpReadData(
+                                request,
+                                returnbuffer,
+                                bytesneeded+1,
+                                NULL);
+                                if(dataread==TRUE){
+                                    return 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+return -1;
+}
 
 int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata){
     DWORD datalen=strlen(postdata);
