@@ -11,6 +11,8 @@ using json = nlohmann::json;
 
 void task_do(json task);
 void task_dispatcher(char * body);
+
+/* example of how to obfuscate*/
 void tester(){
      HMODULE hModule = LoadLibraryA("User32.dll");
     if( hModule == NULL){
