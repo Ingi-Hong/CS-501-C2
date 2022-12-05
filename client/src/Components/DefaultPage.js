@@ -1,7 +1,8 @@
-import "./Stylesheets/defaultpage.css";
-import AuthService from "./AuthService";
 import { Navigate, Outlet } from "react-router-dom";
+import AuthService from "./AuthService";
 import NavBar from "./NavBar";
+import "./Stylesheets/defaultpage.css";
+import "spectre.css";
 
 function DefaultPage() {
     const isLoggedIn = AuthService.isLoggedIn();

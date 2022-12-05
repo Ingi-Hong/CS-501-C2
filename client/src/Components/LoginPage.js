@@ -1,8 +1,9 @@
-import AuthService from "./AuthService";
 import { Navigate } from "react-router-dom";
+import AuthService from "./AuthService";
 import LoginForm from "./LoginForm";
-import "./Stylesheets/loginpage.css";
 import MovingImage from "./movingimage";
+import "./Stylesheets/loginpage.css";
+import "spectre.css";
 
 function LoginPage() {
   const isLoggedIn = AuthService.isLoggedIn();
@@ -12,6 +13,194 @@ function LoginPage() {
     return (
       
       <div className="page-wrapper">
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage /><MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage /><MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage /><MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
         <MovingImage />
         <LoginForm />
       </div>

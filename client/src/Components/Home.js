@@ -1,5 +1,3 @@
-import { Navigate } from "react-router-dom";
-import AuthService from "./AuthService";
 import QueueCommandForm from "./QueueCommandForm";
 
 function Home() {

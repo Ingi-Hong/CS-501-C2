@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import AuthService from "./AuthService";
 import { Navigate } from "react-router-dom";
+import AuthService from "./AuthService";
 import "./Stylesheets/loginform.css";
 
 function LoginForm() {
@@ -45,27 +45,24 @@ function LoginForm() {
   const onClick = async (e) => {
     e.preventDefault();
     await handleSubmit();
-    if (isLoading) {
-      return <div>Loading...</div>;
-    } else {
-      return <Navigate to="/" />;
-    }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  
   if (error) return <div>error: {error}</div>;
   if (message === "Login succesful") return <Navigate to="/" />;
   return (
     <div className="form-wrapper">
-      <div>{message}</div>
+      <div> {message} &nbsp; {isLoading}</div>
       <form
         onSubmit={async (e) => {
           onClick(e);
         }}
+        className="form-group"
       >
-        <label>
-          username:
+        <label className="form-label" for="username">
+          Username: &nbsp;
           <input
+          id="username"
             name="username"
             type="text"
             value={username}
@@ -73,16 +70,17 @@ function LoginForm() {
           />
         </label>
         <br />
-        <label>
-          password:
+        <label className="form-label" for="password">
+          Password: &nbsp;
           <input
+          id="password"
             name="password"
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button type="submit">Login</button>
+        <button className="btn " type="submit">Login</button>
       </form>
     </div>
   );

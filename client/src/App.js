@@ -1,16 +1,11 @@
 import React from "react";
-import "./App.css";
-import LoginForm from "./Components/LoginForm";
 import {
-  Router,
-  Route,
-  Routes,
-  Outlet,
-  BrowserRouter,
-  Navigate,
+  BrowserRouter, Route,
+  Routes
 } from "react-router-dom";
-import Home from "./Components/Home";
+import "./App.css";
 import DefaultPage from "./Components/DefaultPage";
+import Home from "./Components/Home";
 import LoginPage from "./Components/LoginPage";
 
 function App() {
