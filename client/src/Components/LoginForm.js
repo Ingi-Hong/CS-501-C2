@@ -14,7 +14,7 @@ function LoginForm() {
   async function handleSubmit() {
     setIsLoading(true);
     try {
-      let response = await fetch("http://127.0.0.1:5000/login", {
+      let response = await fetch(process.env.REACT_APP_C2URL + "/login", {
         method: "POST",
         mode: "cors",
         body: new URLSearchParams({
@@ -54,7 +54,7 @@ function LoginForm() {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>error: {error}</div>;
-  if (message === "Login succesful") return <Navigate to="/" />
+  if (message === "Login succesful") return <Navigate to="/" />;
   return (
     <div className="form-wrapper">
       <div>{message}</div>

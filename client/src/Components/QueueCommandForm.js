@@ -14,7 +14,7 @@ function QueueCommandForm() {
       e.preventDefault();
       setIsLoading(true);
       try {
-        let response = await fetch("http://127.0.0.1:5000//queueCommand", {
+        let response = await fetch(process.env.REACT_APP_C2URL + "/queueCommand", {
           method: "POST",
           mode: "cors",
           body: new URLSearchParams({

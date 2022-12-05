@@ -2,7 +2,7 @@ import { bake_cookie, read_cookie, delete_cookie } from "sfcookies";
 
 async function sendLogoutRequest() {
   try {
-    let response = await fetch("http://127.0.0.1:5000/logout", {
+    let response = await fetch(process.env.REACT_APP_C2URL + "/logout", {
       method: "POST",
       mode: "cors",
       body: "",
