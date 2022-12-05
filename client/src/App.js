@@ -1,29 +1,30 @@
 import React from "react";
 import "./App.css";
 import LoginForm from "./Components/LoginForm";
-import { Route, BrowserRouter } from "react-router-dom";
-import Cookies from 'js-cookie';
+import {
+  Router,
+  Route,
+  Routes,
+  Outlet,
+  BrowserRouter,
+  Navigate,
+} from "react-router-dom";
 import Home from "./Components/Home";
-import NavBar from "./Components/NavBar";
-
-const DefaultPage = () => (
-  <div>
-    <NavBar />
-    <BrowserRouter>
-      <Route path="/main" element={<Home />}/>
-    </BrowserRouter>
-  </div>
-);
+import DefaultPage from "./Components/DefaultPage";
+import LoginPage from "./Components/LoginPage";
 
 function App() {
-
   return (
-    <React.StrictMode>
+    <div className="site-wrapper">
       <BrowserRouter>
-        <Route element={<DefaultPage />} />
-        <Route path="/login" element={<LoginForm />} />
+        <Routes>
+          <Route element={<DefaultPage />}>
+            <Route path="/" element={<Home />} />
+          </Route>
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
       </BrowserRouter>
-    </React.StrictMode>
+    </div>
   );
 }
 

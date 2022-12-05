@@ -1,0 +1,5 @@
+.form-wrapper{
+    border: 1px black solid;
+    z-index: 100;
+    background-color: white;
+}

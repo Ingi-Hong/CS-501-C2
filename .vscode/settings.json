@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "xiosbase": "c",
-        "xlocale": "c",
-        "xutility": "c",
-        "type_traits": "c",
-        "xstring": "c"
-    }
-}

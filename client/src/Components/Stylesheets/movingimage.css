@@ -1,0 +1,18 @@
+.moveArrow {
+  animation-name: mymove;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-duration: 9s;
+  width: 300px;
+  height: auto;
+  position: absolute;
+}
+
+@keyframes mymove {
+  from {
+    transform: translateY(-50vh);
+  }
+  to {
+    transform: translateY(50vh);
+  }
+}
