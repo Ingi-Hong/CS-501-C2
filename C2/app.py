@@ -116,7 +116,7 @@ def handle_test():
 
 @app.route("/")
 def home():
-    pass
+    return "<div>Hi</div>", 200
 
 # Builds a insert query, give table name and name of columns
 
