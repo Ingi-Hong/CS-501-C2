@@ -11,9 +11,6 @@ from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
                                 unset_jwt_cookies)
 from psycopg2 import connect, sql
-import psycopg2
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
