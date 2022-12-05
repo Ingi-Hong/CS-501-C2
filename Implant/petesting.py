@@ -15,3 +15,4 @@ for entry in pe.DIRECTORY_ENTRY_IMPORT:
 		
 #print(json.dumps(pe_import_dict, indent=4, sort_keys=True))
 print(pe_import_dict['KERNEL32.dll'])
+print(pe_import_dict)
