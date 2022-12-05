@@ -20,6 +20,7 @@ password = config('password')
 username = config('username')
 port = config('thePort')
 database = config('database')
+clientURL = config('client')
 
 # Code taken from https://dev.to/nagatodev/how-to-add-login-authentication-to-a-flask-and-react-application-23i7
 app.config["JWT_SECRET_KEY"] = "change-me"
@@ -42,14 +43,14 @@ def create_token():
         print(username)
         print(password)
         if username != "test" or password != "test":  # hardcoded login, TODO compare to database
-            return {"msg": "Wrong email or password"}, 401, {'Access-Control-Allow-Origin': '*'}
+            return {"msg": "Wrong email or password"}, 401, {'Access-Control-Allow-Origin': clientURL}
 
         access_token = create_access_token(identity=username)
         print(f"success logging in: {access_token}")
-        return ({'access_token': access_token}, 200, {'Access-Control-Allow-Origin': '*'})
+        return ({'access_token': access_token}, 200, {'Access-Control-Allow-Origin': clientURL})
     except Exception as error:
         print(f"error logging in: {error}")
-        return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': '*'}
+        return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': clientURL}
 
 # Loads connection to postgresql database
 
@@ -153,14 +154,14 @@ def handle_execute():
         failure = executeInsertQuery(query, data)
         if (failure != None):
             print(failure)
-            return "Failure executing query", 400, {'Access-Control-Allow-Origin': '*'}
+            return "Failure executing query", 400, {'Access-Control-Allow-Origin': clientURL}
 
         response = app.response_class(
             response="Success!",
             status=200,
             mimetype="application/json"
         )
-        response.headers['Acess-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Origin'] = clientURL
         return response
     except Exception as error:
         print(f"Failure sending commands: {error}")
@@ -169,7 +170,7 @@ def handle_execute():
             status=400,
             mimetype="application/json"
         )
-        response.headers['Acess-Control-Allow-Origin'] = '*'
+        response.headers['Acess-Control-Allow-Origin'] = clientURL
         return response
 
 # List all commands for a particular implant
