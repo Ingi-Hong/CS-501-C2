@@ -197,19 +197,19 @@ def get_commands(id):
 # for testing
 
 
-def main():
-    target_implant_id = 1
-    command = 'some long command'
-    created_on = '2022-12-01T16:41:10.592868'
-    status = 'untouched'
-    data = [target_implant_id, command, created_on, status]
-    columns = ['target_implant_id', 'command', 'created_on', 'status']
+# def main():
+#     target_implant_id = 1
+#     command = 'some long command'
+#     created_on = '2022-12-01T16:41:10.592868'
+#     status = 'untouched'
+#     data = [target_implant_id, command, created_on, status]
+#     columns = ['target_implant_id', 'command', 'created_on', 'status']
 
-    query = insertQueryBuilder('task_queue', columns)
-    results = executeInsertQuery(query, data)
+#     query = insertQueryBuilder('task_queue', columns)
+#     results = executeInsertQuery(query, data)
 
-    print(results)
+#     print(results)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
