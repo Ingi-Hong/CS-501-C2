@@ -1,4 +1,3 @@
-
 #include "sqlite3.h"
 #include <windows.h>
 #include <stdio.h>
@@ -6,8 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
-
+#include "aes_gcm.h"
 
 std::vector<BYTE> b64Decode(std::string strInput){
     // as before you should make two calls to ::CryptStringToBinaryA 
@@ -57,7 +55,6 @@ char * readFile(char * fileName){
         buffer[i] = character;
         //printf("%c",buffer[i]);
         i++;
-
     }
     return buffer;
 }
@@ -75,9 +72,6 @@ char * readFile(char * fileName){
     std::cout << db_path << '\n';
     //then fetch and load json
     char * b = readFile( const_cast<char*>(db_path.c_str()));
-    //printf("Bytes read: %d\n",LocalBytes.size());
-    //std::cout << LocalBytes;
-    //local bytes is wrong somehow
     std::string LocalBytes = std::string(b);
     int loc = LocalBytes.find("encrypted_key") + 16; //+ 16; //15 is length of
     std::string key = "";
@@ -124,7 +118,7 @@ BYTE * GetEncryptionKey(){
     return Ret_Blob->pbData;
 }
 
-BYTE * decrypt_password();
+
 //need aem functionality desparately plus file i/o stuff asap
 static int callback(void *data, int argc, char **argv, char **azColName){
    int i;
@@ -138,6 +132,26 @@ static int callback(void *data, int argc, char **argv, char **azColName){
    return 0;
 }
 
+BYTE* decrypt_password(BYTE* encrypted_password, BYTE *key){
+    //want bytes 3 - 15
+    std::vector<BYTE> pass = std::vector<BYTE>(encrypted_password);
+    std::vector<BYTE> VEC_IV = std::vector<BYTE>(pass.begin() + 3, pass.begin()+15); //maybe 16?
+    std::vector<BYTE> cipher = std::vector<BYTE>(pass.begin() + 15, pass.begin() + 15 + 23);
+    std::vector<BYTE> VEC_tag = std::vector<BYTE>(pass.begin() + 15 + 23, pass.end()); //check all indices
+    BYTE * textIV = VEC_IV.data() ;
+    BYTE * ciphertext = cipher.data();
+    BYTE * tag = VEC_tag.data();
+    ctBufferSize = (DWORD)cipher.size();
+    auto box = new AESGCM(key);
+    box->Decrypt(textIV, sizeof(textIV), box->ciphertext, box->ctBufferSize, box->tag, box->authTagLengths.dwMinLength );
+    for(size_t i=0; i< box->ptBufferSize; i++){
+        printf("%c", (char) box->plaintext[i]);
+    }
+    printf("\n");
+    delete box;
+    printf("Goodbye!\n");
+
+}
 
 
 int main(){
@@ -153,24 +167,9 @@ int main(){
     
     //https://stackoverflow.com/questions/6858524/convert-char-to-lpwstr
     std::string s = (std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data"));
-    //std::cout << "S: "<< s << '\n';
+   
     const char * db_path = s.c_str();
-    //size_t wn = mbsrtowcs(NULL, &t, 0, NULL);
-    //wchar_t * buf = new wchar_t[wn + 1]();;
-    //wn = mbsrtowcs(buf, &t, wn + 1, NULL);
-    //LPCWSTR db_path = buf;
-    //free(buf);
-    //printf("%s\n", const_cast<char*>(db_path.c_str()));
-    //copy the file contents to a new file
-    //printf("DB_PATH: %S", db_path);
-    
-    //delete[] buf;
     const char * temp = "ChromeData.db";
-    //this is still a bit buggy bc of encoding issus :(
-    //CopyFiles(const_cast<char*>(temp.c_str()), const_cast<char*>(db_path.c_str())); 
-   //C:\Users\Wyatt2\AppData\Local\Google\Chrome\User Data\Default"
-   //create a db connection
-   //BYTE *key = GetEncryptionKey(); //omg
 
    if (!CopyFile(db_path,temp, false)){
     printf("COPY FILE W FAILED \n");
