@@ -24,7 +24,7 @@ void tasks()
         Sleep(SLEEP);
     }
 }
-int makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
+LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
     HINTERNET httpsession = WinHttpOpen(
         L"GenericAPICaller",
         WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
@@ -78,7 +78,7 @@ int makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
                                 bytesneeded+1,
                                 NULL);
                                 if(dataread==TRUE){
-                                    return 0;
+                                    return returnbuffer;
                                 }
                             }
                         }
@@ -87,7 +87,6 @@ int makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
             }
         }
     }
-return -1;
 }
 
 
@@ -126,7 +125,7 @@ void runLoop(bool isRunning){
 
 }
 
-int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
+LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
 {
     DWORD datalen = strlen(postdata);
     HINTERNET httpsession = WinHttpOpen(
@@ -186,7 +185,7 @@ int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postda
                                     NULL);
                                 if (dataread == TRUE)
                                 {
-                                    return 0;
+                                    return returnbuffer;
                                 }
                             }
                         }
@@ -195,7 +194,6 @@ int makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postda
             }
         }
     }
-    return -1;
 }
 
 int sendresults()
