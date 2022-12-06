@@ -1,8 +1,10 @@
 import "./Stylesheets/movingimage.css";
 
 function MovingImage() {
-  let leftValue = Math.floor(Math.random() * 100);
-  let animationDur = 3 + Math.floor(Math.random() * 8);
+  const images = [require("./Images/macroyal.jpg"), require("./Images/macrun.jpeg"), require("./Images/macyawn.jpg")];
+  let pick = Math.floor(Math.random()*3);
+  let leftValue = (Math.random() * 90) - 3;
+  let animationDur = 3 + (Math.random() * 10);
   const styles = ({
     animationName: "mymove",
     animationIterationCount: "infinite",
@@ -17,7 +19,7 @@ function MovingImage() {
     <img
       className="moveArrow"
       style={ styles }
-      src={require("./Images/macroyal.jpg")}
+      src={images[pick]}
     ></img>
   );
 }

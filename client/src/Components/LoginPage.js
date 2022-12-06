@@ -8,11 +8,18 @@ import "spectre.css";
 function LoginPage() {
   const isLoggedIn = AuthService.isLoggedIn();
   if (isLoggedIn) {
-    return <Navigate to="/" />;
+    return <Navigate to="/home" />;
   } else {
     return (
-      
       <div className="page-wrapper">
+        <div className="form-wrapper">
+          <div className="hero-sm bg-purple">
+            <div className="hero-body">
+              <h1>MACWARE ZONE</h1>
+                <LoginForm />
+            </div>
+          </div>
+        </div>
         <MovingImage />
         <MovingImage />
         <MovingImage />
@@ -60,7 +67,6 @@ function LoginPage() {
         <MovingImage />
         <MovingImage />
         <MovingImage />
-        <MovingImage /><MovingImage />
         <MovingImage />
         <MovingImage />
         <MovingImage />
@@ -123,7 +129,6 @@ function LoginPage() {
         <MovingImage />
         <MovingImage />
         <MovingImage />
-        <MovingImage /><MovingImage />
         <MovingImage />
         <MovingImage />
         <MovingImage />
@@ -186,7 +191,6 @@ function LoginPage() {
         <MovingImage />
         <MovingImage />
         <MovingImage />
-        <MovingImage /><MovingImage />
         <MovingImage />
         <MovingImage />
         <MovingImage />
@@ -202,7 +206,12 @@ function LoginPage() {
         <MovingImage />
         <MovingImage />
         <MovingImage />
-        <LoginForm />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
+        <MovingImage />
       </div>
     );
   }

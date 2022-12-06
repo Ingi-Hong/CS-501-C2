@@ -6,6 +6,7 @@
   width: 300px;
   height: auto;
   position: absolute;
+  z-index: 0;
 }
 
 @keyframes mymove {

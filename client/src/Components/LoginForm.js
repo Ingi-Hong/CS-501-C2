@@ -49,7 +49,7 @@ function LoginForm() {
 
   
   if (error) return <div>error: {error}</div>;
-  if (message === "Login succesful") return <Navigate to="/" />;
+  if (message === "Login succesful") return <Navigate to="/home" />;
   return (
     <div className="form-wrapper">
       <div> {message} &nbsp; {isLoading}</div>

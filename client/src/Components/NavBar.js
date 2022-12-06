@@ -1,23 +1,44 @@
-import { useState } from "react";
+import { Navigate } from "react";
+import { Link } from "react-router-dom";
 import AuthService from "./AuthService";
 import "spectre.css";
 
-function NavBar() {
-  const [loggedIn, setLoggedIn] = useState(AuthService.isLoggedIn());
-
+function NavigationBar() {
   async function handleLogout() {
     await AuthService.logout();
-    setLoggedIn = true;
+  }
+
+  if (!AuthService.isLoggedIn()) {
+    window.location.reload(false);
+    return <Navigate to="/login" />;
   }
 
   return (
     <header className="navbar">
-      <section class="navbar-section">
-        <button className="btn btn-link" onClick={async () => await handleLogout()}>Logout</button>
-        <button className="btn btn-link" to="/test_implant">Test Implant Function</button>
+      <section className="navbar-section">
+        <Link className="btn btn-link" to="/test_implant">
+          Test Implant
+        </Link>
+
+        <Link className="btn btn-link" to="/home">
+          Home
+        </Link>
+      </section>
+      
+      <section class="navbar-center">
+        <img src={require("./Images/macroyal.jpg")} style={{width: "50px"}}></img>
+      </section>
+
+      <section className="navbar-section">
+        <button
+          className="btn btn-link"
+          onClick={async () => await handleLogout()}
+        >
+          Logout
+        </button>
       </section>
     </header>
   );
 }
 
-export default NavBar;
+export default NavigationBar;

@@ -1,12 +1,10 @@
 import QueueCommandForm from "./QueueCommandForm";
+import NavigationBar from "./NavBar";
 
 function Home() {
     
     return (
-      <div className="home-content-container">
-        hi!
         <QueueCommandForm />
-      </div>
     );
 }
 

