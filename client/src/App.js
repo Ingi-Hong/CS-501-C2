@@ -9,7 +9,6 @@ import ImplantTable from "./Components/ImplantTable";
 
 function App() {
   return (
-    <div className="site-wrapper">
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -21,7 +20,6 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </div>
   );
 }
 

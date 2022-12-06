@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 function QueueCommandForm() {
      {/* target_implant_id = request.form.get('implantID')
         command = request.form.get('command')
@@ -42,7 +43,7 @@ function QueueCommandForm() {
     if (isLoading) return <div>Loading...</div>;
 
     return (
-      <div>
+      <div className='command-wrapper'>
         {error && <div>error: {error}</div>}
         <div>{message}</div>
         <form onSubmit={handleSubmit}>

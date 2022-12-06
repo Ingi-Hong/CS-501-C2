@@ -2,7 +2,6 @@ import { Navigate, Outlet } from "react-router-dom";
 import "spectre.css";
 import AuthService from "./AuthService";
 import NavBar from "./NavBar";
-import "./Stylesheets/defaultpage.css";
 
 function DefaultPage() {
   const isLoggedIn = AuthService.isLoggedIn();
@@ -10,11 +9,9 @@ function DefaultPage() {
     return <Navigate to="/login" />;
   } else {
     return (
-      <div className="defaultPage-wrapper">
+      <div>
         <NavBar />
-        <div className="outlet-wrapper">
         <Outlet />
-        </div>
       </div>
     );
   }

@@ -23,8 +23,8 @@ function NavigationBar() {
         <Link className="bt btn-link" to="/implant_table" >Implant Table</Link>
       </section>
       
-      <section class="navbar-center">
-        <img src={require("./Images/macroyal.jpg")} style={{width: "50px"}}></img>
+      <section className="navbar-center">
+        <img src={require("./Images/macroyal.jpg")} style={{width: "100px"}}></img>
       </section>
 
       <section className="navbar-section">

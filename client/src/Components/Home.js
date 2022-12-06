@@ -1,12 +1,17 @@
 import QueueCommandForm from "./QueueCommandForm";
-import ImplantTable from "./ImplantTable";
+import "spectre.css";
+
 function Home() {
-    
-    return (
-        <div>
-        <QueueCommandForm />
+  return (
+    <div className="container">
+      <div className="columns">
+        <div className="column col-12">
+          <QueueCommandForm />
         </div>
-    );
+        
+      </div>
+    </div>
+  );
 }
 
 export default Home;
