@@ -15,7 +15,7 @@ function LoginPage() {
         <div className="form-wrapper">
           <div className="hero-sm bg-purple">
             <div className="hero-body">
-              <h1>MACWARE ZONE</h1>
+              <h1>MAC-WARE ZONE</h1>
                 <LoginForm />
             </div>
           </div>

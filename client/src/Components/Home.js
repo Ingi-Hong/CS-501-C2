@@ -4,13 +4,9 @@ import "spectre.css";
 function Home() {
   return (
     <div className="container">
-      <div className="columns">
-        <div className="column col-12">
+        <h2>Execute</h2>
           <QueueCommandForm />
-        </div>
-        
       </div>
-    </div>
   );
 }
 
