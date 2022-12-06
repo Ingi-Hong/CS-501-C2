@@ -1,6 +1,6 @@
 #include "aes_gcm.h"
 #include <vector>
-
+#include <iostream>
 
 
 AESGCM:: ~AESGCM() {
@@ -116,24 +116,47 @@ void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
     BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo;
     BCRYPT_INIT_AUTH_MODE_INFO(pPaddingInfo);
     std::vector<BYTE> authTag(authTagLengths.dwMinLength);
+    tag=(BYTE*)malloc(authTagLengths.dwMaxLength);
     //authTag = authTag(authTagLengths.dwMinLength);
     pPaddingInfo.pbNonce = (PUCHAR)nonce;
     pPaddingInfo.cbNonce = (ULONG)nonceLen;
     pPaddingInfo.pbTag   = (PUCHAR)tag;
     pPaddingInfo.cbTag   =(ULONG) authTagLengths.dwMinLength;
+    pPaddingInfo.dwFlags=0;
+    pPaddingInfo.cbMacContext=0;
+    pPaddingInfo.pbMacContext=NULL;
     //pPaddingInfo.cbAAD = 0;
     //pPaddingInfo.cbData = 0;
     //pPaddingInfo.dwFlags = BCRYPT_AUTH_MODE_CHAIN_CALLS_FLAG;
-    //pPaddingInfo.pbAuthData = NULL;
-    //pPaddingInfo.cbAuthData = 0;
+    pPaddingInfo.pbAuthData = NULL;
+    pPaddingInfo.cbAuthData = 0;
 
 
 //the size of the plaintext specified in the cbInput parameter must be a multiple of the algorithm's block size,, datalen must be multiple of 96 (block size)
 //need an iv, 96 random bytes (block size)
-    NTSTATUS Encryption = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, 0, 0, data, dataLen, &cbOutput, 0);
-    if (!NT_SUCCESS(Encryption)){
+    NTSTATUS EncryptionLenStatus = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, NULL, 0, &ctBufferSize, 0);
+    if (!NT_SUCCESS(EncryptionLenStatus)){
          printf("**** Error 0x%x returned by BCryptEncrypt when calculating auth tag len\n", nStatus);
     }
+    std::cout<<ctBufferSize;
+    
+    ciphertext=(BYTE*)malloc(ctBufferSize+1);
+    DWORD* byteswritten=(DWORD*)malloc(sizeof(DWORD));
+    NTSTATUS Encryption= BCryptEncrypt(hKey,data,dataLen,&pPaddingInfo,NULL,0,ciphertext,ctBufferSize+1,byteswritten,0);
+    if (!NT_SUCCESS(EncryptionLenStatus)){
+         printf("**** Error 0x%x returned by BCryptEncrypt when calculating auth tag len\n", nStatus);
+    }
+    std::cout<<*byteswritten;
+
+
+
+
+
+
+
+
+
+
 }
 
 void AESGCM::Cleanup() {

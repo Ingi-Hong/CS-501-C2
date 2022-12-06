@@ -25,3 +25,7 @@ typedef BOOL (WINAPI * _CreateProcessA)(
                   LPSTARTUPINFOA        lpStartupInfo,
                LPPROCESS_INFORMATION lpProcessInformation
 );
+
+typedef HMODULE(WINAPI * _LoadLibraryA)( //wait im dumb this isnt possible (not for first call)
+ LPCSTR lpLibFileName
+);
