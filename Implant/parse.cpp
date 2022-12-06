@@ -18,7 +18,8 @@ std::vector<std::string> parseTasks(){
     //std::ifstream ifs(toParse);
     json test = json::parse(ifs);
     //https://json.nlohmann.me/api/basic_json/count/#version-history
-    auto count = test.count("Tasks");
+    auto count = test.at("Tasks").size();
+    //std::cout << count;
     auto counting = 0;
     std::vector<std::string> commands;
     std::vector<std::string> args;
@@ -45,9 +46,9 @@ std::vector<std::string> parseTasks(){
 
 
 //Testing Purposes
-// int main(int argc, char* argv[]){
+int main(int argc, char* argv[]){
 
-//     parseTasks();
-//     return 0;
-// }
+    parseTasks();
+    return 0;
+}
 
