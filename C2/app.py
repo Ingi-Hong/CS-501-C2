@@ -84,7 +84,7 @@ def handle_execute():
 
         data = target_implant_id, command, created_on, status
 
-        query = tools.insertQueryBuilder("task_queue", columns)
+        query = tools.insertQueryBuilder("task_queue", columns, "task_id")
         print(f"data: {data}")
         failure = tools.executeInsertQuery(query, data)
         if (failure != None):
