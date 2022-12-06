@@ -1,19 +1,9 @@
-.outlet-wrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    border: 1px solid black;
-    height: 100%;
-    width: 100%;
-  }
-
-  .defaultPage-wrapper{
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    border: 1px solid black;
-    height: 100%;
-    width: 100%;
-  }
+.defaultPage-wrapper {
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  border: 1px solid black;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}

@@ -15,13 +15,12 @@ function NavigationBar() {
   return (
     <header className="navbar">
       <section className="navbar-section">
-        <Link className="btn btn-link" to="/test_implant">
-          Test Implant
-        </Link>
 
         <Link className="btn btn-link" to="/home">
           Home
         </Link>
+
+        <Link className="bt btn-link" to="/implant_table" >Implant Table</Link>
       </section>
       
       <section class="navbar-center">
@@ -29,6 +28,9 @@ function NavigationBar() {
       </section>
 
       <section className="navbar-section">
+      <Link className="btn btn-link" to="/test_implant">
+          Test Implant Functions
+        </Link>
         <button
           className="btn btn-link"
           onClick={async () => await handleLogout()}

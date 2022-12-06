@@ -11,9 +11,9 @@
 
 @keyframes mymove {
   from {
-    transform: translateY(-50vh);
+    transform: translateY(-80vh);
   }
   to {
-    transform: translateY(50vh);
+    transform: translateY(70vh);
   }
 }

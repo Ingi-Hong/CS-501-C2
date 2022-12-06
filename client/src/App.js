@@ -5,6 +5,7 @@ import DefaultPage from "./Components/DefaultPage";
 import LoginPage from "./Components/LoginPage";
 import Home from "./Components/Home";
 import TestImplantFun from "./Components/TestImplantFun";
+import ImplantTable from "./Components/ImplantTable";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route element={<DefaultPage />}>
             <Route path="/home" element={<Home />} />
             <Route path="/test_implant" element={<TestImplantFun />} />
+            <Route path="/implant_table" element={<ImplantTable />} />
           </Route>
         </Routes>
       </BrowserRouter>
