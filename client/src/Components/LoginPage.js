@@ -13,6 +13,7 @@ function LoginPage() {
     const someBool = AuthService.isLoggedIn();
     setIsLoggedIn(someBool);
   }
+  
   useEffect(() => {
     checkState();
   }, []);
