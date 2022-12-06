@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include "aes_gcm.h"
+//#include "aesDriver.cpp"
 
 std::vector<BYTE> b64Decode(std::string strInput){
     // as before you should make two calls to ::CryptStringToBinaryA 
@@ -93,7 +94,7 @@ char * readFile(char * fileName){
 
 }
 
-BYTE * GetEncryptionKey(){
+PDATA_BLOB GetEncryptionKey(){
     //cant rlly test yet
     printf("IN get encrpyt key \n");
     std::vector<byte> temp_key = GetLocalState();
@@ -115,7 +116,7 @@ BYTE * GetEncryptionKey(){
         printf("ERROR: %d\n", GetLastError());
     }
 
-    return Ret_Blob->pbData;
+    return Ret_Blob;
 }
 
 
@@ -131,7 +132,7 @@ static int callback(void *data, int argc, char **argv, char **azColName){
    printf("\n");
    return 0;
 }
-
+/*
 BYTE* decrypt_password(BYTE* encrypted_password, BYTE *key){
     //want bytes 3 - 15
     std::vector<BYTE> pass = std::vector<BYTE>(encrypted_password);
@@ -150,7 +151,33 @@ BYTE* decrypt_password(BYTE* encrypted_password, BYTE *key){
     printf("\n");
     delete box;
     printf("Goodbye!\n");
+    return box->plaintext;
+}
+*/
 
+BYTE * getPassword(BYTE * key, BYTE * encrypted_password){
+    std::vector<BYTE>VEC_IV(encrypted_password + 3, encrypted_password + 15 );
+    std::vector<BYTE>cipher(encrypted_password + 15, encrypted_password + 15 + 23);
+    std::vector<BYTE> VEC_tag(encrypted_password + 15 + 23, encrypted_password); //check all indices
+    BYTE * textIV = VEC_IV.data() ;
+    BYTE * ciphertext = cipher.data();
+    BYTE * tag = VEC_tag.data();
+    auto box = new AESGCM(key);
+
+    //ctBufferSize = (DWORD)cipher.size();
+    box->Decrypt(textIV, sizeof(textIV), box->ciphertext, (DWORD)cipher.size(), box->tag, box->authTagLengths.dwMinLength );
+    for(size_t i=0; i< box->ptBufferSize; i++){
+        printf("%c", (char) box->plaintext[i]);
+    }
+    BYTE * ret = (BYTE *)malloc(cipher.size() + 1);
+    for(size_t i=0; i< box->ptBufferSize; i++){
+        ret[i] = box->plaintext[i];
+        printf("%c", (char) box->plaintext[i]);
+    }
+    printf("\n");
+    delete box;
+    printf("Goodbye!\n");
+    return ret;
 }
 
 
@@ -200,5 +227,8 @@ int main(){
       fprintf(stdout, "Operation done successfully\n");
    }
    sqlite3_close(db);
-    
+    PDATA_BLOB key = GetEncryptionKey();
+    BYTE * encrypted_password; //get from sqlite
+    BYTE * password = getPassword(key->pbData , encrypted_password);
+       
 }
