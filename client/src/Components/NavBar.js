@@ -1,7 +1,6 @@
-import { Navigate } from "react";
-import { Link } from "react-router-dom";
-import AuthService from "./AuthService";
+import { Link, Navigate } from "react-router-dom";
 import "spectre.css";
+import AuthService from "./AuthService";
 
 function NavigationBar() {
   async function handleLogout() {

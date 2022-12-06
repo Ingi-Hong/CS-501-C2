@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
+import "spectre.css";
 import AuthService from "./AuthService";
 import LoginForm from "./LoginForm";
 import MovingImage from "./movingimage";
 import "./Stylesheets/loginpage.css";
-import "spectre.css";
 
 function LoginPage() {
   const isLoggedIn = AuthService.isLoggedIn();
