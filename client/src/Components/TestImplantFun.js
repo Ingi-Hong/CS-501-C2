@@ -15,8 +15,9 @@ function TestImplantFun() {
         let response = await fetch(process.env.REACT_APP_C2URL + "/register_implant", {
           method: "POST",
           mode: "cors",
-          body: ({
+          body: JSON.stringify({
             sleep: sleep,
+            jitter: 5
           }),
           headers: {
             "Content-Type": "application/json",

@@ -4,7 +4,6 @@ from psycopg2 import connect, sql
 # Builds an insert query
 
 
-
 # Returns a conn and a cursor
 def load():
     # Connect to C2
@@ -20,6 +19,7 @@ def load():
     print(f"Connection closed? {conn.closed}")
     return conn, cursor
 
+
 def insertQueryBuilder(tableName, columns):
 
     q = sql.SQL("INSERT INTO {table}({column}) VALUES ({value})").format(
@@ -32,7 +32,8 @@ def insertQueryBuilder(tableName, columns):
 
     return q
 
-def insertQueryBuilder(tableName, columns, returnString):
+
+def insertQueryBuilder(tableName, columns, returnStringList):
 
     q = sql.SQL("INSERT INTO {table}({column}) VALUES ({value}) RETURNING {returnThis}").format(
         table=sql.Identifier(tableName),
@@ -40,11 +41,11 @@ def insertQueryBuilder(tableName, columns, returnString):
             sql.Identifier(x) for x in columns
         ]),
         value=sql.SQL(',').join(sql.Placeholder() * len(columns)),
-        returnThis=sql.Sql(',').join([
-            sql.Identifier(x) for x in returnString
-        ])
+        returnThis=sql.SQL(',').join([
+            sql.Identifier(x) for x in returnStringList
+        ]
+        )
     )
-
     return q
 
 
@@ -57,14 +58,15 @@ def executeInsertQuery(query, variables):
         print("executing: ")
         print(query.as_string(cursor), variables)
         print()
-        response = cursor.execute(query, variables)
+        cursor.execute(query, variables)
         conn.commit()
+        response = cursor.fetchall()
         cursor.close()
         conn.close()
         return response
     except Exception as error:
         print(f"error on execute insert query: {error}")
-    
+
 
 # Executes a select query
 
