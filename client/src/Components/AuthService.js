@@ -33,11 +33,13 @@ class AuthService {
       return true;
     }
   }
+
   static async logout() {
     let string = await sendLogoutRequest();
     delete_cookie("access_token");
     return string;
   }
+
   static login(value) {
     bake_cookie("access_token", value, Date.now() + 1800);
   }
