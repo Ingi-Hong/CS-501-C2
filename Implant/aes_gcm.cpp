@@ -96,14 +96,14 @@ void AESGCM::Decrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen, B
     //Is this using block padding by passing 0 as dwflags https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptdecrypt. IF so bad
     NTSTATUS GetSize = BCryptDecrypt(hKey, data, dataLen, &pPaddingInfo, NULL, 0, NULL, 0, &cbOutput, 0);
     if (!NT_SUCCESS(GetSize)){
-        printf("GetSize ERROR: %d\n", GetLastError());
+        printf("**** Error 0x%x returned by BCryptDecrypt when calculating auth tag len\n", nStatus);
     }
    //cbOutput = dataLen;
     plaintext = (BYTE *)malloc(cbOutput*sizeof(BYTE) + 1) ;
     ptBufferSize = cbOutput;
     NTSTATUS Decryption = BCryptDecrypt(hKey, data, dataLen, &pPaddingInfo, NULL,0, plaintext, ptBufferSize, &cbOutput, 0);
     if (!NT_SUCCESS(Decryption)){
-        printf("Decryption ERROR: %d\n", GetLastError());
+         printf("**** Error 0x%x returned by BCryptDecrypt when calculating auth tag len\n", nStatus);
     }
     printf("WE DECRYPTED????");
 }
@@ -132,7 +132,7 @@ void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
 //need an iv, 96 random bytes (block size)
     NTSTATUS Encryption = BCryptEncrypt(hKey, data, dataLen, &pPaddingInfo, 0, 0, data, dataLen, &cbOutput, 0);
     if (!NT_SUCCESS(Encryption)){
-        printf("Encryption ERROR: %d\n", GetLastError());
+         printf("**** Error 0x%x returned by BCryptEncrypt when calculating auth tag len\n", nStatus);
     }
 }
 
