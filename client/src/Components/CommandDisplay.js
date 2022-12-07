@@ -75,8 +75,8 @@ function CommandDisplay() {
           (getCommandData(element[0]))
         )
       );
-      
-      setDisplayItems(array);
+      var filtered_commands = array.map( (commandList) => {return filterCommandList(commandList)});
+      setDisplayItems(filtered_commands);
     } catch (error) {
       console.log("ERROR FETCHING DATA: " + error);
       setError(error.message);
@@ -85,15 +85,44 @@ function CommandDisplay() {
     }
   });
 
+  function filterCommandList(commandList){
+    var untouched = commandList.filter((command, commandIndex) => {
+      
+      if (command[4] === "untouched"){
+        return true;
+      }
+
+      return false;
+    })
+
+    var executing = commandList.filter((command, commandIndex) => {
+      if (command[4] === "executing"){
+        return true;
+      }
+
+      return false;
+    })
+
+    var executed = commandList.filter((command, commandIndex) => {
+      if (command[4] === "executed"){
+        return true;
+      }
+
+      return false;
+    })
+
+    return {untouched: untouched, executing:executing, executed:executed}
+  }
+
   useEffect(() => {
     getDisplayItems();
   }, []);
 
-  if (isLoading) return <div class="loading loading-lg"></div>;
+  if (isLoading) return <div className="loading loading-lg"></div>;
   if (error)
     return (
       <div>
-        error: {error} {console.log(error)}{" "}
+        error: {error} 
       </div>
     );
   return (
@@ -101,18 +130,43 @@ function CommandDisplay() {
 
       {
         
-        displayItems && displayItems.map( (commandList, id) => (
-          <div>
-          <div class="divider"></div>
-          <div className="accordion">   
-            <input type="checkbox" id={id+1} name="accordion-checkbox" hidden />
-            <label className="accordion-header" for={id+1}>
-            <i class="icon icon-arrow-right mr-1"></i>
+        displayItems && displayItems.map( (implant, id) => (
+          <div key={id + "wrapper"}>
+          <div className="divider" key={id + "divider"}></div>
+          <div className="accordion" key={id + "accordion"}>
+            <input key={id+1} type="checkbox" id={id+1} name="accordion-checkbox" hidden />
+            <label className="accordion-header" htmlFor={id+1} key={id+"header"}>
+            <i className="icon icon-arrow-right mr-1"></i>
             Implant: {id + 1}
             </label>
-            <div className="accordion-body">
+            <div className="accordion-body" key={id + "body"}>
 
-                {commandList}
+                <h3>Untouched</h3>
+                {implant.untouched && 
+
+                implant.untouched.map((commands) => (
+                  <div key={commands}>{commands}</div>
+                ))
+                }
+
+
+                <h3>Executing</h3>
+                {implant.executing && 
+
+                implant.executing.map((commands) => (
+                  <div key={commands}>{commands}</div>
+                ))
+                }
+
+                <h3>Executed</h3>
+                {implant.executed && 
+
+                implant.executed.map((commands) => (
+                  <div key={commands}>{commands}</div>
+                ))
+                }
+
+
 
               </div> 
           </div>
