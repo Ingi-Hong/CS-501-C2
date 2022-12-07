@@ -46,10 +46,12 @@ function QueueCommandForm() {
       <div className='command-wrapper'>
         {error && <div>error: {error}</div>}
         <div>{message}</div>
-        <form onSubmit={handleSubmit}>
-          <label>
+        <form onSubmit={handleSubmit} className="form-group">
+          <label className='form-label' htmlFor='implant-ID'>
             Implant ID:
             <input
+            className='form-input'
+            id='implant-ID'
               name="implant-ID"
               type="text"
               value={target_implant_id}
@@ -57,16 +59,18 @@ function QueueCommandForm() {
             />
           </label>
           <br />
-          <label>
+          <label className='form-label' htmlFor='command'>
             command:
             <input
+            id='command'
+            className='form-input'
               name="command"
               type="text"
               value={command}
               onChange={(e) => setCommand(e.target.value)}
             />
           </label>
-          <button type="submit">Submit command</button>
+          <button className='btn' type="submit">Submit command</button>
         </form>
       </div>
     );

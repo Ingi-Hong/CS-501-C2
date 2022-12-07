@@ -126,7 +126,7 @@ function CommandDisplay() {
       </div>
     );
   return (
-    <div>
+    <div className="p-centered">
 
       {
         
@@ -137,11 +137,11 @@ function CommandDisplay() {
             <input key={id+1} type="checkbox" id={id+1} name="accordion-checkbox" hidden />
             <label className="accordion-header" htmlFor={id+1} key={id+"header"}>
             <i className="icon icon-arrow-right mr-1"></i>
-            Implant: {id + 1}
+            <h3>Implant: {id + 1}</h3>
             </label>
-            <div className="accordion-body" key={id + "body"}>
+            <div className="accordion-body mx-1" key={id + "body"}>
 
-                <h3>Untouched</h3>
+                <h4>Untouched</h4>
                 {implant.untouched && 
 
                 implant.untouched.map((commands) => (
@@ -150,15 +150,15 @@ function CommandDisplay() {
                 }
 
 
-                <h3>Executing</h3>
+                <h4>Executing</h4>
                 {implant.executing && 
 
                 implant.executing.map((commands) => (
                   <div key={commands}>{commands}</div>
-                ))
+                )) 
                 }
 
-                <h3>Executed</h3>
+                <h4>Executed</h4>
                 {implant.executed && 
 
                 implant.executed.map((commands) => (
