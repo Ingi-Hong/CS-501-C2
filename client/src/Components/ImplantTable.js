@@ -44,9 +44,8 @@ function ImplantTable() {
       <h1>Implant Table</h1>
       <h2>{error}</h2>
       <table className="table table-hover table-striped">
-        <thead>
+        <thead>,
           <tr>
-            <th>ID</th>
             <th>First Connect</th>
             <th>Active?</th>
             <th>Location</th>
@@ -58,9 +57,10 @@ function ImplantTable() {
             <th>Next Check In</th>
             <th>Sleep</th>
             <th>Session Key</th>
+            <th>ID</th>
           </tr>
         </thead>
-        {/* ImplantID
+        {/*
           FIrst_connection
           active
           location
@@ -71,7 +71,8 @@ function ImplantTable() {
           jitter
           next check in
           sleep
-          sesh key */}
+          sesh key 
+           ImplantID*/}
         <tbody>
           {data &&
             data.map((item, iterator) => (
@@ -79,7 +80,6 @@ function ImplantTable() {
                 {item.map((currentData, iterator) => (
                     <td key={iterator}>{currentData}</td>
                 ))}
-                
               </tr>
             ))}
         </tbody>

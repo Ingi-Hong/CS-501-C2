@@ -1,4 +1,5 @@
 import QueueCommandForm from "./QueueCommandForm";
+import CommandDisplay from "./CommandDisplay";
 import "spectre.css";
 
 function Home() {
@@ -6,6 +7,7 @@ function Home() {
     <div className="container">
         <h2>Execute</h2>
           <QueueCommandForm />
+          <CommandDisplay />
       </div>
   );
 }

