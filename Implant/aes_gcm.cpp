@@ -108,6 +108,35 @@ void AESGCM::Decrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen, B
     printf("WE DECRYPTED????");
 }
 
+BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
+    BCRYPT_ALG_HANDLE rsahandle;
+    BCryptOpenAlgorithmProvider(&rsahandle,BCRYPT_RSA_ALGORITHM,NULL,0);
+    BCRYPT_KEY_HANDLE outro=new BCRYPT_KEY_HANDLE;
+    BCryptImportKeyPair(rsahandle,NULL,BCRYPT_RSAPUBLIC_BLOB,&outro,pbinnput,pbinputsize,BCRYPT_NO_KEY_VALIDATION);
+    return outro;
+
+}
+PUCHAR rsaEncrypt(BCRYPT_KEY_HANDLE rsakeyhandle,PUCHAR symkey, ULONG symkeysize){ 
+    //Function adapted from https://stackoverflow.com/questions/58419870/how-to-use-bcrypt-for-rsa-asymmetric-encryption
+    ULONG encbuffersize;
+    NTSTATUS status = BCryptEncrypt(rsakeyhandle,
+    symkey,
+    symkeysize,
+    NULL,
+    NULL,
+    0,
+    NULL,
+    0,
+    &encbuffersize,
+    0);
+    PUCHAR encbuffer = (PUCHAR)HeapAlloc(GetProcessHeap(), 0, encbuffersize);
+    if (encbuffer == NULL) {
+        printf("failed to allocate memory for blindedFEKBuffer\n");
+    }
+    BCryptDecrypt(rsakeyhandle,symkey,symkeysize,NULL,NULL,0,encbuffer,encbuffersize,&encbuffersize,0);
+    return encbuffer;
+}
+
 void AESGCM::Encrypt(BYTE* nonce, size_t nonceLen, BYTE* data, size_t dataLen) {
     // BCryptEncrypt - function encrypts a block of data
     //https://stackoverflow.com/questions/30720414/how-to-chain-bcryptencrypt-and-bcryptdecrypt-calls-using-aes-in-gcm-mode
