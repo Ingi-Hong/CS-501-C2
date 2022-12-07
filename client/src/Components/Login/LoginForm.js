@@ -47,12 +47,13 @@ function LoginForm() {
     await handleSubmit();
   };
 
+  if(isLoading) return <div className="loading"></div>
   
   if (error) return <div>error: {error}</div>;
   if (message === "Login succesful") return <Navigate to="/home" />;
   return (
     <div className="form-wrapper">
-      <div> {message} &nbsp; {isLoading}</div>
+      <div> {message} &nbsp; </div>
       <form
         onSubmit={async (e) => {
           onClick(e);

@@ -10,6 +10,7 @@ function MovingImage() {
     animationIterationCount: "infinite",
     animationDirection: "normal",
     animationDuration: animationDur + "s",
+    transitionTimingFunction: "linear",
     width: "300px",
     height: "auto",
     position: "absolute",

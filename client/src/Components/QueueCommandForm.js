@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-function QueueCommandForm() {
+function QueueCommandForm(props) {
      {/* target_implant_id = request.form.get('implantID')
         command = request.form.get('command')
         created_on = datetime.now()
         status = "untouched" */}
+    var setRefresh = props.setRefresh;
     const [target_implant_id, setImplantID] = useState("");
     const [command, setCommand] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -33,14 +34,16 @@ function QueueCommandForm() {
         }  else {
           setMessage("Error when submitting form");
         }
+        setError("");
       } catch (error) {
         setError(error.message);
       } finally {
         setIsLoading(false);
+        setRefresh("refreshed");
       }
     };
   
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <div className='loading'>Loading...</div>;
 
     return (
       <div className='command-wrapper'>

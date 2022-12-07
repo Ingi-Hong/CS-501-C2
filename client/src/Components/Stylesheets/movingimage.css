@@ -3,6 +3,7 @@
   animation-iteration-count: infinite;
   animation-direction: normal;
   animation-duration: 9s;
+  transition-timing-function: linear;
   width: 300px;
   height: auto;
   position: absolute;

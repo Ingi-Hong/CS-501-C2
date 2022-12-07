@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import "spectre.css";
-import "./Stylesheets/spectre-icons.min.css"
-import UntouchedCommandTable from "./CommandDisplay/UntouchedCommandTable";
+import "../Stylesheets/spectre-icons.min.css"
+import UntouchedCommandTable from "./UntouchedCommandTable";
 
-function CommandDisplay() {
+function CommandDisplay(props) {
+
+  var refresh = props.refresh;
+
   const [isLoading, setIsLoading] = useState();
   const [error, setError] = useState();
   const [message, setMessage] = useState();

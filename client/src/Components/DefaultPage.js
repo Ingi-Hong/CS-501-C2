@@ -11,7 +11,7 @@ function DefaultPage() {
     const someBool = AuthService.isLoggedIn();
     setIsLoggedIn(someBool);
   }
-
+  
   useEffect(() => {
     checkState();
   }, []);
