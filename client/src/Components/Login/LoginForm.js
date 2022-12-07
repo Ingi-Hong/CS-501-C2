@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
-import AuthService from "./AuthService";
-import "./Stylesheets/loginform.css";
+import AuthService from "../AuthService";
+import "../Stylesheets/loginform.css";
 
 function LoginForm() {
   const [username, setUsername] = useState("");

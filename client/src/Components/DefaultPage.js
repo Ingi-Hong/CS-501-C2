@@ -21,7 +21,7 @@ function DefaultPage() {
   }
   return (
     <div>
-      <NavBar />
+      <NavBar setLogin={setIsLoggedIn}/>
       <Outlet />
     </div>
   );

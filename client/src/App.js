@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import DefaultPage from "./Components/DefaultPage";
-import LoginPage from "./Components/LoginPage";
+import LoginPage from "./Components/Login/LoginPage";
 import Home from "./Components/Home";
 import TestImplantFun from "./Components/TestImplantFun";
 import ImplantTable from "./Components/ImplantTable";

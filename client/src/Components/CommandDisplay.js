@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import "spectre.css";
+import "./Stylesheets/spectre-icons.min.css"
+import UntouchedCommandTable from "./CommandDisplay/UntouchedCommandTable";
 
 function CommandDisplay() {
   const [isLoading, setIsLoading] = useState();
@@ -50,7 +52,7 @@ function CommandDisplay() {
         }
       );
       let respJSON = await response.json();
-      if (typeof respJSON !== 'undefined'){
+      if (typeof respJSON !== "undefined") {
         command_data = respJSON;
       }
       if (response.status === 200) {
@@ -69,13 +71,13 @@ function CommandDisplay() {
       setIsLoading(true);
 
       var implantStuff = await getImplants();
-      console.log(implantStuff)
+      console.log(implantStuff);
       const array = await Promise.all(
-        implantStuff.map((element) =>
-          (getCommandData(element[0]))
-        )
+        implantStuff.map((element) => getCommandData(element[0]))
       );
-      var filtered_commands = array.map( (commandList) => {return filterCommandList(commandList)});
+      var filtered_commands = array.map((commandList) => {
+        return filterCommandList(commandList);
+      });
       setDisplayItems(filtered_commands);
     } catch (error) {
       console.log("ERROR FETCHING DATA: " + error);
@@ -85,33 +87,32 @@ function CommandDisplay() {
     }
   });
 
-  function filterCommandList(commandList){
+  function filterCommandList(commandList) {
     var untouched = commandList.filter((command, commandIndex) => {
-      
-      if (command[4] === "untouched"){
+      if (command[4] === "untouched") {
         return true;
       }
 
       return false;
-    })
+    });
 
     var executing = commandList.filter((command, commandIndex) => {
-      if (command[4] === "executing"){
+      if (command[4] === "executing") {
         return true;
       }
 
       return false;
-    })
+    });
 
     var executed = commandList.filter((command, commandIndex) => {
-      if (command[4] === "executed"){
+      if (command[4] === "executed") {
         return true;
       }
 
       return false;
-    })
+    });
 
-    return {untouched: untouched, executing:executing, executed:executed}
+    return { untouched: untouched, executing: executing, executed: executed };
   }
 
   useEffect(() => {
@@ -119,62 +120,59 @@ function CommandDisplay() {
   }, []);
 
   if (isLoading) return <div className="loading loading-lg"></div>;
-  if (error)
-    return (
-      <div>
-        error: {error} 
-      </div>
-    );
+  if (error) return <div>error: {error}</div>;
   return (
     <div className="p-centered">
-
-      {
-        
-        displayItems && displayItems.map( (implant, id) => (
+      {displayItems &&
+        displayItems.map((implant, id) => (
           <div key={id + "wrapper"}>
-          <div className="divider" key={id + "divider"}></div>
-          <div className="accordion" key={id + "accordion"}>
-            <input key={id+1} type="checkbox" id={id+1} name="accordion-checkbox" hidden />
-            <label className="accordion-header" htmlFor={id+1} key={id+"header"}>
-            <i className="icon icon-arrow-right mr-1"></i>
-            <h3>Implant: {id + 1}</h3>
-            </label>
-            <div className="accordion-body mx-1" key={id + "body"}>
+            <div className="divider" key={id + "divider"}></div>
+            <div className="accordion" key={id + "accordion"}>
+              <input
+                key={id + 1}
+                type="checkbox"
+                id={id + 1}
+                name="accordion-checkbox"
+                hidden
+              />
+              <label
+                className="accordion-header"
+                htmlFor={id + 1}
+                key={id + "header"}
+              >
+                <i className="icon icon-arrow-right mr-1"></i> Implant: {id + 1}
+              </label>
+              <div className="accordion-body mx-1" key={id + "body"}>
+                <div className="container">
+                  <div className="columns m-2 p-2">
+                    <div className="column col-6">
+                      <h4>Untouched</h4>
+                      {implant.untouched &&
+                        <UntouchedCommandTable commandList={implant.untouched}></UntouchedCommandTable>}
+                    </div>
 
-                <h4>Untouched</h4>
-                {implant.untouched && 
+                    <div className="column col-6">
+                      <h4>Executing</h4>
+                      {implant.executing &&
+                        implant.executing.map((commands) => (
+                          <div key={commands}>{commands}</div>
+                        ))}
+                    </div>
 
-                implant.untouched.map((commands) => (
-                  <div key={commands}>{commands}</div>
-                ))
-                }
-
-
-                <h4>Executing</h4>
-                {implant.executing && 
-
-                implant.executing.map((commands) => (
-                  <div key={commands}>{commands}</div>
-                )) 
-                }
-
-                <h4>Executed</h4>
-                {implant.executed && 
-
-                implant.executed.map((commands) => (
-                  <div key={commands}>{commands}</div>
-                ))
-                }
-
-
-
-              </div> 
+                    <div className="column col-6">
+                      <h4>Executed</h4>
+                      {implant.executed &&
+                        implant.executed.map((commands) => (
+                          <div key={commands}>{commands}</div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          </div>
-        ))
-      }
-      </div>
-      
+        ))}
+    </div>
   );
 }
 

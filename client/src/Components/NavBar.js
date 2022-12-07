@@ -3,10 +3,13 @@ import { useState } from "react";
 import "spectre.css";
 import AuthService from "./AuthService";
 
-function NavigationBar() {
+function NavigationBar(props) {
+
+  var setLogin = props.setLogin;
 
   async function handleLogout() {
     await AuthService.logout();
+    setLogin(false);
   }
 
     return (
