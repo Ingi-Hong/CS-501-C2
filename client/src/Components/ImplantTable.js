@@ -9,8 +9,8 @@ function ImplantTable() {
   const [message, setMessage] = useState();
   const [data, setData] = useState();
   const getData = async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       let response = await fetch(
         process.env.REACT_APP_C2URL + "/display_implants",
         {
@@ -23,7 +23,7 @@ function ImplantTable() {
       );
       let respJSON = await response.json();
       setData(respJSON);
-      console.log(respJSON);
+      console.log("display this data: " + respJSON);
       if (response.status === 200) {
       } else {
         setMessage("Error getting implant data");
@@ -44,8 +44,10 @@ function ImplantTable() {
       <h1>Implant Table</h1>
       <h2>{error}</h2>
       <table className="table table-hover table-striped">
-        <thead>,
+        <thead>
+          ,
           <tr>
+            <th>ID</th>
             <th>First Connect</th>
             <th>Active?</th>
             <th>Location</th>
@@ -57,7 +59,6 @@ function ImplantTable() {
             <th>Next Check In</th>
             <th>Sleep</th>
             <th>Session Key</th>
-            <th>ID</th>
           </tr>
         </thead>
         {/*
@@ -78,7 +79,7 @@ function ImplantTable() {
             data.map((item, iterator) => (
               <tr key={iterator} className="active">
                 {item.map((currentData, iterator) => (
-                    <td key={iterator}>{currentData}</td>
+                  <td key={iterator}>{currentData}</td>
                 ))}
               </tr>
             ))}

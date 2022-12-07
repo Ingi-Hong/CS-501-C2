@@ -7,7 +7,6 @@ function NavigationBar() {
 
   async function handleLogout() {
     await AuthService.logout();
-    console.log(AuthService.isLoggedIn());
   }
 
     return (

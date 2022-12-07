@@ -26,7 +26,6 @@ async function sendLogoutRequest() {
 class AuthService {
   static isLoggedIn() {
     let cookie = read_cookie("access_token");
-    console.log(cookie);
     if (cookie.length === 0) {
       return false;
     } else {

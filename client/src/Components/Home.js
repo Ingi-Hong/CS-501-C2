@@ -7,6 +7,8 @@ function Home() {
     <div className="container">
         <h2>Execute</h2>
           <QueueCommandForm />
+
+          <h2>Command Display</h2>
           <CommandDisplay />
       </div>
   );

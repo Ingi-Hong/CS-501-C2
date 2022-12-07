@@ -29,7 +29,6 @@ function QueueCommandForm() {
           }
         });
         if (response.status === 200) {
-          console.log(response.status);
           setMessage("Command succesfully queued");
         }  else {
           setMessage("Error when submitting form");

@@ -84,20 +84,11 @@ def handle_execute():
 
         data = target_implant_id, command, created_on, status
 
-        query = tools.insertQueryBuilder("task_queue", columns, "task_id")
+        query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
         print(f"data: {data}")
-        failure = tools.executeInsertQuery(query, data)
-        if (failure != None):
-            print(failure)
-            return "Failure executing query", 400, {'Access-Control-Allow-Origin': config.clientURL}
-
-        response = app.response_class(
-            response="Success!",
-            status=200,
-            mimetype="application/json"
-        )
-        response.headers['Access-Control-Allow-Origin'] = config.clientURL
-        return response
+        db_resp = tools.executeInsertQuery(query, data)
+        print(db_resp)
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(f"Failure sending commands: {error}")
         return error, {'Access-Control-Allow-Origin': config.clientURL}
@@ -111,7 +102,7 @@ def get_commands():
     id = data['id']
     try:
         db_resp = tools.executeSelectQuery(
-            f"SELECT command FROM task_queue WHERE target_implant_id={id}")
+            f"SELECT * FROM task_queue WHERE target_implant_id={id}")
         print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:

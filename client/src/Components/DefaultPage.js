@@ -16,9 +16,7 @@ function DefaultPage() {
     checkState();
   }, []);
   
-  console.log("is logged in:" + isLoggedIn);
   if (isLoggedIn === false) {
-    console.log(!isLoggedIn);
     return <Navigate to="/login" />;
   }
   return (
