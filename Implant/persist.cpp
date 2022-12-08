@@ -1,13 +1,7 @@
-#include <windows.h>
-#include <stdio.h>
-#include <tchar.h>
-#include <iostream>
-#include <fstream>
-#include <direct.h>
+#include "persist.h"
 
 
-
-int main(int argc, char* argv[]){
+void persist_execution(void){
 
     /* 
     The bat file is in the same directory for reference.
