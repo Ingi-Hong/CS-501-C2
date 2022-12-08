@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
 #include "nlohmann/json.hpp"
-#include <vector>
+#include "parse.h"
 
 using json = nlohmann::json;
 
@@ -73,9 +69,9 @@ void parseTasks(void){
 
 
 //Testing Purposes
-int main(int argc, char* argv[]){
+// int main(int argc, char* argv[]){
 
-    parseTasks();
-    return 0;
-}
+//     parseTasks();
+//     return 0;
+// }
 
