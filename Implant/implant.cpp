@@ -32,13 +32,8 @@ void tasks()
     }
 }
 
-<<<<<<< HEAD
 BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput, ULONG pbinputsize)
 {
-=======
-
-BCRYPT_KEY_HANDLE importrsakey(PUCHAR pbinnput,ULONG pbinputsize){
->>>>>>> bb2b4918e5d63fa8e3a9d5e24a00d5e506b3bbe2
     BCRYPT_ALG_HANDLE rsahandle;
     BCryptOpenAlgorithmProvider(&rsahandle, BCRYPT_RSA_ALGORITHM, NULL, 0);
     BCRYPT_KEY_HANDLE outro = new BCRYPT_KEY_HANDLE;
