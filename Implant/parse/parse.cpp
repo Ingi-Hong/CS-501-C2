@@ -1,4 +1,4 @@
-#include "nlohmann/json.hpp"
+#include "../nlohmann/json.hpp"
 #include "parse.h"
 
 using json = nlohmann::json;
