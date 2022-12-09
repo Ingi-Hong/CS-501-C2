@@ -1,7 +1,6 @@
 import config
 from psycopg2 import connect, sql
-
-# Builds an insert query
+import ctypes
 
 
 # Returns a conn and a cursor
@@ -86,3 +85,9 @@ def executeSelectQuery(query):
         return returnThis
     except Exception as e:
         print(f"error on execute select query: {e}")
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()

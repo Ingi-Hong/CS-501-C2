@@ -1,11 +1,12 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import DefaultPage from "./Components/DefaultPage";
+import DefaultPage from "./Pages/DefaultPage";
 import LoginPage from "./Components/Login/LoginPage";
-import Home from "./Components/Home";
+import Home from "./Pages/Home";
 import TestImplantFun from "./Components/TestImplantFun";
 import ImplantTable from "./Components/ImplantTable";
+import Interface from "./Pages/Interface";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/test_implant" element={<TestImplantFun />} />
             <Route path="/implant_table" element={<ImplantTable />} />
+            <Route path="/interface" element={<Interface></Interface>} />
           </Route>
         </Routes>
       </BrowserRouter>

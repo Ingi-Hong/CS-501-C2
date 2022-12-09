@@ -19,9 +19,17 @@ function NavigationBar(props) {
             Home
           </Link>
 
-          <Link className="bt btn-link" to="/implant_table">
+          
+
+          <Link className="btn btn-link" to="/implant_table">
             Implant Table
           </Link>
+
+          <Link className="btn btn-link" to="/interface">
+            Interface
+          </Link>
+
+          
         </section>
 
         <section className="navbar-center">

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import "spectre.css";
-import AuthService from "./AuthService";
-import NavBar from "./NavBar";
+import AuthService from "../Components/AuthService";
+import NavBar from "../Components/NavBar";
 
 function DefaultPage() {
   const [isLoggedIn, setIsLoggedIn] = useState();

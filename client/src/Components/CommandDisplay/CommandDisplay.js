@@ -6,6 +6,7 @@ import UntouchedCommandTable from "./UntouchedCommandTable";
 function CommandDisplay(props) {
 
   var refresh = props.refresh;
+  var setID = props.setID;
 
   const [isLoading, setIsLoading] = useState();
   const [error, setError] = useState();
@@ -48,6 +49,7 @@ function CommandDisplay(props) {
           mode: "cors",
           body: JSON.stringify({
             id: id_value,
+            
           }),
           headers: {
             "Content-Type": "application/json",
