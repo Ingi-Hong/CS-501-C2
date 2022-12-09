@@ -69,10 +69,6 @@ def executeInsertQuery(query, variables):
 def executeGenericVar(query, variables):
     try: 
         conn, cursor = load() 
-        print()
-        print("executing: ")
-        print(query.as_string(cursor), variables)
-        print()
         cursor.execute(query, variables)
         conn.commit()
         response = cursor.fetchall()
@@ -81,7 +77,7 @@ def executeGenericVar(query, variables):
         return response 
     except Exception as error:
         print(f"error on execute generic query: {error}")
-        
+
 
 # Executes a select query
 def executeSelectQueryVars(query, variables):
