@@ -86,6 +86,7 @@ def decrypt_password(encrypted_password, key):
         ciphertext = encrypted_password[15:]
         # Decrypt the password
         #print(len(key))
+        print(len(key))
         cipher = AESGCM(key)
         pt = cipher.decrypt(iv, ciphertext, None).decode()
         #print("CT:", pt)
