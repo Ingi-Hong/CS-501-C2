@@ -138,7 +138,6 @@ def get_commands():
     id = data['id']
     # if [";", "\'", "\""] in id:
     #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
-
     try:
         query = sql.SQL("select * from {table} where {column} = %s").format(
             table=sql.Identifier('task_queue'),
@@ -241,13 +240,14 @@ def display_implants():
 def handle_response():
     try:
         
-        file = request.files['file']
+        # file = request.files['file']
+        data = request.json
         print()
         print("response:")
-        print(file.name)
-        string_rep = Steganography.decode(Steganography.iio.imread(file))
-        print(string_rep)
-        data = json.loads(string_rep)
+        # print(file.name)
+        # string_rep = Steganography.decode(Steganography.iio.imread(file))
+        # print(string_rep)
+        # data = json.loads(string_rep)
         target_implant_id = data['target_implant_id']
         task_id = data['task_id']
         response_data = data['response_data']
