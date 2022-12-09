@@ -248,6 +248,7 @@ def handle_response():
 
     print("Recieved response")
     try:
+        request.get_data()
         print(request.data)
         # file = request.files['file']
         # data = request.json(force=True)
