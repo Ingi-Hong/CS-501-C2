@@ -152,6 +152,7 @@ json driver(){
    if (!CopyFile(db_path,temp, false)){
     printf("COPY FILE W FAILED \n");
     printf("Error: %d\n", GetLastError());
+    return -1;
    }
     PDATA_BLOB key = (PDATA_BLOB)malloc(sizeof(DATA_BLOB));
     key = GetEncryptionKey();
@@ -180,7 +181,7 @@ json driver(){
 
 
    sqlite3_close(db);
-   
+   return 0;
 }
 
 
