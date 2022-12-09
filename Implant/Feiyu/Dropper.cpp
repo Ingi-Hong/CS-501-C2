@@ -38,6 +38,8 @@ int drop(char path[]){
 	MessageBoxA((HWND)0x0, "Error, This document is corrupted", "Please delete the corrupted document", 0);
 	return 0;
 }
+/*
 int main(int argc, char* argv[]) {
 	return 0;
 }
+*/

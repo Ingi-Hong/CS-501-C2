@@ -4,7 +4,8 @@
 #include <vector>
 #include <utility>
 
-
+#include "..\nlohmann\json.hpp"
+using json = nlohmann::json;
 using namespace std;
 
 
@@ -109,16 +110,23 @@ vector<pair<string, bool>> checkPrivileges() {
     return privileges;
 }
 
-int GetAll(){
+json GetAll(){
+    json res;
     const string compName = getComputerName();
     const string userName = getUserName();
     cout << compName << endl;
     cout << userName << endl;
     //cout << IsUserAnAdmin() << endl;
+    vector<pair<string, bool>> p( checkPrivileges());
+    /*
     for(pair<string, bool> p : checkPrivileges()) {
         cout << p.first << ": " << p.second << endl;
     }
-    return 0;
+    */
+    res["compName"] = compName;
+    res["userName"] = userName;
+    res["Privileges"] = p;
+    return res;
 
 }
 

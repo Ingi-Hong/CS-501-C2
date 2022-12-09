@@ -99,9 +99,10 @@ void UnLoadDll(const wchar_t* processName, const wchar_t* dllName) {
     CloseHandle(hThread);
     CloseHandle(hProcess);
 }
-
+/*
 int main() {
     InjectDll(L"cmd.exe", "C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\testlib.dll");
     UnLoadDll(L"cmd.exe", L"testlib.dll");
 }
+*/
 
