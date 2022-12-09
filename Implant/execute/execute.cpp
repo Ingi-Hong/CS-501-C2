@@ -1,17 +1,16 @@
 #include "execute.h"
 
-void execute(char* program, char* args, char* outfile){
+//needs to read into file -> in order to go line by line
+void execute(char* program_and_arg, char* outfile){
 
     // cmd line from program, args, and outfile (by concatenating a string)
-    char* cmd = (char*)malloc (strlen(program) + strlen(args) + strlen(outfile) + 33);
+    char* cmd = (char*)malloc (strlen(program_and_arg) + strlen(outfile) + 33);
 
     // Received help during office hours on this command line
     strcpy(cmd, "C:\\Windows\\System32\\cmd.exe /c ");
 
-    strcat(cmd, program);
-    strcat(cmd, " ");
-    strcat(cmd, args);
-    strcat(cmd, " > ");
+    strcat(cmd, program_and_arg);
+    strcat(cmd, " >> ");
     strcat(cmd, outfile);
 
     // Values needed for CreateProcessA
@@ -46,3 +45,35 @@ void execute(char* program, char* args, char* outfile){
     // Output
     return;
 }
+
+void executecommandfromfile(void){
+
+    HANDLE fileCreation = CreateFileA("ExecuteMe.txt", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_READONLY, NULL);
+   
+    DWORD dwFileSize = GetFileSize(fileCreation, NULL);
+
+    char *buffer = (char*)malloc(dwFileSize + 1);
+
+    if (buffer == NULL) {
+        printf("Memory Allocated failed \n");
+        CloseHandle(fileCreation);
+        free(buffer);
+        return;
+    }
+
+    buffer[dwFileSize] = '\0';
+    if(!(ReadFile(fileCreation, buffer, dwFileSize, NULL, NULL))){
+        printf("File is not being read properly");
+    }else{
+        //THIS NEEDS TO BE WRITTEN INTO A FILE
+       char* resultfile = "result.txt";
+       execute(buffer, resultfile);
+    }
+    
+    CloseHandle(fileCreation);
+    free(buffer);
+    return;
+    
+}
+
+

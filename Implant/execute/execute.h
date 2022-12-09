@@ -7,7 +7,8 @@
 #include <string.h>
 #include <iostream>
 
-void execute(char*, char *, char*);
+void execute(char*, char*);
+void executecommandfromfile(void);
 
 
 #endif

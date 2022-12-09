@@ -7,6 +7,7 @@
 #include <fstream>
 #include <vector>
 
-void parseTasks(void);
+
+void parseTasks(std::string);
 
 #endif

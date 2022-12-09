@@ -13,20 +13,20 @@ using json = nlohmann::json;
     */
 
 // std::vector<std::string> if it needs a return
-void parseTasks(void){
+void parseTasks(std::string jsonfile){
     
     // Reads in the JSON using ifstream
-    std::ifstream ifs("tasking.json");
+    std::ifstream ifs(jsonfile);
 
     // Parses the input JSON
     json test = json::parse(ifs);
 
     // https://json.nlohmann.me/api/basic_json/count/#version-history
     // Gets the size of the object
-    auto count = test.at("Tasks").size();
+    int count = (int) test.size();
 
     // counter
-    auto counting = 0;
+    int counting = 0;
 
     // two separate vectors for commands and args
     std::vector<std::string> commands;
@@ -39,22 +39,33 @@ void parseTasks(void){
     // While loop will count through the JSON objects
     while(counting < count){
 
-        // Gets the command and arg lines in the JSON
-        // https://linuxhint.com/parse-json-data-cpp/
-        // https://stackoverflow.com/questions/38099308/accessing-elements-from-nlohmann-json
-        std::string cmdline = test.at("Tasks")[counting].at("command");
-        std::string argline = test.at("Tasks")[counting].at("args");
+        if(test[counting][4]=="untouched"){
+        std::string cmdline = test[counting][2];
 
-        // Pushes them to the std::vector if necessary
-        commands.push_back(cmdline);
-        commands.push_back(argline);
+        std::string delimiter = " ";
+        
+        //https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+        size_t pos = 0;
+        std::string command;
 
-        // Outputs commandline and arglines to the file
-        std::cout << cmdline << argline << std::endl;
-        exefile << cmdline << " " << argline << std::endl;
+        pos = cmdline.find(delimiter);
+        command = cmdline.substr(0, pos);
+            
+        cmdline.erase(0, pos + delimiter.length());
+    
+        std::string argline = cmdline;
+
+        // // Pushes them to the std::vector if necessary
+        // commands.push_back(cmdline);
+        // commands.push_back(argline);
+
+        // // Outputs commandline and arglines to the file
+        // std::cout << cmdline << argline << std::endl;
+        exefile << command << " " << argline << std::endl;
 
 
         counting+=1;
+        }
     }
 
     
