@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import DefaultPage from "./Pages/DefaultPage";
-import LoginPage from "./Components/Login/LoginPage";
+import LoginPage from "./Pages/LoginPage";
 import Home from "./Pages/Home";
 import TestImplantFun from "./Components/TestImplantFun";
 import ImplantTable from "./Components/ImplantTable";
@@ -18,7 +18,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/test_implant" element={<TestImplantFun />} />
             <Route path="/implant_table" element={<ImplantTable />} />
-            <Route path="/interface" element={<Interface></Interface>} />
+            <Route path="/interface" element={<Interface />} />
           </Route>
         </Routes>
       </BrowserRouter>

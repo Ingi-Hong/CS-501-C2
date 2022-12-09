@@ -27,8 +27,6 @@ function Interface(){
 
       <div className="columns">
         <div className="column col-12 m-2 p-2">
-          <h2>Command Display</h2>
-
           <Console id={ID} refresh={refresh}/>
         </div>
       </div>

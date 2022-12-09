@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import "spectre.css";
-import AuthService from "../AuthService";
-import LoginForm from "./LoginForm";
-import MovingImage from "./movingimage";
-import "../Stylesheets/loginpage.css";
+import AuthService from "../Components/AuthService";
+import LoginForm from "../Components/Login/LoginForm";
+import MovingImage from "../Components/Login/movingimage";
+import "../Components/Stylesheets/loginpage.css";
 
 function LoginPage() {
   const [isLoggedIn, setIsLoggedIn] = useState();
