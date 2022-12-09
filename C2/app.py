@@ -188,6 +188,16 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
+@app.route("/response", methods=["POST"]) 
+def handle_response():
+    try: 
+        data = request.get_data()
+        
+    
+    except Exception as e:
+        print (f"Error displaying implants: {e}")
+        return e, {'Access-Control-Allow-Origin': config.clientURL}
+
 # for testing
 # def main():
 #     target_implant_id = 1
