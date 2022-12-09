@@ -1,6 +1,14 @@
 import imageio as iio
 
 
+                 
+# Example Usage:  
+#                 
+# img = iio.imread("doge.png")
+# iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
+# print(decode(iio.imread("doge_encoded.png")))
+
+
 def encode(img, msg):
     """Encode the message into the image.
     :param img: Image to encode the message into.
@@ -20,6 +28,7 @@ def encode(img, msg):
     for c in msg:
         i, j = encode_single_byte(c, img, i, j)
     return img
+
 
 def encode_single_byte(to_encode, img, i, j):
     for c in bin(ord(to_encode))[2:].zfill(8):
@@ -61,4 +70,3 @@ def decode_single_byte(img, i, j):
         byte += str(img[i][j][2] & 1)
         j += 1
     return chr(int(byte, 2)), j
-

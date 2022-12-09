@@ -194,7 +194,7 @@ def display_implants():
 def handle_response():
     try: 
         file = request.files['file']
-        string_rep = Steganography.encode(file)
+        string_rep = Steganography.decode(Steganography.iio.imread(file))
         json.loads(string_rep)
         
         # img = iio.imread("doge.png")
@@ -211,7 +211,8 @@ def testThis():
     try:
         file = "file not accesed"
         file = request.files['file']
-        print(file)
+        message = Steganography.decode(Steganography.iio.imread(file))
+        print(message)
         return 'yer', 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as error:
         print(error)
