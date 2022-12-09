@@ -1,17 +1,16 @@
 // dllmain.cpp : 定义 DLL 应用程序的入口点。
-#include "pch.h"
 #include <string>
 #include <assert.h>
 #include <iostream>
 #include <functional>
-
-#define cimg_use_png
 #include "CImg.h"
+#define cimg_use_png 1
+
 
 using namespace cimg_library;
 using namespace std;
-#define DLLEXPORT extern "C" __declspec(dllexport) 
-
+//#define DLLEXPORT extern "C" __declspec(dllexport) 
+/*
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -28,7 +27,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-
+*/
 
 
 //https://github.com/jokLiu/ImageSteganography https://www.codeproject.com/Articles/4877/Steganography-Hiding-messages-in-the-Noise-of-a-Pi
@@ -95,7 +94,7 @@ char decode_single_byte(CImg<unsigned char>& img,
 	}
 	return to_decode;
 }
-DLLEXPORT std::string decode(const std::string& img_name) {
+ std::string decode(const std::string& img_name) {
 	CImg<unsigned char> img(img_name.c_str());
 	std::string message = "";
 	uint64_t length = 0;
@@ -113,7 +112,7 @@ DLLEXPORT std::string decode(const std::string& img_name) {
 	return message;
 }
 
-DLLEXPORT void encode(std::string& img_name,
+ void encode(std::string& img_name,
 	std::string& message) {
 	CImg<unsigned char> img(img_name.c_str());
 	uint64_t length = message.length();
@@ -124,4 +123,16 @@ DLLEXPORT void encode(std::string& img_name,
 	}
 	std::string new_img_name = "encrypted_" + img_name;
 	img.save(new_img_name.c_str());
+}
+
+
+int main(){
+	std::string str = "msg_to_encode";
+    //path of the picture
+    std::string pic = "doge.png";
+    //encode function
+    encode(pic, str);
+    //decode and cout, modify this cout to send html message so server can recive this 
+    cout << decode("encrypted_doge.png") << "\n";
+	return 0;
 }
