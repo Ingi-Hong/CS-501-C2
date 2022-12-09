@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import AuthService from "./AuthService";
 import { Navigate } from "react-router-dom";
-import "./Stylesheets/loginform.css";
+import AuthService from "../AuthService";
+import "../Stylesheets/loginform.css";
 
 function LoginForm() {
   const [username, setUsername] = useState("");
@@ -14,7 +14,7 @@ function LoginForm() {
   async function handleSubmit() {
     setIsLoading(true);
     try {
-      let response = await fetch("http://127.0.0.1:5000/login", {
+      let response = await fetch(process.env.REACT_APP_C2URL + "/login", {
         method: "POST",
         mode: "cors",
         body: new URLSearchParams({
@@ -45,27 +45,25 @@ function LoginForm() {
   const onClick = async (e) => {
     e.preventDefault();
     await handleSubmit();
-    if (isLoading) {
-      return <div>Loading...</div>;
-    } else {
-      return <Navigate to="/" />;
-    }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if(isLoading) return <div className="loading"></div>
+  
   if (error) return <div>error: {error}</div>;
-  if (message === "Login succesful") return <Navigate to="/" />
+  if (message === "Login succesful") return <Navigate to="/implant_table" />;
   return (
     <div className="form-wrapper">
-      <div>{message}</div>
+      <div> {message} &nbsp; </div>
       <form
         onSubmit={async (e) => {
           onClick(e);
         }}
+        className="form-group"
       >
-        <label>
-          username:
+        <label className="form-label" for="username">
+          Username: &nbsp;
           <input
+          id="username"
             name="username"
             type="text"
             value={username}
@@ -73,16 +71,17 @@ function LoginForm() {
           />
         </label>
         <br />
-        <label>
-          password:
+        <label className="form-label" for="password">
+          Password: &nbsp;
           <input
+          id="password"
             name="password"
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button type="submit">Login</button>
+        <button className="btn " type="submit">Login</button>
       </form>
     </div>
   );

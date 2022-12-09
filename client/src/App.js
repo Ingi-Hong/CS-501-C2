@@ -1,30 +1,27 @@
 import React from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import LoginForm from "./Components/LoginForm";
-import {
-  Router,
-  Route,
-  Routes,
-  Outlet,
-  BrowserRouter,
-  Navigate,
-} from "react-router-dom";
-import Home from "./Components/Home";
-import DefaultPage from "./Components/DefaultPage";
-import LoginPage from "./Components/LoginPage";
+import DefaultPage from "./Pages/DefaultPage";
+import LoginPage from "./Components/Login/LoginPage";
+import Home from "./Pages/Home";
+import TestImplantFun from "./Components/TestImplantFun";
+import ImplantTable from "./Components/ImplantTable";
+import Interface from "./Pages/Interface";
 
 function App() {
   return (
-    <div className="site-wrapper">
       <BrowserRouter>
         <Routes>
-          <Route element={<DefaultPage />}>
-            <Route path="/" element={<Home />} />
-          </Route>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route element={<DefaultPage />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/test_implant" element={<TestImplantFun />} />
+            <Route path="/implant_table" element={<ImplantTable />} />
+            <Route path="/interface" element={<Interface></Interface>} />
+          </Route>
         </Routes>
       </BrowserRouter>
-    </div>
   );
 }
 
