@@ -21,7 +21,6 @@ def encode(img, msg):
         i, j = encode_single_byte(c, img, i, j)
     return img
 
-
 def encode_single_byte(to_encode, img, i, j):
     for c in bin(ord(to_encode))[2:].zfill(8):
         img[i][j][2] ^= -int(c) ^ (img[i][j][2] & 1)
@@ -63,7 +62,3 @@ def decode_single_byte(img, i, j):
         j += 1
     return chr(int(byte, 2)), j
 
-
-img = iio.imread("doge.png")
-iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
-print(decode(iio.imread("doge_encoded.png")))

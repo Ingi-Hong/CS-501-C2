@@ -2,7 +2,7 @@
 
 import os
 from datetime import datetime
-
+import json
 import config
 import tools
 from decouple import config
@@ -194,7 +194,13 @@ def display_implants():
 def handle_response():
     try: 
         file = request.files['file']
+        string_rep = Steganography.encode(file)
+        json.loads(string_rep)
         
+        # img = iio.imread("doge.png")
+        # iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
+        # print(decode(iio.imread("doge_encoded.png")))
+
 
     except Exception as error:
         return error, {'Access-Control-Allow-Origin': config.clientURL}
