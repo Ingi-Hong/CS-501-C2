@@ -1,17 +1,15 @@
 import { useState } from 'react';
+import { read_cookie } from 'sfcookies';
 
 function QueueCommandForm(props) {
-     {/* target_implant_id = request.form.get('implantID')
-        command = request.form.get('command')
-        created_on = datetime.now()
-        status = "untouched" */}
     var setRefresh = props.setRefresh;
-    const [target_implant_id, setImplantID] = useState("");
     const [command, setCommand] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
-  
+
+    let target_implant_id = props.target_implant_id;
+    let setWasClick = props.setWasClick;
     let handleSubmit = async (e) => {
       e.preventDefault();
       setIsLoading(true);
@@ -26,7 +24,8 @@ function QueueCommandForm(props) {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
             'Access-Control-Allow-Origin': '*',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + read_cookie('access_token') 
           }
         });
         if (response.status === 200) {
@@ -35,6 +34,7 @@ function QueueCommandForm(props) {
           setMessage("Error when submitting form");
         }
         setError("");
+        setWasClick(command + target_implant_id + Math.random());
       } catch (error) {
         setError(error.message);
       } finally {
@@ -50,18 +50,6 @@ function QueueCommandForm(props) {
         {error && <div>error: {error}</div>}
         <div>{message}</div>
         <form onSubmit={handleSubmit} className="form-group">
-          <label className='form-label' htmlFor='implant-ID'>
-            Implant ID:
-            <input
-            className='form-input'
-            id='implant-ID'
-              name="implant-ID"
-              type="text"
-              value={target_implant_id}
-              onChange={(e) => setImplantID(e.target.value)}
-            />
-          </label>
-          <br />
           <label className='form-label' htmlFor='command'>
             command:
             <input

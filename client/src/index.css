@@ -20,3 +20,8 @@ html, body, #App, #App>div, #App>div>div {
 #root{
   height: 100vh;
 }
+
+@font-face {
+  font-family: Light;
+  src: url(./fonts/JetBrainsMono-Light.ttf);
+}

@@ -1,34 +1,88 @@
 import { useEffect, useRef, useState } from "react";
+import "../fonts/JetBrainsMono-Light.ttf";
+import "./Stylesheets/console.css";
+import QueueCommandForm from "./QueueCommandForm";
 
 // https://bobbyhadz.com/blog/javascript-date-remove-local-timezone
 function padTo2Digits(num) {
-  return num.toString().padStart(2, '0');
+  return num.toString().padStart(2, "0");
 }
 
-
 function formatDate(date) {
+  date = new Date(date);
+
   return (
     [
       date.getFullYear(),
       padTo2Digits(date.getMonth() + 1),
       padTo2Digits(date.getDate()),
-    ].join('-') +
-    ' ' +
+    ].join("-") +
+    " " +
     [
       padTo2Digits(date.getHours()),
       padTo2Digits(date.getMinutes()),
       padTo2Digits(date.getSeconds()),
-    ].join(':')
+    ].join(":")
   );
 }
+
+// function Content(props){
+
+//   let loading = props.loading;
+//   let history = props.history;
+//   let id = props.id;
+
+//   if (loading){
+//     return (<div></div>)
+//   } else{
+//     {{history.sorted &&
+//       history.sorted.map((dialogue, key) => {
+//         if (dialogue.sender === "user") {
+//           return (
+//             <div key={key}>
+//               [{formatDate(dialogue.time)}] [{dialogue.creator}]{" "}
+//               {dialogue.command}
+//             </div>
+//           );
+//         } else {
+//           return (
+//             <div key={key}>
+//               [{formatDate(dialogue.time)}] [implant {id}]{" "}
+//               {dialogue.response}
+//             </div>
+//           );
+//         }
+
+//       })}
+//       {history.pending &&
+//         history.pending.map((item, i) => <div key={i}>{item}</div>)}}
+//   }
+
+// }
 
 function Console(props) {
   const [message, setMessage] = useState();
   const [error, setError] = useState();
+  const [loading, setLoading] = useState(true);
+  const [wasClick, setWasClick] = useState();
+  const endWindow = useRef(null);
+
+  //https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
+  const scrollToBottom = () => {
+    if (endWindow.current) {
+      endWindow.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  };
 
   let id = props.id;
   const idRef = useRef();
-  const [history, setHistory] = useState();
+
+  const [history, setHistory] = useState({
+    sorted: { creator: "", time: "", command: "", response: "" },
+  });
 
   async function getCommandData(id_value) {
     var command_data = "No Commands Found";
@@ -60,33 +114,65 @@ function Console(props) {
   }
 
   async function organizeHistory(id_value) {
+    setLoading(true);
     try {
       let command_data = await getCommandData(id_value);
-      console.log(command_data);
+      console.log("This is command data: " + command_data);
       setHistory(command_data);
     } catch (error) {
       console.log("Error with console!: " + error);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     organizeHistory(id);
-  }, [id]);
+  }, [id, wasClick]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [wasClick]);
+
+  // combined = [{"sender": "user", "creator":x[-1], "time":x[3], "command":x[2] } for x in executed]
+  // combined += [{"sender": "implant", "time":x[-2], "command":x[2], "response":x[-4]} for x in executed]
+  if (loading)
+    return (
+      <div id="console-wrapper">
+        {error} {message}
+        <h1 className="p-centered">Implant {id}</h1>
+        <div className="p-centered" id="console-window"></div>
+      </div>
+    );
   return (
-    <div className="container">
-      <div className="columns">
-        <div className="col col-12 centered">
-          <div className="d-flex">
-            <h1 className="p-centered">Console: {id}</h1>
-          </div>
-        </div>
-        <div className="col col-12">
-          <div className="float-left">
-            {history && <div>{history.pending}</div>}
-          </div>
+    <div id="console-wrapper">
+      {error} {message}
+      <h1 className="p-centered">Implant {id}</h1>
+      <div className="p-centered" id="console-window">
+        {/* <Content loading={loading} history={history} id={id}/> */}
+        <div>
+          {history.sorted &&
+            history.sorted.map((dialogue, key) => {
+              if (dialogue.sender === "user") {
+                return (
+                  <div key={key}>
+                    [{formatDate(dialogue.time)}] [{dialogue.creator}]{" "}
+                    {dialogue.command}
+                  </div>
+                );
+              } else {
+                return (
+                  <div key={key}>
+                    [{formatDate(dialogue.time)}] [implant {id}]{" "}
+                    {dialogue.response}
+                  </div>
+                );
+              }
+            })}
+          <div ref={endWindow}></div>
         </div>
       </div>
+      <QueueCommandForm target_implant_id={id} setWasClick={setWasClick} />
     </div>
   );
 }

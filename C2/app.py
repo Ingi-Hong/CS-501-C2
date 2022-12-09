@@ -75,17 +75,21 @@ def home():
 
 # api endpoint to queue a command
 @app.route("/queueCommand", methods=["POST"])
+@jwt_required()
 def handle_execute():
+    print("hello??")
     try:
+        print("Enterring execute")
         target_implant_id = int(request.form.get('target_implant_id'))
         command = request.form.get('command')
-        created_on = datetime.now(zone=None).isoformat()
+        created_on = datetime.now(tz=None).isoformat()
         status = "untouched"
         current_user = get_jwt_identity()
         columns = ['target_implant_id', 'command', 'created_on', 'status', 'creator']
-
+        
         data = target_implant_id, command, created_on, status, current_user
-
+        print("About to send query")
+        print(current_user)
         query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
         print(f"data: {data}")
         db_resp = tools.executeInsertQuery(query, data)
@@ -273,14 +277,16 @@ def testThis():
         return error, 401, {'Access-Control-Allow-Origin': '*'}
 
 # Gets log history of a particular implant
-
-
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
 
         data = request.json
         id = data['id']
+
+        all = tools.executeSelectQuery(f"SELECT * FROM task_queue WHERE target_implant_id={id}")
+        print(all)
+
         pending = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'untouched\')")
         print(f"this is pending responses: {pending}")
@@ -295,14 +301,17 @@ def get_history():
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
         print(f"this is executing responses: {executing}")
         # "success": x[-3]
-        combined = [{"sender": "user", "creator":x[-1], "date":x[3], "command":x[2] } for x in executed]
-        combined += []
-        print()
-        print("this is combined: " )
-        print(combined)
-        print()
+        # [(2, 1, 'implant', datetime.datetime(2022, 12, 1, 16, 58, 44, 674016), 'untouched', responseData, success, recieved, creator)
+        pending = [{"sender": "user", "creator":x[-1], "time":x[3], "command":x[2] } for x in pending]
+        combined = [{"sender": "user", "creator":x[-1], "time":x[3], "command":x[2] } for x in executed]
+        combined += [{"sender": "implant", "time":x[-2], "command":x[2], "response":x[-4]} for x in executed] 
+        combined += pending
 
-        return {"pending": pending}, 200, {'Access-Control-Allow-Origin': '*'}
+        sortedList = sorted(combined, key=lambda x: x['time']) 
+
+        print(f"Sorted List: {sortedList}")
+
+        return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as e:
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}

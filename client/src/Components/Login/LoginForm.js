@@ -50,7 +50,7 @@ function LoginForm() {
   if(isLoading) return <div className="loading"></div>
   
   if (error) return <div>error: {error}</div>;
-  if (message === "Login succesful") return <Navigate to="/implant_table" />;
+  if (message === "Login succesful") return <Navigate to="/interface" />;
   return (
     <div className="form-wrapper">
       <div> {message} &nbsp; </div>
