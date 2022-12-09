@@ -68,7 +68,22 @@ def executeInsertQuery(query, variables):
 
 
 # Executes a select query
+def executeSelectQueryVars(query, variables):
+    try:
+        conn, cursor = load()
+        print()
+        print("executing: ")
+        print(query)
+        print()
+        cursor.execute(query, (variables),)
+        conn.commit()
+        returnThis = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return returnThis
 
+    except Exception as e:
+        print(f"error on execute select query: {e}")
 
 def executeSelectQuery(query):
     try:
@@ -83,8 +98,10 @@ def executeSelectQuery(query):
         cursor.close()
         conn.close()
         return returnThis
+
     except Exception as e:
         print(f"error on execute select query: {e}")
+
 
 def main():
     pass

