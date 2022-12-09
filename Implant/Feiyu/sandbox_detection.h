@@ -65,12 +65,3 @@ bool sandboxTimeCheck() {
 	}
 	return false;
 }
-
-int main(int argc, char** argv)
-{
-	struct stat buffer;
-	if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
-		MessageBoxW(NULL, L"Running in vm", L"Not good", MB_OK | MB_ICONERROR);
-		exit(0);
-	}
-}
