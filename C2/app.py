@@ -219,6 +219,18 @@ def handle_response():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 
+@app.route("/response_test", methods=["POST"]) 
+def testThis():
+    try:
+        file = "file not accesed"
+        file = request.files['file']
+        print(file)
+        return 'yer', 200, {'Access-Control-Allow-Origin': '*'}
+    except Exception as error:
+        print(error)
+        return error, 401, {'Access-Control-Allow-Origin': '*'} 
+    
+
 # for testing
 # def main():
 #     target_implant_id = 1
