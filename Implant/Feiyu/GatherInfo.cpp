@@ -1,6 +1,5 @@
 #include <iostream>
 #include <Windows.h>
-#include <shlobj_core.h>
 #include <tchar.h>
 #include <vector>
 #include <utility>
@@ -46,8 +45,9 @@ BOOL CheckWindowsPrivilege(const TCHAR* Privilege)
 }
 
 
-//https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokenmembership
-BOOL IsUserAdmin(VOID) {
+//https://learn.microsoft.com/zh-cn/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokenmembership?redirectedfrom=MSDN
+BOOL IsUserAdmin()
+{
     BOOL b;
     SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
     PSID AdministratorsGroup;
@@ -114,7 +114,7 @@ int main() {
     const string userName = getUserName();
     cout << compName << endl;
     cout << userName << endl;
-    cout << IsUserAnAdmin() << endl;
+    cout << IsUserAdmin() << endl;
     for(pair<string, bool> p : checkPrivileges()) {
         cout << p.first << ": " << p.second << endl;
     }
