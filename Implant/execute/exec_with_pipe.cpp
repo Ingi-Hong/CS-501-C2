@@ -215,7 +215,7 @@ int parseArgs(){
                 }
                 ss << *it;
             };
-            std::string s = std::accumulate(ss.begin(), v.end(), std::string{});
+            std::string s = std::accumulate(ss.begin(), ss.end(), std::string(""));
 
             //    /response
             std::string item = makePostRequest(L"sea-lion-app-f5nrq.ondigitalocean.app", L"/response",s);
