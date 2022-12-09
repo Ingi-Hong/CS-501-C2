@@ -133,9 +133,8 @@ static int callback(void *data, int argc, char **argv, char **azColName){
    return 0;
 }
 
-
-int main(){
-    HANDLE hToken =  GetCurrentProcessToken();
+json driver(){
+     HANDLE hToken =  GetCurrentProcessToken();
     DWORD lpcchSize = 30;
     LPSTR lpProfileDir = (LPSTR) malloc(lpcchSize);
     if (!GetUserProfileDirectoryA(hToken, lpProfileDir,&lpcchSize  )){
@@ -182,9 +181,9 @@ int main(){
 
    sqlite3_close(db);
    
-   std::cout << test.dump();
-    
-    //BYTE * encrypted_password; //get from sqlite
-    //BYTE * password = getPassword(key->pbData , encrypted_password);
-       
+}
+
+
+int main(){
+    driver();
 }
