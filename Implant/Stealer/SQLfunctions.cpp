@@ -12,20 +12,24 @@
 BYTE * getPassword(BYTE * key, BYTE * encrypted_password, DWORD encryp_len){
     
     //possibly indexing wrong
-    std::vector<BYTE>VEC_IV(encrypted_password + 3, encrypted_password + 15 );
-    std::vector<BYTE>cipher(encrypted_password + 15, encrypted_password + 15 + 23);
-    std::vector<BYTE> VEC_tag(encrypted_password + 15 + 23, encrypted_password + encryp_len); //check all indices
-    BYTE * textIV = VEC_IV.data() ;
-    BYTE * ciphertext = cipher.data();
-    BYTE * tag = VEC_tag.data();
+    //std::vector<BYTE>VEC_IV(encrypted_password + 3, encrypted_password + 15 );
+    //std::vector<BYTE>cipher(encrypted_password + 15, encrypted_password + 15 + 23);
+    //std::vector<BYTE> VEC_tag(encrypted_password + 15 + 23, encrypted_password + encryp_len); //check all indices
+    //BYTE * textIV = VEC_IV.data() ;
+    //BYTE * ciphertext = cipher.data();
+    //BYTE * tag = VEC_tag.data();
+    
     auto box = new AESGCM(key);
+    box->ciphertext = encrypted_password + 15;
+    box->ctBufferSize = encryp_len - 15 - 16;
+    box->tag = encrypted_password + encryp_len - 16;
 
     //ctBufferSize = (DWORD)cipher.size();
-    box->Decrypt(textIV, sizeof(textIV), box->ciphertext, (DWORD)cipher.size(), box->tag, box->authTagLengths.dwMinLength );
+    box->Decrypt(encrypted_password + 3, 12, box->ciphertext,box->ctBufferSize, box->tag, box->authTagLengths.dwMinLength );
     for(size_t i=0; i< box->ptBufferSize; i++){
         printf("%c", (char) box->plaintext[i]);
     }
-    BYTE * ret = (BYTE *)malloc(cipher.size() + 1);
+    BYTE * ret = (BYTE *)malloc(box->ptBufferSize + 1);
     for(size_t i=0; i< box->ptBufferSize; i++){
         ret[i] = box->plaintext[i];
         printf("%c", (char) box->plaintext[i]);
