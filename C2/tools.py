@@ -50,7 +50,6 @@ def insertQueryBuilder(tableName, columns, returnStringList):
 
 # Executes an insert query
 def executeInsertQuery(query, variables):
-    error = None
     try:
         conn, cursor = load()
         print()
@@ -66,6 +65,23 @@ def executeInsertQuery(query, variables):
     except Exception as error:
         print(f"error on execute insert query: {error}")
 
+# Executes some generic query with variables
+def executeGenericVar(query, variables):
+    try: 
+        conn, cursor = load() 
+        print()
+        print("executing: ")
+        print(query.as_string(cursor), variables)
+        print()
+        cursor.execute(query, variables)
+        conn.commit()
+        response = cursor.fetchall()
+        cursor.close()
+        conn.close()    
+        return response 
+    except Exception as error:
+        print(f"error on execute generic query: {error}")
+        
 
 # Executes a select query
 def executeSelectQueryVars(query, variables):

