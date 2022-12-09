@@ -10,6 +10,6 @@
 
 std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int implant_id);
 
-LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata);
+//LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata);
 
-LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata);
+//LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata);

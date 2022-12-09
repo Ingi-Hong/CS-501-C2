@@ -8,7 +8,7 @@
 #include <future>
 #include <cmath>
 
-#include "..\nlohmann\json.hpp"
+#include "nlohmann\json.hpp"
 
 using json = nlohmann::json;
 std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int implant_id)
@@ -131,7 +131,7 @@ std::string makeHttpRequest(std::string fqdn, int port, std::string uri, int imp
     return result;
 }
 
-
+/*
 LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
 {
     DWORD datalen = strlen(postdata);
@@ -210,6 +210,8 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
     }
 }
 
+
+
 LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *postdata)
 {
     DWORD datalen = strlen(postdata);
@@ -287,3 +289,4 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
         }
     }
 }
+*/
