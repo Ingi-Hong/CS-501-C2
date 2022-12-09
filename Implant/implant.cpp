@@ -564,3 +564,5 @@ LPSTR makePostRequest(LPCWSTR servername, LPCWSTR subdirectory, const char *post
         }
     }
 }
+//symEncrypt(symkey,(PUCHAR) symkeytext,symkeysize);
+//Assume symkey filled in and this func works
