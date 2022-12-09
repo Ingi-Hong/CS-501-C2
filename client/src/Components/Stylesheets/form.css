@@ -1,0 +1,20 @@
+.regular-joe{
+    background-color: transparent;
+    border: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: none;
+    outline: none;
+    color: antiquewhite;
+    width: 100%;
+    min-width: 200px;
+}
+
+.regular-joe:focus{
+    outline: none;
+}
+
+.form{
+    display: inline-flex;
+    width: 200%;
+}
+

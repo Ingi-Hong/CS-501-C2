@@ -85,10 +85,12 @@ def handle_execute():
         created_on = datetime.now(tz=None).isoformat()
         status = "untouched"
         current_user = get_jwt_identity()
+
         columns = ['target_implant_id', 'command', 'created_on', 'status', 'creator']
         
         data = target_implant_id, command, created_on, status, current_user
         print("About to send query")
+        print(data)
         print(current_user)
         query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
         print(f"data: {data}")

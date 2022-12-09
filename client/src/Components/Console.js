@@ -26,39 +26,7 @@ function formatDate(date) {
   );
 }
 
-// function Content(props){
 
-//   let loading = props.loading;
-//   let history = props.history;
-//   let id = props.id;
-
-//   if (loading){
-//     return (<div></div>)
-//   } else{
-//     {{history.sorted &&
-//       history.sorted.map((dialogue, key) => {
-//         if (dialogue.sender === "user") {
-//           return (
-//             <div key={key}>
-//               [{formatDate(dialogue.time)}] [{dialogue.creator}]{" "}
-//               {dialogue.command}
-//             </div>
-//           );
-//         } else {
-//           return (
-//             <div key={key}>
-//               [{formatDate(dialogue.time)}] [implant {id}]{" "}
-//               {dialogue.response}
-//             </div>
-//           );
-//         }
-
-//       })}
-//       {history.pending &&
-//         history.pending.map((item, i) => <div key={i}>{item}</div>)}}
-//   }
-
-// }
 
 function Console(props) {
   const [message, setMessage] = useState();
@@ -66,6 +34,7 @@ function Console(props) {
   const [loading, setLoading] = useState(true);
   const [wasClick, setWasClick] = useState();
   const endWindow = useRef(null);
+  const focusRef = useRef(null);
 
   //https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
   const scrollToBottom = () => {
@@ -78,7 +47,6 @@ function Console(props) {
   };
 
   let id = props.id;
-  const idRef = useRef();
 
   const [history, setHistory] = useState({
     sorted: { creator: "", time: "", command: "", response: "" },
@@ -126,6 +94,45 @@ function Console(props) {
     }
   }
 
+
+
+  // Code for polling
+// https://stackoverflow.com/a/63134447
+let apiTimeout = setTimeout(fetchAPIData, 1000);
+
+async function fetchAPIData() {
+  if (!id) {
+    setTimeout(fetchAPIData, 10000);
+  } else {
+    let response = await fetch(process.env.REACT_APP_C2URL + "/get_history", {
+      method: "POST",
+      mode: "cors",
+      body: JSON.stringify({
+        id: id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.statusCode == 200) {
+      // Process the response and update the view.
+      // Recreate a setTimeout API call which will be fired after 1 second.
+      let respJSON = await response.json();
+      setHistory(respJSON)
+      apiTimeout = setTimeout(fetchAPIData, 10000);
+    } else {
+      clearTimeout(apiTimeout);
+      // Failure case. If required, alert the user.
+    }
+  }
+}
+
+
+
+  const focusOnRef = () => {
+    focusRef.current.focus();
+  };
+
   useEffect(() => {
     organizeHistory(id);
   }, [id, wasClick]);
@@ -148,7 +155,7 @@ function Console(props) {
     <div id="console-wrapper">
       {error} {message}
       <h1 className="p-centered">Implant {id}</h1>
-      <div className="p-centered" id="console-window">
+      <div className="p-centered" id="console-window" onClick={focusOnRef}>
         {/* <Content loading={loading} history={history} id={id}/> */}
         <div>
           {history.sorted &&
@@ -170,9 +177,13 @@ function Console(props) {
               }
             })}
           <div ref={endWindow}></div>
+          <QueueCommandForm
+            ref_val={focusRef}
+            target_implant_id={id}
+            setWasClick={setWasClick}
+          />
         </div>
       </div>
-      <QueueCommandForm target_implant_id={id} setWasClick={setWasClick} />
     </div>
   );
 }
