@@ -406,6 +406,10 @@ char *make_base_payload(char *implant_id)
     return payloadptr;
 }
 
+
+//Respond to server:
+//task response data->Wrap in image->post request
+
 int main(int argc, char *argv[])
 {
 
