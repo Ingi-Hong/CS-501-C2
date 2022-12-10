@@ -1,3 +1,7 @@
+#ifndef SANDBOX_DETECTION_H
+#define SANDBOX_DETECTION_H
+
+/* Standard Header Files*/
 #include <iostream>
 #include <comdef.h>
 #include <comutil.h>
@@ -6,11 +10,12 @@
 #include <string>
 #include <fstream>
 
-
+/* Libraries */
 using namespace std;
 
 #pragma comment(lib, "wbemuuid.lib")
 
+/* Functions */
 bool vmCheck() {
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
@@ -46,7 +51,7 @@ bool vmCheck() {
 bool exists_test(const std::string& name) {
     ifstream f(name.c_str());
     return f.good();
-};
+}
 
 bool vmDriverCheck() {
 	struct stat buffer;
@@ -65,3 +70,6 @@ bool sandboxTimeCheck() {
 	}
 	return false;
 }
+
+
+#endif

