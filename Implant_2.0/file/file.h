@@ -5,13 +5,14 @@
 #include <windows.h>
 #include <stdio.h>
 #include <ShlObj.h>
+#include <Lmcons.h>
 #include <fstream>
 #include <iostream>
 #include <filesystem>
 #include <stdbool.h>
+#include <vector>
 
 /* Functions */
-std::string readingfiles(void);
-
+std::vector<std::string> getFileNamesFromPath(std::string path);
 
 #endif

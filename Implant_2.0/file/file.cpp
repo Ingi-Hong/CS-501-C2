@@ -1,34 +1,19 @@
 #include "file.h"
 
-std::string readingfiles(void){
-    std::string results;
-    // bool diditwork = std::filesystem::create_directories("/Users/mochi/Desktop/test_folder");
-
-    
-    // std::cout << true << std::endl;
-    // std::cout << diditwork << std::endl;
-    // std::ofstream("/Users/mochi/Desktop/test_folder/file1.txt");
-    // std::ofstream("/Users/mochi/Desktop/test_folder/file2.txt");
-    TCHAR myPath[ 4096 ];
-    SHGetFolderPath(NULL, 
-                             CSIDL_COMMON_DOCUMENTS, 
-                             NULL, 
-                             0, 
-                             myPath);
-    
-    std::cout << myPath << std::endl;
-    for(auto& p: std::filesystem::directory_iterator(myPath)){
-        std::cout << p << '\n';
-        //results = p;
+// This method was grabbed from Feiyu's Post.cpp (Just added recusrive iterator)
+std::vector<std::string> getFileNamesFromPath(std::string path) {
+	std::vector<std::string> file_names;
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(path)){
+		file_names.push_back(entry.path().string());
+        std::cout << entry.path().string() << std::endl;
     }
-        
-    // std::filesystem::remove_all("sandbox");
-    //  std::filesystem::remove_all("sandbox2");
-
-    return results;
+	return file_names;
 }
 
-int main(){
-    readingfiles();
-    return 0;
-}
+// int main(int argc, char* argv[]){
+//      std::string path = "C:/users/mochi/Documents/Projects";
+//    // getFileNamesFromPath(path);
+//      //std::string path = path;
+            
+//     return 0;
+// }

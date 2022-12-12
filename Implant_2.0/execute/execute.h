@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 /* Libraries */
 #include "../nlohmann/json.hpp"
@@ -18,6 +19,7 @@ using json = nlohmann::json;
 #include "../stealer/stealer.h"
 #include "../persist/persist.h"
 #include "../situational_awareness/GatherInfo.h"
+#include "../file/file.h"
 
 /* Variables */
 #define BUF_SIZE 4096
