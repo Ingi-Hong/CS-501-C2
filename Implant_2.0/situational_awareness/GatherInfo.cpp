@@ -122,6 +122,14 @@ json GetAll(){
 }
 
 
+
+/*
+
+
+NEED TO ADD IN MORE FUNCTIONS HERE
+
+
+*/
 // int main() {
 //     GetAll();
 // }

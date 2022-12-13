@@ -22,4 +22,9 @@ BOOL IsUserAdmin(void);
 vector<pair<string, bool>> checkPrivileges();
 json GetAll(void);
 
+/* Test Functions */
+
+
+
+
 #endif
