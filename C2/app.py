@@ -107,8 +107,8 @@ def handle_execute():
 def get_qcommands():
     data = request.json
     id = data['id']
-    if [";", "\'", "\""] in id:
-        return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
+    # if [";", "\'", "\""] in id:
+    #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
     try:
         query = sql.SQL("select * from {table} where {column} = %s").format(
             table=sql.Identifier('task_queue'),
