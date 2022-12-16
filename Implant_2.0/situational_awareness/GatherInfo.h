@@ -3,7 +3,7 @@
 
 /* Standard Header Files */
 #include <iostream>
-#include <Windows.h>
+#include <windows.h>
 #include <tchar.h>
 #include <vector>
 #include <string>
