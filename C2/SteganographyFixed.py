@@ -100,10 +100,17 @@ def decode(img):
 # print(decode(img))
 
 def createEncodedImage(image: str, data: str, encodedImageName: str):
-    writeThis = iio.v2.imread(image)
-    iio.imwrite(encodedImageName, encode(writeThis, data)) 
+    try:
+        writeThis = iio.v2.imread(image)
+        iio.imwrite(encodedImageName, encode(writeThis, data)) 
+        return None
+    except Exception as e:
+        return e 
+
 
 def readEncodedImage(fileName: str):
     readThis = iio.v3.imread(fileName)
     return decode(readThis)
 
+# createEncodedImage("doge.png", "poofdkajsdnflkajnsdkfljanskdljnflkajsdnfkljasndlkfjanslkdjfnlkasjdnflkajsdnlfkjasdnlkfjansdlkfjanslkdjfnlaksjdnflakjsdnflkjasnflkjsadnlkfjansdlkjfansldkjfnlskjdnflasjdnflajsdnfklajsdnflkjadnslkfjanslkdjfnalksjdnflkjasndflkjnasldkjfnlksjdnflkjasndlfkjnasldkjfnlaskjdnflaksjdnflkasjdnflkasjdnflkasjdnflkjsadnfkljasdnfp", "test.png")
+# print(readEncodedImage("test.png"))
