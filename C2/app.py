@@ -278,10 +278,10 @@ def handle_response_json():
         print("Querying now")
         # DUMP BACK INTO TASK_QUEUE
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-        print("succesful")
+    
         time = datetime.now()
-        tools.executeGenericVar(query, [response_data, success, time, task_id])
-
+        response = tools.executeGenericVar(query, [response_data, success, time, task_id])
+        print(response)
         return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
