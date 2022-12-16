@@ -74,7 +74,8 @@ def executeGenericVar(query, variables):
         conn.commit()
         response = cursor.fetchall()
         cursor.close()
-        conn.close()    
+        conn.close()   
+        print("response from query: " + response) 
         return response 
     except Exception as error:
         print(f"error on execute generic query: {error}")

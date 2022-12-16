@@ -16,6 +16,12 @@ function Interface() {
           <Console id={ID} refresh={refresh} />
         </div>
       </div>
+
+      <div className="columns">
+        <div className="column col-12 m-2 p-2">
+            <CommandDisplay />
+        </div>
+      </div>
     </div>
   );
 }
