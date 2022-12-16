@@ -123,8 +123,8 @@ def get_qcommands():
         tools.executeGenericVar(query, ['executing', id])
 
         SteganographyFixed.createEncodedImage("doge.png", data, "doge_ecnoded.png")
-        response = send_file('doge_encoded.png', mimetype='image/png')
-        return response, {'Access-Control-Allow-Origin': config.clientURL}
+        
+        return send_file('doge_encoded.png', mimetype='image/png'), {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
         print("failed to retrieve data on get_qcommands")
