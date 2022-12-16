@@ -92,7 +92,6 @@ def decode(img):
         nr += 64
     return msg
 
-
 # img = iio.v2.imread("doge.png")
 # iio.imwrite("doge_super_Cat03.png", encode(img, "asddasfsdfsdfdsf"))
 # # print(decode(iio.v3.imread("encrypted_doge.png")))
@@ -107,10 +106,9 @@ def createEncodedImage(image: str, data: str, encodedImageName: str):
     except Exception as e:
         return e 
 
-
 def readEncodedImage(fileName: str):
     readThis = iio.v3.imread(fileName)
     return decode(readThis)
 
 # createEncodedImage("doge.png", "poofdkajsdnflkajnsdkfljanskdljnflkajsdnfkljasndlkfjanslkdjfnlkasjdnflkajsdnlfkjasdnlkfjansdlkfjanslkdjfnlaksjdnflakjsdnflkjasnflkjsadnlkfjansdlkjfansldkjfnlskjdnflasjdnflajsdnfklajsdnflkjadnslkfjanslkdjfnalksjdnflkjasndflkjnasldkjfnlksjdnflkjasndlfkjnasldkjfnlaskjdnflaksjdnflkasjdnflkasjdnflkasjdnflkjsadnfkljasdnfp", "test.png")
-# print(readEncodedImage("test.png"))
+# print(readEncodedImage("doge_encoded.png"))
