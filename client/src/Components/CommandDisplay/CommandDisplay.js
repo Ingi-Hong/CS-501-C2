@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import "spectre.css";
 import "../Stylesheets/spectre-icons.min.css"
+import ExecutingCommandTable from "./ExecutingCommandTable";
 import UntouchedCommandTable from "./UntouchedCommandTable";
 
 function CommandDisplay(props) {
@@ -43,7 +44,7 @@ function CommandDisplay(props) {
     var command_data = "No Commands ";
     try {
       let response = await fetch(
-        process.env.REACT_APP_C2URL + "/get_commands",
+        process.env.REACT_APP_C2URL + "/client_get_commands",
         {
           method: "POST",
           mode: "cors",
@@ -153,15 +154,14 @@ function CommandDisplay(props) {
                     <div className="column col-6">
                       <h4>Untouched</h4>
                       {implant.untouched &&
-                        <UntouchedCommandTable commandList={implant.untouched}></UntouchedCommandTable>}
+                        <UntouchedCommandTable commandList={implant.untouched} />}
                     </div>
 
                     <div className="column col-6">
                       <h4>Executing</h4>
                       {implant.executing &&
-                        implant.executing.map((commands) => (
-                          <div key={commands}>{commands}</div>
-                        ))}
+                        <ExecutingCommandTable commandList={implant.executing} />
+                        }
                     </div>
 
                     <div className="column col-6">
