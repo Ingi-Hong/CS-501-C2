@@ -1,9 +1,8 @@
-from Crypto.Cipher import AES
+import binascii
 import hashlib
 import sys
-import binascii
 
-
+from Crypto.Cipher import AES
 
 
 def encrypt(plaintext,key):
