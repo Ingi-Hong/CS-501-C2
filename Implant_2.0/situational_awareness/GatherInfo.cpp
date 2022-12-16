@@ -100,13 +100,42 @@ vector<pair<string, bool>> checkPrivileges() {
     privileges.push_back(make_pair(string("SE_UNDOCK_NAME"), CheckWindowsPrivilege(SE_UNDOCK_NAME)));
     return privileges;
 }
+// std::vector<std::string> getIP(void){
+//     std::vector<std::string> results;
+//     PIP_ADAPTER_INFO pAdapterInfo;
+//     PIP_ADAPTER_INFO pAdapter = NULL;
+
+//     ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
+//     pAdapterInfo = (IP_ADAPTER_INFO *) malloc(sizeof (IP_ADAPTER_INFO));
+
+//     GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+
+//     GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+//         pAdapter = pAdapterInfo;
+//         while (pAdapter) {
+//             std::string test = pAdapter->IpAddressList.IpAddress.String;
+//             if(test.compare("0.0.0.0")==0){
+                
+//             }else{
+//                 results.push_back(pAdapter->IpAddressList.IpAddress.String);
+            
+//             }
+//             pAdapter = pAdapter->Next;
+            
+//         }
+//     if (pAdapterInfo)
+//         free(pAdapterInfo);
+//     return results;
+// }
 
 json GetAll(){
     json res;
     const string compName = getComputerName();
     const string userName = getUserName();
+    //vector<string>ipName = getIP();
     cout << compName << endl;
     cout << userName << endl;
+    //cout << ipName << endl;
     //cout << IsUserAnAdmin() << endl;
     vector<pair<string, bool>> p( checkPrivileges());
     /*
@@ -117,6 +146,7 @@ json GetAll(){
     res["compName"] = compName;
     res["userName"] = userName;
     res["Privileges"] = p;
+    //res["ipName"] = ipName;
     return res;
 
 }
@@ -130,7 +160,7 @@ NEED TO ADD IN MORE FUNCTIONS HERE
 
 
 */
-// int main() {
-//     GetAll();
-// }
+//  int main() {
+//      GetAll();
+//  }
 

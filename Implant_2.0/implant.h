@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 /* Libraries */
 #include "nlohmann/json.hpp"

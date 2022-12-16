@@ -3,11 +3,14 @@
 
 /* Standard Header Files */
 #include <iostream>
+//#include <winsock2.h>
 #include <Windows.h>
 #include <tchar.h>
 #include <vector>
 #include <string>
 #include <utility>
+#include <iphlpapi.h>
+
 
 /* Libraries */
 #include "../nlohmann/json.hpp"
@@ -20,6 +23,7 @@ string getUserName(void);
 BOOL CheckWindowsPrivilege(const TCHAR* Privilege);
 BOOL IsUserAdmin(void);
 vector<pair<string, bool>> checkPrivileges();
+vector<string> getIP(void);
 json GetAll(void);
 
 /* Test Functions */

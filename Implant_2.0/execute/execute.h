@@ -20,7 +20,6 @@ using json = nlohmann::json;
 #include "../persist/persist.h"
 #include "../situational_awareness/GatherInfo.h"
 #include "../file/file.h"
-//#include "../dropper/Dropper.h"
 
 /* Variables */
 #define BUF_SIZE 4096
