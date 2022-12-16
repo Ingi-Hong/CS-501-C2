@@ -19,6 +19,7 @@ import WyattWonderland
 app = Flask(__name__)
 CORS(app)
 
+# Environment variables 
 config.host = config('host')
 config.password = config('password')
 config.username = config('username')
@@ -31,7 +32,7 @@ app.config["JWT_SECRET_KEY"] = "change-me"
 app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
-
+# Logs user out of system
 @app.route('/logout', methods=["POST"])
 def logout():
     try:
@@ -41,7 +42,7 @@ def logout():
     except:
         return "couldn't logout...", 500, {'Access-Control-Allow-Origin': config.clientURL}
 
-
+#Logs user into system 
 @app.route('/login', methods=["POST"])
 def create_token():
     access_token = ""
@@ -145,8 +146,6 @@ def get_qcommands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
-
-
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -188,8 +187,6 @@ def get_untouched():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
 @app.route("/get_executing", methods=["POST"])
 def get_executing():
     data = request.json
@@ -205,8 +202,6 @@ def get_executing():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
 @app.route("/get_executed", methods=["POST"])
 def get_executed():
     data = request.json
@@ -222,8 +217,6 @@ def get_executed():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side TODO
-
-
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:

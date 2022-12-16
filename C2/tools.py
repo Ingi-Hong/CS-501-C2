@@ -1,6 +1,7 @@
+import ctypes
+
 import config
 from psycopg2 import connect, sql
-import ctypes
 
 
 # Returns a conn and a cursor
