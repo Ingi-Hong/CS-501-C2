@@ -214,8 +214,8 @@ def register_implant():
         data = request.json
         print(f"Recieved: {data}")
         print(data['sleep'])
-        jitter = data['jitter']
-        sleep = data['sleep']
+        jitter = 10
+        sleep = 1
         first_connection = last_seen = datetime.now()
         active = True
         columns = ["first_connection", "active",
