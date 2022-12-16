@@ -6,7 +6,7 @@
 #include <shlwapi.h>
 #include <iostream>
 #include <fstream>
-#include <wininet.h>
+//#include <wininet.h>
 
 
 /* Functions */
