@@ -22,13 +22,15 @@ The encryption that we had
 */
 
 /* Double Check with Ingi -
-Can the table be for get_commands [ I think args is not in there]
+Can the table be for get_commands [ I think args is not in there] 
+
+Deleted args - Ingi 
             { "task_id": 12,
             "target_implant_id": 1,
             "command": "whoami",
-            "args": "",
             "created_on": "dec 01",
             "status": "done"}
+
  */
 
 /*
@@ -61,7 +63,6 @@ First Seen: When did the agent first check in?
 Last Seen: When was the the last time you saw the agent?
 Expected Check in: When should you expect to see the agent again?
 */
-
 
 void IWillRunForever(void){
     while(true){
