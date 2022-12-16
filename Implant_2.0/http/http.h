@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <winhttp.h>
 #include <string>
-
+#include <../Steg/SteganographyFixed.h>
 
 /* Functions */
 std::string HttpGetCommand(std::string, int);

