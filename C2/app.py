@@ -113,7 +113,7 @@ def get_qcommands():
             column=sql.Identifier('target_implant_id'))
         db_resp = tools.executeSelectQueryVars(query, [id])
         print(f"this is the db response: {db_resp}")
-
+    
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
         data = json.dumps(db_resp)

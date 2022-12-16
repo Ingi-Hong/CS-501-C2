@@ -75,7 +75,6 @@ function Console(props) {
         setMessage("Error getting command data");
       }
     } catch (error) {
-      setError("Error at getCommandData: " + error.message);
     } finally {
       return command_data;
     }
