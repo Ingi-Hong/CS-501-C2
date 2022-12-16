@@ -277,6 +277,13 @@ def handle_response_json():
             response_data = WyattWonderland.parsejson(response_data)
         print("Querying now")
         # DUMP BACK INTO TASK_QUEUE
+
+        if success in ["success", "Success"]:
+            success = True  
+
+        else: 
+            success = False
+            
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
     
         time = datetime.now()
