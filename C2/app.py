@@ -280,12 +280,12 @@ def handle_response_json():
 
         if success in ["success", "Success"]:
             success = True  
-
         else: 
             success = False
 
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-    
+        if query ==[]:
+            print("\n\nupdate task queue worked\n\n")
         time = datetime.now()
         print(response_data, success, time, task_id)
         response = tools.executeGenericVar(query, [response_data, success, time, task_id])
