@@ -124,8 +124,6 @@ async function fetchAPIData() {
   }
 }
 
-
-
   const focusOnRef = () => {
     focusRef.current.focus();
   };
