@@ -76,7 +76,6 @@ def home():
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
 def handle_execute():
-    print("hello??")
     try:
         print("Enterring execute")
         target_implant_id = int(request.form.get('target_implant_id'))
@@ -150,7 +149,6 @@ def get_commands():
 
         db_resp = tools.executeSelectQueryVars(query, [id])
 
-        print(f"this is the db response: {db_resp}")
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
         
@@ -171,7 +169,6 @@ def client_get_commands():
     try:
         db_resp = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE target_implant_id={id}")
-        print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data on get_commands")
@@ -186,7 +183,6 @@ def get_untouched():
     try:
         db_resp = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"untouched\")")
-        print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data on untouched")
@@ -201,7 +197,6 @@ def get_executing():
     try:
         db_resp = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executing\")")
-        print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data on get_executing")
@@ -216,7 +211,6 @@ def get_executed():
     try:
         db_resp = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executed\")")
-        print(f"this is the db response: {db_resp}")
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print("failed to retrieve data on get_executed")
@@ -416,19 +410,11 @@ def get_history():
         data = request.json
         id = data['id']
 
-        all = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE target_implant_id={id}")
-        print(all)
-
         pending = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'untouched\')")
-        print(f"this is pending responses: {pending}")
-
-        print(pending)
 
         executed = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
-        print(f"this is executed responses: {executed}")
 
         executing = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
@@ -444,8 +430,6 @@ def get_history():
         combined += pending
 
         sortedList = sorted(combined, key=lambda x: x['time'])
-
-        print(f"Sorted List: {sortedList}")
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as e:
