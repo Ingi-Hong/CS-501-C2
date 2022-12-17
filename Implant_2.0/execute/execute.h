@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
+
 
 /* Libraries */
 #include "../nlohmann/json.hpp"

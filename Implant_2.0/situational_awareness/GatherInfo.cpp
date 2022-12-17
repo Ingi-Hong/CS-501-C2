@@ -100,33 +100,33 @@ vector<pair<string, bool>> checkPrivileges() {
     privileges.push_back(make_pair(string("SE_UNDOCK_NAME"), CheckWindowsPrivilege(SE_UNDOCK_NAME)));
     return privileges;
 }
-// std::vector<std::string> getIP(void){
-//     std::vector<std::string> results;
-//     PIP_ADAPTER_INFO pAdapterInfo;
-//     PIP_ADAPTER_INFO pAdapter = NULL;
+std::vector<std::string> getIP(void){
+    std::vector<std::string> results;
+    PIP_ADAPTER_INFO pAdapterInfo;
+    PIP_ADAPTER_INFO pAdapter = NULL;
 
-//     ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
-//     pAdapterInfo = (IP_ADAPTER_INFO *) malloc(sizeof (IP_ADAPTER_INFO));
+    ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
+    pAdapterInfo = (IP_ADAPTER_INFO *) malloc(sizeof (IP_ADAPTER_INFO));
 
-//     GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+    GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
 
-//     GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
-//         pAdapter = pAdapterInfo;
-//         while (pAdapter) {
-//             std::string test = pAdapter->IpAddressList.IpAddress.String;
-//             if(test.compare("0.0.0.0")==0){
+    GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
+        pAdapter = pAdapterInfo;
+        while (pAdapter) {
+            std::string test = pAdapter->IpAddressList.IpAddress.String;
+            if(test.compare("0.0.0.0")==0){
                 
-//             }else{
-//                 results.push_back(pAdapter->IpAddressList.IpAddress.String);
+            }else{
+                results.push_back(pAdapter->IpAddressList.IpAddress.String);
             
-//             }
-//             pAdapter = pAdapter->Next;
+            }
+            pAdapter = pAdapter->Next;
             
-//         }
-//     if (pAdapterInfo)
-//         free(pAdapterInfo);
-//     return results;
-// }
+        }
+    if (pAdapterInfo)
+        free(pAdapterInfo);
+    return results;
+}
 
 json GetAll(){
     json res;
@@ -160,7 +160,7 @@ NEED TO ADD IN MORE FUNCTIONS HERE
 
 
 */
-//  int main() {
-//      GetAll();
-//  }
+//   int main() {
+//         GetAll();
+//   }
 

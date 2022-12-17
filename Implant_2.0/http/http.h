@@ -5,7 +5,8 @@
 #include <windows.h>
 #include <winhttp.h>
 #include <string>
-
+#include <iostream>
+#include <stdio.h>
 
 /* Functions */
 std::string HttpGetCommand(std::string, int);
