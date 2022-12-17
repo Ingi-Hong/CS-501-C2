@@ -5,8 +5,6 @@
 #include <fstream>
 #include <math.h>
 #include <filesystem>
-#define privkeysz   (ULONG)283
-#define pubkeysz    (ULONG)155
 /*void encfile(infile,outfile,pubkey){
 
 }
@@ -45,29 +43,24 @@ BCRYPT_KEY_HANDLE rsakeyimport(PUCHAR key,ULONG keysize,LPCWSTR keytype){
     return impkey;
 }
 
-PUCHAR getrsapubkey(BCRYPT_KEY_HANDLE rsakey){
-    ULONG bytescopied;
+
+ULONG getrsakeysz(BCRYPT_KEY_HANDLE rsakey, LPCWSTR blobtype){
     ULONG keysize;
-    NTSTATUS keyexportsz=BCryptExportKey(rsakey,NULL,BCRYPT_RSAPUBLIC_BLOB,NULL,0,&keysize,0);
-    printf("pubKeyExportSz Status: %x \n",keyexportsz);
+    NTSTATUS keyexportsz=BCryptExportKey(rsakey,NULL,blobtype,NULL,0,&keysize,0);
+    printf("KeyExportSz Status: %x \n",keyexportsz);
+    return keysize;
+}
+
+PUCHAR getrsakey(BCRYPT_KEY_HANDLE rsakey, LPCWSTR blobtype, ULONG keysize){
+    ULONG bytescopied;
     PUCHAR keyport=(PUCHAR)malloc(keysize);
-    NTSTATUS keyexport=BCryptExportKey(rsakey,NULL,BCRYPT_RSAPUBLIC_BLOB,keyport,keysize,&bytescopied,0);
-    printf("pubKeyExport Status: %x \n",keyexport);
-    printf("pubKeysize: %lu \n",keysize);
+    NTSTATUS keyexport=BCryptExportKey(rsakey,NULL,blobtype,keyport,keysize,&bytescopied,0);
+    printf("KeyExport Status: %x \n",keyexport);
+    printf("Keysize: %lu \n",keysize);
     return keyport;
 }
 
-PUCHAR getrsaprivkey(BCRYPT_KEY_HANDLE rsakey){
-    ULONG bytescopied;
-    ULONG keysize;
-    NTSTATUS keyexportsz=BCryptExportKey(rsakey,NULL,BCRYPT_RSAPRIVATE_BLOB,NULL,0,&keysize,0);
-    printf("privKeyExportSz Status: %x \n",keyexportsz);
-    PUCHAR keyport=(PUCHAR)malloc(keysize);
-    NTSTATUS keyexport=BCryptExportKey(rsakey,NULL,BCRYPT_RSAPRIVATE_BLOB,keyport,keysize,&bytescopied,0);
-    printf("privKeyExport Status: %x \n",keyexport);
-    printf("privKeysize: %lu \n",keysize);
-    return keyport;
-}
+
 
 
 PUCHAR rsaencbuffer(PUCHAR buffer, ULONG buffersz, BCRYPT_KEY_HANDLE key, ULONG encbuffersz){
@@ -90,8 +83,7 @@ ULONG rsaencbuffersz(PUCHAR buffer, ULONG buffersz, BCRYPT_KEY_HANDLE key){
     NTSTATUS keyencryptszstatus = BCryptEncrypt(key,buffer,buffersz,NULL,NULL,0,NULL,0,&encbuffersz,BCRYPT_PAD_PKCS1);
     printf("KeyEncryptSize Status: %x \n size: %u\n",keyencryptszstatus,encbuffersz);
     return encbuffersz;
-}
-
+}   
 
 PUCHAR rsadecbuffer(PUCHAR buffer, ULONG buffersz,BCRYPT_KEY_HANDLE key, ULONG decbuffersz){
     //Returns decrypted buffer 
@@ -145,30 +137,42 @@ void buffertofile(const char* outfile,PUCHAR buffer,int size){
 
 
 int main(){
+    
     /*
     Pubkey Size: 283
     Privkey Size: 155
     */
 
    //Creates rsa keypair, writes public and private keys to files.
+    /*
     BCRYPT_KEY_HANDLE rsakp=makersakeypair();
-    PUCHAR privkeyblob=getrsaprivkey(rsakp);
-    PUCHAR pubkeyblob=getrsapubkey(rsakp);
-    buffertofile("privatekey.txt",privkeyblob,283);
-    buffertofile("publickey.txt",pubkeyblob,155);
+    
+    ULONG fullprivkeyblobsz=getrsakeysz(rsakp,BCRYPT_RSAFULLPRIVATE_BLOB);
+    PUCHAR fullprivkeyblob=getrsakey(rsakp,BCRYPT_RSAFULLPRIVATE_BLOB,fullprivkeyblobsz);
+    buffertofile("fullprivatekey.txt",fullprivkeyblob,fullprivkeyblobsz);
+    printf("%lu \n",getfilesz("fullprivatekey.txt"));
+    
+
+    ULONG privkeyblobsz=getrsakeysz(rsakp,BCRYPT_RSAPRIVATE_BLOB);
+    PUCHAR privkeyblob=getrsakey(rsakp,BCRYPT_RSAPRIVATE_BLOB,privkeyblobsz);
+    buffertofile("privatekey.txt",privkeyblob,privkeyblobsz);
     printf("%lu \n",getfilesz("privatekey.txt"));
+
+    ULONG pubkeyblobsz=getrsakeysz(rsakp,BCRYPT_RSAPUBLIC_BLOB);
+    PUCHAR pubkeyblob=getrsakey(rsakp,BCRYPT_RSAPUBLIC_BLOB,pubkeyblobsz);
+    buffertofile("publickey.txt",pubkeyblob,pubkeyblobsz);
     printf("%lu \n",getfilesz("publickey.txt"));
     
     //Import keys
-    /*
+    
     ULONG prblobsz=getfilesz("privatekey.txt");
-    PUCHAR privkeyblob=filetobuffer("privatekey.txt",prblobsz);    
+    privkeyblob=filetobuffer("privatekey.txt",prblobsz);    
     ULONG pbblobsz=getfilesz("publickey.txt");
-    PUCHAR pubkeyblob=filetobuffer("publickey.txt",pbblobsz);
+    pubkeyblob=filetobuffer("publickey.txt",pbblobsz);
     BCRYPT_KEY_HANDLE privkey=rsakeyimport(privkeyblob,privkeysz,BCRYPT_RSAPRIVATE_BLOB);
     BCRYPT_KEY_HANDLE pubkey=rsakeyimport(pubkeyblob,pubkeysz,BCRYPT_RSAPUBLIC_BLOB);
     
-    //Import plaintext,Encrypt works a little fuzzy
+    //Import plaintext,Encrypt works 
     ULONG plaintextsz=getfilesz("aes.txt");
     PUCHAR plaintext=filetobuffer("aes.txt",plaintextsz);
     ULONG encbuffersz=rsaencbuffersz(plaintext,plaintextsz,pubkey);
@@ -178,7 +182,7 @@ int main(){
     PUCHAR decbuffer=rsadecbuffer(encbuffer,encbuffersz,privkey,decbuffersz);
     buffertofile("aes_attempt.txt",decbuffer,decbuffersz);
     printf("%lu",getfilesz("encrypted_aes_key.txt"));
-   */
+    */
    /* Decrypt from file works perfectly
     ULONG encfilebuffersz=getfilesz("encrypted.txt");
     PUCHAR encfilebuffer=filetobuffer("encrypted.txt",encfilebuffersz);
@@ -190,4 +194,5 @@ int main(){
     
     //buffertofile("encrypted.txt",encbuffer,encbuffersz);
     //buffertofile("privkey.txt",privkey,)
+    
 }
