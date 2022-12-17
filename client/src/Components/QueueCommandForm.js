@@ -35,9 +35,11 @@ function QueueCommandForm(props) {
         }
       );
       if (response.status === 200) {
+        console.log("Command queued")
         setMessage("Command succesfully queued");
       } else {
         setMessage("Error when submitting form");
+        console.log("Error submitting command")
       }
       setError("");
       setWasClick(command + target_implant_id + Math.random());

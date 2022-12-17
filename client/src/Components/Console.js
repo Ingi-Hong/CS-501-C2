@@ -93,8 +93,6 @@ function Console(props) {
     }
   }
 
-
-
   // Code for polling
 // https://stackoverflow.com/a/63134447
 let apiTimeout = setTimeout(fetchAPIData, 1000);
