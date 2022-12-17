@@ -149,7 +149,7 @@ async function fetchAPIData() {
       </div>
     );
   return (
-    <div id="console-wrapper">
+    <div  id="console-wrapper">
       {error} {message}
       <h1 className="p-centered">Implant {id}</h1>
       <div className="p-centered" id="console-window" onClick={focusOnRef}>
@@ -173,12 +173,12 @@ async function fetchAPIData() {
                 );
               }
             })}
-          <div ref={endWindow}></div>
           <QueueCommandForm
             ref_val={focusRef}
             target_implant_id={id}
             setWasClick={setWasClick}
           />
+          <div ref={endWindow}></div>
         </div>
       </div>
     </div>

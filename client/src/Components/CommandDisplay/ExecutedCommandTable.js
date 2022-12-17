@@ -1,7 +1,17 @@
 function ExecutedCommandTable(props) {
-    var commandList = props.commandList;
-    return (
-      <table className="table">
+  var commandList = props.commandList;
+  return (
+    <div
+      style={{
+        maxHeight: "1000px",
+        overflowWrap: "normal",
+        overflowX: "scroll",
+      }}
+    >
+      <table
+        className="table"
+        style={{ tableLayout: "fixed", width: "100%", overflowWrap: "normal" }}
+      >
         <thead>
           <tr>
             <th>Task ID</th>
@@ -26,8 +36,8 @@ function ExecutedCommandTable(props) {
             ))}
         </tbody>
       </table>
-    );
-  }
-  
-  export default ExecutedCommandTable;
-  
+    </div>
+  );
+}
+
+export default ExecutedCommandTable;

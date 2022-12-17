@@ -1,5 +1,4 @@
 #console-wrapper{
-    padding-bottom: 40%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -16,5 +15,6 @@
     flex-direction: column;
     border: 1px black solid;
     overflow: scroll;
+    overflow-wrap: break-word;
     font-size: small;
 }

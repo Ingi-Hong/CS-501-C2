@@ -9,15 +9,17 @@ function Interface() {
   const [ID, setID] = useState();
   return (
     <div className="container">
-      <ImplantTable setID={setID}></ImplantTable>
-
       <div className="columns">
-        <div className="column col-12 m-2 p-2">
-          <Console id={ID} refresh={refresh} />
+        <div className="column col-12">
+          <ImplantTable setID={setID}></ImplantTable>
         </div>
 
-        <div className="column col-12 m-2 p-2">
-          <CommandDisplay />
+        <div className="column col-12">
+          <Console className="column col-12" id={ID} refresh={refresh} />
+        </div>
+
+        <div className="column col-12">
+          <CommandDisplay id={ID}/>
         </div>
       </div>
     </div>

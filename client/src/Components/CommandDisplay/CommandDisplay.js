@@ -150,7 +150,7 @@ function CommandDisplay(props) {
               <div className="accordion-body mx-1" key={id + "body"}>
                 <div className="container">
                   <div className="columns m-2 p-2">
-                    <div className="column col-6">
+                    <div className="column col-12">
                       <h4>Untouched</h4>
                       {implant.untouched && (
                         <UntouchedCommandTable
@@ -159,7 +159,7 @@ function CommandDisplay(props) {
                       )}
                     </div>
 
-                    <div className="column col-6">
+                    <div className="column col-12">
                       <h4>Executing</h4>
                       {implant.executing && (
                         <ExecutingCommandTable
@@ -168,7 +168,7 @@ function CommandDisplay(props) {
                       )}
                     </div>
 
-                    <div className="column col-6">
+                    <div className="column col-12">
                       <h4>Executed</h4>
                       {implant.executed && (
                         <ExecutedCommandTable commandList={implant.executed} />
