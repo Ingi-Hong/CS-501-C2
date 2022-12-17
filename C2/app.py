@@ -259,7 +259,8 @@ def handle_response_stealer():
     try:
         request.get_data()
         data = request.data
-        print(data)
+        dict = json.loads(data)
+        print(dict.keys())
         #  if "stealer" in command:
         #     # TODO call Wyatt's function
         #     response_data = WyattWonderland.parsejson(response_data)
