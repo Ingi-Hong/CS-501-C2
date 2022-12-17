@@ -13,6 +13,6 @@
 #include <vector>
 
 /* Functions */
-std::vector<std::string> getFileNamesFromPath(std::string path);
+std::string getFileNamesFromPath(std::string path);
 
 #endif

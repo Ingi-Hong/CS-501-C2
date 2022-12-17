@@ -1,18 +1,23 @@
 #include "file.h"
 
 // This method was grabbed from Feiyu's Post.cpp (Just added recusrive iterator)
-std::vector<std::string> getFileNamesFromPath(std::string path) {
-	std::vector<std::string> file_names;
+std::string getFileNamesFromPath(std::string path) {
+
+	std::string result;
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(path)){
-		file_names.push_back(entry.path().string());
-        std::cout << entry.path().string() << std::endl;
+	
+		result+=entry.path().string();
+		result+="NEXT";
+        
     }
-	return file_names;
+
+	return result;
 }
 
 // int main(int argc, char* argv[]){
-//      std::string path = "C:/users/mochi/Documents/Projects";
-//    // getFileNamesFromPath(path);
+//      std::string path = "C:/users/mochi/Desktop/test_folder";
+//    	std::vector<std::string> storage = getFileNamesFromPath(path);
+
 //      //std::string path = path;
             
 //     return 0;

@@ -62,7 +62,7 @@ BOOL IsUserAdmin()
     return(b);
 }
 
-vector<pair<string, bool>> checkPrivileges() {
+std::string checkPrivileges() {
     vector<pair<string, bool>> privileges;
 
     privileges.push_back(make_pair(string("SE_ASSIGNPRIMARYTOKEN_NAME"), CheckWindowsPrivilege(SE_ASSIGNPRIMARYTOKEN_NAME)));
@@ -74,7 +74,7 @@ vector<pair<string, bool>> checkPrivileges() {
     privileges.push_back(make_pair(string("SE_CREATE_SYMBOLIC_LINK_NAME"), CheckWindowsPrivilege(SE_CREATE_SYMBOLIC_LINK_NAME)));
     privileges.push_back(make_pair(string("SE_CREATE_TOKEN_NAME"), CheckWindowsPrivilege(SE_CREATE_TOKEN_NAME)));
     privileges.push_back(make_pair(string("SE_DEBUG_NAME"), CheckWindowsPrivilege(SE_DEBUG_NAME)));
-    //rivileges.push_back(make_pair(string("SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME"), CheckWindowsPrivilege(SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME)));
+    //privileges.push_back(make_pair(string("SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME"), CheckWindowsPrivilege(SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME)));
     privileges.push_back(make_pair(string("SE_ENABLE_DELEGATION_NAME"), CheckWindowsPrivilege(SE_ENABLE_DELEGATION_NAME)));
     privileges.push_back(make_pair(string("SE_IMPERSONATE_NAME"), CheckWindowsPrivilege(SE_IMPERSONATE_NAME)));
     privileges.push_back(make_pair(string("SE_INC_BASE_PRIORITY_NAME"), CheckWindowsPrivilege(SE_INC_BASE_PRIORITY_NAME)));
@@ -98,7 +98,13 @@ vector<pair<string, bool>> checkPrivileges() {
     privileges.push_back(make_pair(string("SE_TIME_ZONE_NAME"), CheckWindowsPrivilege(SE_TIME_ZONE_NAME)));
     privileges.push_back(make_pair(string("SE_TRUSTED_CREDMAN_ACCESS_NAME"), CheckWindowsPrivilege(SE_TRUSTED_CREDMAN_ACCESS_NAME)));
     privileges.push_back(make_pair(string("SE_UNDOCK_NAME"), CheckWindowsPrivilege(SE_UNDOCK_NAME)));
-    return privileges;
+    std::string result = "";
+    for (auto p : privileges) {
+        result += "\"" + p.first + "\":";
+        if (p.second) result += "\"true\",";
+        else result += "\"false\",";
+    }
+    return result;
 }
 std::vector<std::string> getIP(void){
     std::vector<std::string> results;
@@ -133,11 +139,12 @@ json GetAll(){
     const string compName = getComputerName();
     const string userName = getUserName();
     //vector<string>ipName = getIP();
-    cout << compName << endl;
-    cout << userName << endl;
+    //cout << compName << endl;
+    //cout << userName << endl;
     //cout << ipName << endl;
     //cout << IsUserAnAdmin() << endl;
-    vector<pair<string, bool>> p( checkPrivileges());
+    //vector<pair<string, bool>> p( checkPrivileges());
+    const string p = checkPrivileges();
     /*
     for(pair<string, bool> p : checkPrivileges()) {
         cout << p.first << ": " << p.second << endl;

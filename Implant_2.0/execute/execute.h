@@ -28,6 +28,6 @@ using json = nlohmann::json;
 
 /* Functions */
 void execute(std::string, std::string, int, int);
-std::string exec(char*, char*);
+std::string exec(char*);
 
 #endif

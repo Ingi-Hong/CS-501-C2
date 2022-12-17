@@ -22,7 +22,7 @@ string getComputerName(void);
 string getUserName(void);
 BOOL CheckWindowsPrivilege(const TCHAR* Privilege);
 BOOL IsUserAdmin(void);
-vector<pair<string, bool>> checkPrivileges();
+std::string checkPrivileges();
 vector<string> getIP(void);
 json GetAll(void);
 

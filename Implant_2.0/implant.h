@@ -15,7 +15,7 @@
 using json = nlohmann::json;
 
 /* Variables */
-#define IMPLANT_ID 3
+#define IMPLANT_ID 1
 
 /* Header files of Implementations */
 #include "stealer/stealer.h"
