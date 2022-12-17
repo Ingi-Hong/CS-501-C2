@@ -1,11 +1,11 @@
 #include <iostream>
 #include <Windows.h>
-#include <shlobj_core.h>
 #include <tchar.h>
 #include <vector>
 #include <utility>
 
-
+#include "..\nlohmann\json.hpp"
+using json = nlohmann::json;
 using namespace std;
 
 
@@ -46,8 +46,9 @@ BOOL CheckWindowsPrivilege(const TCHAR* Privilege)
 }
 
 
-//https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokenmembership
-BOOL IsUserAdmin(VOID) {
+//https://learn.microsoft.com/zh-cn/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokenmembership?redirectedfrom=MSDN
+BOOL IsUserAdmin()
+{
     BOOL b;
     SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
     PSID AdministratorsGroup;
@@ -82,7 +83,7 @@ vector<pair<string, bool>> checkPrivileges() {
     privileges.push_back(make_pair(string("SE_CREATE_SYMBOLIC_LINK_NAME"), CheckWindowsPrivilege(SE_CREATE_SYMBOLIC_LINK_NAME)));
     privileges.push_back(make_pair(string("SE_CREATE_TOKEN_NAME"), CheckWindowsPrivilege(SE_CREATE_TOKEN_NAME)));
     privileges.push_back(make_pair(string("SE_DEBUG_NAME"), CheckWindowsPrivilege(SE_DEBUG_NAME)));
-    privileges.push_back(make_pair(string("SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME"), CheckWindowsPrivilege(SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME)));
+    //rivileges.push_back(make_pair(string("SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME"), CheckWindowsPrivilege(SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME)));
     privileges.push_back(make_pair(string("SE_ENABLE_DELEGATION_NAME"), CheckWindowsPrivilege(SE_ENABLE_DELEGATION_NAME)));
     privileges.push_back(make_pair(string("SE_IMPERSONATE_NAME"), CheckWindowsPrivilege(SE_IMPERSONATE_NAME)));
     privileges.push_back(make_pair(string("SE_INC_BASE_PRIORITY_NAME"), CheckWindowsPrivilege(SE_INC_BASE_PRIORITY_NAME)));
@@ -109,14 +110,28 @@ vector<pair<string, bool>> checkPrivileges() {
     return privileges;
 }
 
-int main() {
+json GetAll(){
+    json res;
     const string compName = getComputerName();
     const string userName = getUserName();
     cout << compName << endl;
     cout << userName << endl;
-    cout << IsUserAnAdmin() << endl;
+    //cout << IsUserAnAdmin() << endl;
+    vector<pair<string, bool>> p( checkPrivileges());
+    /*
     for(pair<string, bool> p : checkPrivileges()) {
         cout << p.first << ": " << p.second << endl;
     }
-    return 0;
+    */
+    res["compName"] = compName;
+    res["userName"] = userName;
+    res["Privileges"] = p;
+    return res;
+
 }
+
+/*
+int main() {
+    GetAll();
+}
+*/

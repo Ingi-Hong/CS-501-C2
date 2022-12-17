@@ -15,12 +15,12 @@ DWORD GetProcessByName(CONST TCHAR* processName) {
     processInfo.dwSize = sizeof(PROCESSENTRY32W);
     do
     {
-        if (_tcscmp(processInfo.szExeFile, processName) == 0)
+        if (_tcscmp((TCHAR*)processInfo.szExeFile, processName) == 0)
         {
             CloseHandle(processALL);
             return processInfo.th32ProcessID;
         }
-    } while (Process32Next(processALL, &processInfo));
+    } while (Process32Next(processALL, (LPPROCESSENTRY32)(&processInfo)));
     CloseHandle(processALL);
     return 0;
 }
@@ -52,7 +52,7 @@ HMODULE GetProcessModuleHandle(DWORD pid, CONST TCHAR* moduleName) {
 
 
 void InjectDll(const wchar_t* processName, const char* dllPath) {
-    DWORD dword = GetProcessByName(processName);
+    DWORD dword = GetProcessByName((TCHAR*)processName);
     if (dword == 0)
     {
         MessageBoxA(NULL, "Process not found", "Error", 0);
@@ -71,7 +71,7 @@ void InjectDll(const wchar_t* processName, const char* dllPath) {
         return;
     }
     HMODULE k32 = GetModuleHandle(TEXT("Kernel32.dll"));
-    LPVOID loadADD = GetProcAddress(k32, "LoadLibraryA");
+    FARPROC loadADD = GetProcAddress(k32, "LoadLibraryA");
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)loadADD, DLLAddress, 0, NULL);
     CloseHandle(hThread);
     CloseHandle(hProcess);
@@ -79,13 +79,13 @@ void InjectDll(const wchar_t* processName, const char* dllPath) {
 }
 
 void UnLoadDll(const wchar_t* processName, const wchar_t* dllName) {
-    DWORD dword = GetProcessByName(processName);
+    DWORD dword = GetProcessByName((TCHAR*)processName);
     if (dword == 0)
     {
         MessageBoxA(NULL, "Process not found", "Error", 0);
         return;
     }
-    HMODULE hmodule = GetProcessModuleHandle(dword, dllName);
+    HMODULE hmodule = GetProcessModuleHandle(dword, (TCHAR*)dllName);
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dword);
     if (hProcess == NULL)
     {
@@ -93,14 +93,16 @@ void UnLoadDll(const wchar_t* processName, const wchar_t* dllName) {
         return;
     }
     HMODULE k32 = GetModuleHandle(TEXT("Kernel32.dll"));
-    LPVOID loadADD = GetProcAddress(k32, "FreeLibrary");
+    FARPROC loadADD = GetProcAddress(k32, "FreeLibrary");
 
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)loadADD, (LPVOID)hmodule, 0, NULL);
     CloseHandle(hThread);
     CloseHandle(hProcess);
 }
-
+/*
 int main() {
     InjectDll(L"cmd.exe", "C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\testlib.dll");
     UnLoadDll(L"cmd.exe", L"testlib.dll");
 }
+*/
+
