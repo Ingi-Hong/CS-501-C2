@@ -8,10 +8,8 @@ from psycopg2 import connect, sql
 def load():
     # Connect to C2
     try:
-        print("Connecting")
         conn = connect(dbname=config.database, user=config.username,
                        password=config.password, host=config.host, port=config.port, connect_timeout=20)
-        print("Success? Should be 0 -> ", conn.closed)
         cursor = conn.cursor()
     except:
         print("failed to connect")
