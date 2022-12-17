@@ -74,6 +74,7 @@ def home():
 # api endpoint to queue a command
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
+@cross_origin()
 def handle_execute():
     print("hello??")
     try:

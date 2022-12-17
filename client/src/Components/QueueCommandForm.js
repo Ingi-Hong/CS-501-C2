@@ -24,7 +24,7 @@ function QueueCommandForm(props) {
           mode: "cors",
           body: new URLSearchParams({
             target_implant_id: target_implant_id,
-            command: command,
+            command: command
           }),
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
