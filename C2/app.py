@@ -257,6 +257,20 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
+@app.route("/response_stealer")
+@cross_origin()
+def handle_response_stealer():
+    print("Recieved stealer")
+    try:
+        data = request.get_json(force=True)
+        print(data)
+        #  if "stealer" in command:
+        #     # TODO call Wyatt's function
+        #     response_data = WyattWonderland.parsejson(response_data)
+        return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
+    except Exception as error:
+        return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
+
 #Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
 @cross_origin()
@@ -272,9 +286,6 @@ def handle_response_json():
         success = data['success']
         command = data['command']
         print("checking command: " + command)
-        if "stealer" in command:
-            # TODO call Wyatt's function
-            response_data = WyattWonderland.parsejson(response_data)
         print("Querying now")
         # DUMP BACK INTO TASK_QUEUE
 
