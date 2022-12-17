@@ -24,7 +24,7 @@ function ExecutingCommandTable(props) {
             commandList.map((commands) => (
               <tr className="active" key={commands}>
                 <td>{commands[0]}</td>
-                <td style={{ wordWrap: "break-word" }}>{commands[2]}</td>
+                <td style={{ wordWrap: "break-word", width: '100%' }}>{commands[2]}</td>
                 <td>{commands[3]}</td>
               </tr>
             ))}
