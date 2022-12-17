@@ -19,7 +19,7 @@ function LoginPage() {
   }, []);
 
   if (isLoggedIn){
-    return <Navigate to="/implant_table" />
+    return <Navigate to="/interface" />
   }
    else {
     return (

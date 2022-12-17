@@ -5,7 +5,6 @@ import DefaultPage from "./Pages/DefaultPage";
 import LoginPage from "./Pages/LoginPage";
 import Home from "./Pages/Home";
 import TestImplantFun from "./Components/TestImplantFun";
-import ImplantTable from "./Components/ImplantTable";
 import Interface from "./Pages/Interface";
 
 function App() {
@@ -17,7 +16,6 @@ function App() {
           <Route element={<DefaultPage />}>
             <Route path="/home" element={<Home />} />
             <Route path="/test_implant" element={<TestImplantFun />} />
-            <Route path="/implant_table" element={<ImplantTable />} />
             <Route path="/interface" element={<Interface />} />
           </Route>
         </Routes>

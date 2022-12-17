@@ -1,82 +1,82 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from "react";
+import { read_cookie } from "sfcookies";
+import "./Stylesheets/form.css";
 
 function QueueCommandForm(props) {
-     {/* target_implant_id = request.form.get('implantID')
-        command = request.form.get('command')
-        created_on = datetime.now()
-        status = "untouched" */}
-    var setRefresh = props.setRefresh;
-    const [target_implant_id, setImplantID] = useState("");
-    const [command, setCommand] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
-  
-    let handleSubmit = async (e) => {
-      e.preventDefault();
-      setIsLoading(true);
-      try {
-        let response = await fetch(process.env.REACT_APP_C2URL + "/queueCommand", {
+  var setRefresh = props.setRefresh;
+  const [command, setCommand] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  const ref = props.ref_val;
+
+  let target_implant_id = props.target_implant_id;
+  let setWasClick = props.setWasClick;
+  let handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      let response = await fetch(
+        process.env.REACT_APP_C2URL + "/queueCommand",
+        {
           method: "POST",
           mode: "cors",
           body: new URLSearchParams({
             target_implant_id: target_implant_id,
-            command: command,
+            command: command
           }),
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            'Access-Control-Allow-Origin': '*',
-            'Accept': 'application/json'
-          }
-        });
-        if (response.status === 200) {
-          setMessage("Command succesfully queued");
-        }  else {
-          setMessage("Error when submitting form");
+            "Access-Control-Allow-Origin": "*",
+            Accept: "application/json",
+            Authorization: "Bearer " + read_cookie("access_token"),
+          },
         }
-        setError("");
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-        setRefresh("refreshed");
+      );
+      if (response.status === 200) {
+        console.log("Command queued")
+        setMessage("Command succesfully queued");
+      } else {
+        setMessage("Error when submitting form");
+        console.log("Error submitting command")
       }
-    };
-  
-    if (isLoading) return <div className='loading'>Loading...</div>;
-
-    return (
-      <div className='command-wrapper'>
-        {error && <div>error: {error}</div>}
-        <div>{message}</div>
-        <form onSubmit={handleSubmit} className="form-group">
-          <label className='form-label' htmlFor='implant-ID'>
-            Implant ID:
-            <input
-            className='form-input'
-            id='implant-ID'
-              name="implant-ID"
-              type="text"
-              value={target_implant_id}
-              onChange={(e) => setImplantID(e.target.value)}
-            />
-          </label>
-          <br />
-          <label className='form-label' htmlFor='command'>
-            command:
-            <input
-            id='command'
-            className='form-input'
-              name="command"
-              type="text"
-              value={command}
-              onChange={(e) => setCommand(e.target.value)}
-            />
-          </label>
-          <button className='btn' type="submit">Submit command</button>
-        </form>
-      </div>
-    );
+      setError("");
+      setWasClick(command + target_implant_id + Math.random());
+    } catch (error) {
+      setError(error.message);
+      e.focus();
+    } finally {
+      setIsLoading(false);
+      setRefresh("refreshed");
+      e.focus();
+    }
   };
 
-  export default QueueCommandForm;
+  if (isLoading) return <div className="loading">Loading...</div>;
+
+  return (
+    <div className="d-flex">
+
+    <div>
+      
+      <form className="form" onSubmit={handleSubmit}>
+        $
+        <input
+          ref={ref}
+          id="command"
+          className="regular-joe"
+          name="command"
+          type="text"
+          value={command}
+          onChange={(e) => setCommand(e.target.value)}
+          />
+      </form>
+          </div>
+      {error && <div>error: {error}</div>}
+      <div>{message}</div>
+    </div>
+  );
+}
+
+export default QueueCommandForm;

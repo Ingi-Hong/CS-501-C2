@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import "spectre.css";
-import "../Stylesheets/spectre-icons.min.css"
+import "../Stylesheets/spectre-icons.min.css";
+import ExecutedCommandTable from "./ExecutedCommandTable";
+import ExecutingCommandTable from "./ExecutingCommandTable";
 import UntouchedCommandTable from "./UntouchedCommandTable";
 
 function CommandDisplay(props) {
-
   var refresh = props.refresh;
   var setID = props.setID;
 
@@ -43,13 +44,12 @@ function CommandDisplay(props) {
     var command_data = "No Commands ";
     try {
       let response = await fetch(
-        process.env.REACT_APP_C2URL + "/get_commands",
+        process.env.REACT_APP_C2URL + "/client_get_commands",
         {
           method: "POST",
           mode: "cors",
           body: JSON.stringify({
             id: id_value,
-            
           }),
           headers: {
             "Content-Type": "application/json",
@@ -150,26 +150,29 @@ function CommandDisplay(props) {
               <div className="accordion-body mx-1" key={id + "body"}>
                 <div className="container">
                   <div className="columns m-2 p-2">
-                    <div className="column col-6">
+                    <div className="column col-12">
                       <h4>Untouched</h4>
-                      {implant.untouched &&
-                        <UntouchedCommandTable commandList={implant.untouched}></UntouchedCommandTable>}
+                      {implant.untouched && (
+                        <UntouchedCommandTable
+                          commandList={implant.untouched}
+                        />
+                      )}
                     </div>
 
-                    <div className="column col-6">
+                    <div className="column col-12">
                       <h4>Executing</h4>
-                      {implant.executing &&
-                        implant.executing.map((commands) => (
-                          <div key={commands}>{commands}</div>
-                        ))}
+                      {implant.executing && (
+                        <ExecutingCommandTable
+                          commandList={implant.executing}
+                        />
+                      )}
                     </div>
 
-                    <div className="column col-6">
+                    <div className="column col-12">
                       <h4>Executed</h4>
-                      {implant.executed &&
-                        implant.executed.map((commands) => (
-                          <div key={commands}>{commands}</div>
-                        ))}
+                      {implant.executed && (
+                        <ExecutedCommandTable commandList={implant.executed} />
+                      )}
                     </div>
                   </div>
                 </div>
