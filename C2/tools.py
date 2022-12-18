@@ -77,9 +77,11 @@ def executeMany(query, values):
         cursor.executemany(query, values)
         conn.commit()
 
-        cursor.fetchall()
+        response = cursor.fetchall()
         cursor.close()
         conn.close()
+
+        return response
     except Exception as error:
         print(f"error on execute Many: {error}")
     

