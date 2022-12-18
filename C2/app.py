@@ -345,9 +345,8 @@ def handle_response_data():
     if (request.content_length < 5000000):
         try:
             x = request.get_data()
-            data = request.data
-            print(request.data)
             print(x)
+            print(len(x))
             data = RsaDecryption.rsadecrypt(data)
             print(data)
             print("response:")
