@@ -462,7 +462,7 @@ def get_history():
                       "command":x[2], "response":x[-4]} for x in executed]
         combined += [{"sender": "user", "creator": x[-1],
                       "time":x[3], "command":x[2]} for x in pending]
-
+        print("This is list that is sorted" + sortedList)
         sortedList = sorted(combined, key=lambda x: x['time'])
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
