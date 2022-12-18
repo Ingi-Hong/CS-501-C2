@@ -500,9 +500,6 @@ def get_history():
         combined = [{"sender": "user", "creator": x[8],
                      "time":x[3], "command":x[2]} for x in executing]
 
-        combined += [{"sender": "implant", "time": x[7],
-                      "command":x[2], "response":x[5]} for x in executing]
-
         combined += [{"sender": "user", "creator": x[8],
                      "time":x[3], "command":x[2]} for x in executed]
 
