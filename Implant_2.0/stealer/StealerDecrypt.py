@@ -79,9 +79,9 @@ def main():
         for entry in cookies[user]:
             host_key_list.append(entry['HOST_KEY'])
             encrypted_value_list.append(decrypt_password(entry['encrypted value'], key))
-            break
-        break
-    print(encrypted_value_list)
+            
+        
+    
 
     
 
