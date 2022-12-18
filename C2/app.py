@@ -275,7 +275,6 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-
 @app.route("/response_stealer", methods=["POST"])
 @cross_origin()
 def handle_response_stealer():
@@ -451,19 +450,25 @@ def get_history():
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
         executing = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
-
         combined = [{"sender": "user", "creator": x[-1],
                      "time":x[3], "command":x[2]} for x in executing]
+       
         combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executing]
+       
         combined += [{"sender": "user", "creator": x[-1],
                      "time":x[3], "command":x[2]} for x in executed]
+        print(combined)
         combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executed]
+
+       
         combined += [{"sender": "user", "creator": x[-1],
                       "time":x[3], "command":x[2]} for x in pending]
-        print("This is list that is sorted" + sortedList)
+
+        
         sortedList = sorted(combined, key=lambda x: x['time'])
+       
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as e:
