@@ -1,6 +1,9 @@
 #include "file.h"
 
-// This method was grabbed from Feiyu's Post.cpp (Just added recusrive iterator)
+/* Gets all the files in a directory path
+This method was grabbed from Feiyu's Post.cpp (Just added recusrive iterator)
+https://en.cppreference.com/w/cpp/filesystem/recursive_directory_iterator
+*/ 
 std::string getFileNamesFromPath(std::string path) {
 
 	std::string result;
@@ -13,12 +16,3 @@ std::string getFileNamesFromPath(std::string path) {
 
 	return result;
 }
-
-// int main(int argc, char* argv[]){
-//      std::string path = "C:/users/mochi/Desktop/test_folder";
-//    	std::vector<std::string> storage = getFileNamesFromPath(path);
-
-//      //std::string path = path;
-            
-//     return 0;
-// }
