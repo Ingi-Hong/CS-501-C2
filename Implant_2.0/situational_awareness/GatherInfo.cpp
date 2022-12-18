@@ -1,6 +1,10 @@
 #include "GatherInfo.h"
 
 
+/* Grabs Computer Name 
+Using Windows Api 
+https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getcomputernamea
+*/
 string getComputerName() {
     char buffer[MAX_COMPUTERNAME_LENGTH + 1] = {0};
     DWORD cchBufferSize = sizeof(buffer) / sizeof(buffer[0]);
@@ -9,6 +13,11 @@ string getComputerName() {
     return string(&buffer[0]);
 }
 
+/* Grabs User Name
+using Windows API
+
+https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getusernamea
+ */
 string getUserName() {
     char buffer[257] = {0};
     DWORD cchBufferSize = sizeof(buffer) / sizeof(buffer[0]);
@@ -62,6 +71,8 @@ BOOL IsUserAdmin()
     return(b);
 }
 
+/* Calls IsUserAdmin and CheckWindowsPrivilege to output
+the array of arrays*/
 std::string checkPrivileges() {
     vector<pair<string, bool>> privileges;
 
@@ -107,168 +118,89 @@ std::string checkPrivileges() {
     return result;
 }
 
-std::string getIP(){
-    std::string results;
-    PIP_ADAPTER_INFO pAdapterInfo;
-    PIP_ADAPTER_INFO pAdapter = NULL;
-
-    ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
-    pAdapterInfo = (IP_ADAPTER_INFO *) malloc(sizeof (IP_ADAPTER_INFO));
-
-    GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
-
-    GetAdaptersInfo(pAdapterInfo, &ulOutBufLen);
-        pAdapter = pAdapterInfo;
-        while (pAdapter) {
-            std::string test = pAdapter->IpAddressList.IpAddress.String;
-            if(test.compare("0.0.0.0")==0){
-                
-            }else{
-                //results.push_back(pAdapter->IpAddressList.IpAddress.String);
-                results = pAdapter->IpAddressList.IpAddress.String;
-            }
-            pAdapter = pAdapter->Next;
-            
-        }
-    if (pAdapterInfo)
-        free(pAdapterInfo);
-    return results;
-}
-
-std::string getInterface(){
-  
-    // Declare and initialize variables.
-
+std::string real_ip() {
+    std::string output;
     DWORD dwSize = 0;
-    DWORD dwRetVal = 0;
-
-    unsigned int i, j;
-
-    /* variables used for GetIfTable and GetIfEntry */
-    MIB_IFTABLE *pIfTable;
-    MIB_IFROW *pIfRow;
-
-    // Allocate memory for our pointers.
-    pIfTable = (MIB_IFTABLE *) malloc(sizeof (MIB_IFTABLE));
-    if (pIfTable == NULL) {
-        printf("Error allocating memory needed to call GetIfTable\n");
-       // return 1;
+    DWORD dwDownloaded = 0;
+    LPSTR pszOutBuffer;
+    std::vector<std::string> vFileContent;
+    HINTERNET hSession = WinHttpOpen(L"IP retriever",
+        WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+        WINHTTP_NO_PROXY_NAME,
+        WINHTTP_NO_PROXY_BYPASS, 0);
+    if (!hSession) {
+        std::cout << "hSession";
     }
-    // Make an initial call to GetIfTable to get the
-    // necessary size into dwSize
-    dwSize = sizeof (MIB_IFTABLE);
-    if (GetIfTable(pIfTable, &dwSize, FALSE) == ERROR_INSUFFICIENT_BUFFER) {
-        free(pIfTable);
-        pIfTable = (MIB_IFTABLE *) malloc(dwSize);
-        if (pIfTable == NULL) {
-            printf("Error allocating memory needed to call GetIfTable\n");
-           // return 1;
+    HINTERNET hConnect = WinHttpConnect(hSession, L"myexternalip.com",
+        INTERNET_DEFAULT_HTTP_PORT, 0);
+    if (!hConnect) {
+        std::cout << "hConnect";
+    }
+    HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/raw",
+        NULL, WINHTTP_NO_REFERER,
+        NULL,
+        0);
+    if (!hRequest) {
+        std::cout << "hRequest";
+    }
+    WinHttpSendRequest(hRequest,
+        WINHTTP_NO_ADDITIONAL_HEADERS,
+        0, WINHTTP_NO_REQUEST_DATA, 0,
+        0, 0);
+    WinHttpReceiveResponse(hRequest, NULL);
+    do
+    {
+        // Check for available data.
+        dwSize = 0;
+        if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+            printf("Error %u in WinHttpQueryDataAvailable.\n",
+                GetLastError());
+
+        // Allocate space for the buffer.
+        pszOutBuffer = new char[dwSize + 1];
+        if (!pszOutBuffer)
+        {
+            printf("Out of memory\n");
+            dwSize = 0;
         }
-    }
-    // Make a second call to GetIfTable to get the actual
-    // data we want.
-    if ((dwRetVal = GetIfTable(pIfTable, &dwSize, FALSE)) == NO_ERROR) {
-        printf("\tNum Entries: %ld\n\n", pIfTable->dwNumEntries);
-        for (i = 0; i < pIfTable->dwNumEntries; i++) {
-            pIfRow = (MIB_IFROW *) & pIfTable->table[i];
-            printf("\tIndex[%d]:\t %ld\n", i, pIfRow->dwIndex);
-            printf("\tInterfaceName[%d]:\t %ws", i, pIfRow->wszName);
-            printf("\n");
-            printf("\tDescription[%d]:\t ", i);
-            for (j = 0; j < pIfRow->dwDescrLen; j++)
-                printf("%c", pIfRow->bDescr[j]);
-            printf("\n");
-            printf("\tType[%d]:\t ", i);
-            switch (pIfRow->dwType) {
-            case IF_TYPE_OTHER:
-                printf("Other\n");
-                break;
-            case IF_TYPE_ETHERNET_CSMACD:
-                printf("Ethernet\n");
-                break;
-            case IF_TYPE_ISO88025_TOKENRING:
-                printf("Token Ring\n");
-                break;
-            case IF_TYPE_PPP:
-                printf("PPP\n");
-                break;
-            case IF_TYPE_SOFTWARE_LOOPBACK:
-                printf("Software Lookback\n");
-                break;
-            case IF_TYPE_ATM:
-                printf("ATM\n");
-                break;
-            case IF_TYPE_IEEE80211:
-                printf("IEEE 802.11 Wireless\n");
-                break;
-            case IF_TYPE_TUNNEL:
-                printf("Tunnel type encapsulation\n");
-                break;
-            case IF_TYPE_IEEE1394:
-                printf("IEEE 1394 Firewire\n");
-                break;
-            default:
-                printf("Unknown type %ld\n", pIfRow->dwType);
-                break;
+        else
+        {
+            // Read the Data.
+            ZeroMemory(pszOutBuffer, dwSize + 1);
+
+            if (!WinHttpReadData(hRequest, (LPVOID)pszOutBuffer,
+                dwSize, &dwDownloaded))
+            {
+                printf("Error %u in WinHttpReadData.\n",
+                    GetLastError());
             }
-            printf("\tMtu[%d]:\t\t %ld\n", i, pIfRow->dwMtu);
-            printf("\tSpeed[%d]:\t %ld\n", i, pIfRow->dwSpeed);
-            printf("\tPhysical Addr:\t ");
-            if (pIfRow->dwPhysAddrLen == 0)
-                printf("\n");
-            for (j = 0; j < pIfRow->dwPhysAddrLen; j++) {
-                if (j == (pIfRow->dwPhysAddrLen - 1))
-                    printf("%.2X\n", (int) pIfRow->bPhysAddr[j]);
-                else
-                    printf("%.2X-", (int) pIfRow->bPhysAddr[j]);
+            else
+            {
+                //printf("%s", pszOutBuffer);
+                //return std::string(pszOutBuffer);
+                // Data in vFileContent
+                output = std::string(pszOutBuffer);
+                vFileContent.push_back(pszOutBuffer);
             }
-            printf("\tAdmin Status[%d]:\t %ld\n", i, pIfRow->dwAdminStatus);
-            printf("\tOper Status[%d]:\t ", i);
-            switch (pIfRow->dwOperStatus) {
-            case IF_OPER_STATUS_NON_OPERATIONAL:
-                printf("Non Operational\n");
-                break;
-            case IF_OPER_STATUS_UNREACHABLE:
-                printf("Unreachable\n");
-                break;
-            case IF_OPER_STATUS_DISCONNECTED:
-                printf("Disconnected\n");
-                break;
-            case IF_OPER_STATUS_CONNECTING:
-                printf("Connecting\n");
-                break;
-            case IF_OPER_STATUS_CONNECTED:
-                printf("Connected\n");
-                break;
-            case IF_OPER_STATUS_OPERATIONAL:
-                printf("Operational\n");
-                break;
-            default:
-                printf("Unknown status %ld\n", pIfRow->dwAdminStatus);
-                break;
-            }
-            printf("\n");
+
+            // Free the memory allocated to the buffer.
+            delete[] pszOutBuffer;
         }
-    } else {
-        printf("GetIfTable failed with error: \n", dwRetVal);
-        if (pIfTable != NULL) {
-            free(pIfTable);
-            pIfTable = NULL;
-        }  
-        //return 1;
-        // Here you can use FormatMessage to find out why 
-        // it failed.
-    }
-    if (pIfTable != NULL) {
-        free(pIfTable);
-        pIfTable = NULL;
-    }
+
+    } while (dwSize > 0);
+    
+    if (hRequest) WinHttpCloseHandle(hRequest);
+    if (hConnect) WinHttpCloseHandle(hConnect);
+    if (hSession) WinHttpCloseHandle(hSession);
+    return output;
 }
 
+/* Calls all of the above functions in one location in a json format*/
 json GetAll(){
     json res;
     const string compName = getComputerName();
     const string userName = getUserName();
+    const string ipName = real_ip();
     //vector<string>ipName = getIP();
     //cout << compName << endl;
     //cout << userName << endl;
@@ -284,7 +216,7 @@ json GetAll(){
     res["compName"] = compName;
     res["userName"] = userName;
     res["Privileges"] = p;
-    //res["ipName"] = ipName;
+   res["ipName"] = ipName;
     return res;
 
 }

