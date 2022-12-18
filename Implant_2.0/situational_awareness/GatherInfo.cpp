@@ -118,6 +118,7 @@ std::string checkPrivileges() {
     return result;
 }
 
+/* Gets IP by making a Get Request to MyExternalIp.com */
 std::string real_ip() {
 	std::string output;
 	DWORD dwSize = 0;
@@ -170,36 +171,11 @@ json GetAll(){
     const string compName = getComputerName();
     const string userName = getUserName();
     const string ipName = real_ip();
-    //vector<string>ipName = getIP();
-    //cout << compName << endl;
-    //cout << userName << endl;
-    //cout << ipName << endl;
-    //cout << IsUserAnAdmin() << endl;
-    //vector<pair<string, bool>> p( checkPrivileges());
     const string p = checkPrivileges();
-    /*
-    for(pair<string, bool> p : checkPrivileges()) {
-        cout << p.first << ": " << p.second << endl;
-    }
-    */
     res["compName"] = compName;
     res["userName"] = userName;
     res["Privileges"] = p;
-   res["ipName"] = ipName;
+    res["ipName"] = ipName;
     return res;
 
 }
-
-
-
-/*
-
-
-NEED TO ADD IN MORE FUNCTIONS HERE
-
-
-*/
-//   int main() {
-//         GetAll();
-//   }
-
