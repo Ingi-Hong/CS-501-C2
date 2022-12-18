@@ -496,16 +496,19 @@ def get_history():
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
         executing = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
-        combined = [{"sender": "user", "creator": x[-1],
+
+        combined = [{"sender": "user", "creator": x[8],
                      "time":x[3], "command":x[2]} for x in executing]
-        combined += [{"sender": "implant", "time": x[-2],
-                      "command":x[2], "response":x[-4]} for x in executing]
-        combined += [{"sender": "user", "creator": x[-1],
+
+        combined += [{"sender": "user", "creator": x[8],
                      "time":x[3], "command":x[2]} for x in executed]
-        combined += [{"sender": "implant", "time": x[-2],
-                      "command":x[2], "response":x[-4]} for x in executed]
-        combined += [{"sender": "user", "creator": x[-1],
+
+        combined += [{"sender": "implant", "time": x[7],
+                      "command":x[2], "response":x[5]} for x in executed]
+
+        combined += [{"sender": "user", "creator": x[8],
                       "time":x[3], "command":x[2]} for x in pending]
+        print(executed)
         sortedList = sorted(combined, key=lambda x: x['time'])
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
