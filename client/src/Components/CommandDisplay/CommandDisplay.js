@@ -84,6 +84,7 @@ function CommandDisplay(props) {
         return filterCommandList(commandList);
       });
       setDisplayItems(filtered_commands);
+      console.log("Executed Commands: " + filtered_commands.executed);
     } catch (error) {
       console.log("ERROR FETCHING DATA: " + error);
       setError(error.message);
@@ -97,7 +98,6 @@ function CommandDisplay(props) {
       if (command[4] === "untouched") {
         return true;
       }
-
       return false;
     });
 
@@ -105,7 +105,6 @@ function CommandDisplay(props) {
       if (command[4] === "executing") {
         return true;
       }
-
       return false;
     });
 

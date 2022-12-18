@@ -69,7 +69,7 @@ function Console(props) {
       if (typeof respJSON !== "undefined") {
         command_data = respJSON;
       }
-      console.log(command_data);
+      console.log("Command Data: " + command_data);
       if (response.status === 200) {
       } else {
         setMessage("Error getting command data");
@@ -124,8 +124,6 @@ async function fetchAPIData() {
   }
 }
 
-
-
   const focusOnRef = () => {
     focusRef.current.focus();
   };
@@ -138,8 +136,6 @@ async function fetchAPIData() {
     scrollToBottom();
   }, [wasClick]);
 
-  // combined = [{"sender": "user", "creator":x[-1], "time":x[3], "command":x[2] } for x in executed]
-  // combined += [{"sender": "implant", "time":x[-2], "command":x[2], "response":x[-4]} for x in executed]
   if (loading)
     return (
       <div id="console-wrapper">
@@ -153,7 +149,6 @@ async function fetchAPIData() {
       {error} {message}
       <h1 className="p-centered">Implant {id}</h1>
       <div className="p-centered" id="console-window" onClick={focusOnRef}>
-        {/* <Content loading={loading} history={history} id={id}/> */}
         <div>
           {history.sorted &&
             history.sorted.map((dialogue, key) => {

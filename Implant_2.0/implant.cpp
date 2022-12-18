@@ -78,6 +78,20 @@ void registerimplant(void){
     return;
 }
 
+BOOL CheckInstance(){
+    HANDLE  m_hStartEvent = CreateEventA( NULL, FALSE, FALSE, "GABBAGOOL" );
+    if(m_hStartEvent == NULL) {
+        CloseHandle( m_hStartEvent ); 
+        return false;
+    }
+    if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        CloseHandle( m_hStartEvent ); 
+        m_hStartEvent = NULL;
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char* argv[]){
 
     /* Registering Implant */
@@ -92,7 +106,10 @@ int main(int argc, char* argv[]){
     // }
     
     /* Receive Tasks, Execute Tasks, Send Back Tasks */
+    if (!CheckInstance()){
+        printf("ALREADY RUN\n");
+        return -1;
+    }
     IWillRunForever();
-
     return 0;
 }
