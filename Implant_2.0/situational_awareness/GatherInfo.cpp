@@ -119,80 +119,49 @@ std::string checkPrivileges() {
 }
 
 std::string real_ip() {
-    std::string output;
-    DWORD dwSize = 0;
-    DWORD dwDownloaded = 0;
-    LPSTR pszOutBuffer;
-    std::vector<std::string> vFileContent;
-    HINTERNET hSession = WinHttpOpen(L"IP retriever",
-        WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-        WINHTTP_NO_PROXY_NAME,
-        WINHTTP_NO_PROXY_BYPASS, 0);
-    if (!hSession) {
-        std::cout << "hSession";
-    }
-    HINTERNET hConnect = WinHttpConnect(hSession, L"myexternalip.com",
-        INTERNET_DEFAULT_HTTP_PORT, 0);
-    if (!hConnect) {
-        std::cout << "hConnect";
-    }
-    HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/raw",
-        NULL, WINHTTP_NO_REFERER,
-        NULL,
-        0);
-    if (!hRequest) {
-        std::cout << "hRequest";
-    }
-    WinHttpSendRequest(hRequest,
-        WINHTTP_NO_ADDITIONAL_HEADERS,
-        0, WINHTTP_NO_REQUEST_DATA, 0,
-        0, 0);
-    WinHttpReceiveResponse(hRequest, NULL);
-    do
-    {
-        // Check for available data.
-        dwSize = 0;
-        if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
-            printf("Error %u in WinHttpQueryDataAvailable.\n",
-                GetLastError());
+	std::string output;
+	DWORD dwSize = 0;
+	DWORD dwDownloaded = 0;
+	LPSTR pszOutBuffer;
+	std::vector<std::string> vFileContent;
+	HINTERNET hSession = WinHttpOpen(L"IP retriever",
+		WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+		WINHTTP_NO_PROXY_NAME,
+		WINHTTP_NO_PROXY_BYPASS, 0);
+	if (!hSession) {
+		std::cout << "hSession";
+	}
+	HINTERNET hConnect = WinHttpConnect(hSession, L"myexternalip.com",
+		INTERNET_DEFAULT_HTTP_PORT, 0);
+	if (!hConnect) {
+		std::cout << "hConnect";
+	}
+	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/raw",
+		NULL, WINHTTP_NO_REFERER,
+		NULL,
+		0);
+	if (!hRequest) {
+		std::cout << "hRequest";
+	}
+	WinHttpSendRequest(hRequest,
+		WINHTTP_NO_ADDITIONAL_HEADERS,
+		0, WINHTTP_NO_REQUEST_DATA, 0,
+		0, 0);
+	WinHttpReceiveResponse(hRequest, NULL);
+	dwSize = 0;
+	if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+		printf("Error %u in WinHttpQueryDataAvailable.\n",
+			GetLastError());
+	pszOutBuffer = new char[dwSize + 1];
 
-        // Allocate space for the buffer.
-        pszOutBuffer = new char[dwSize + 1];
-        if (!pszOutBuffer)
-        {
-            printf("Out of memory\n");
-            dwSize = 0;
-        }
-        else
-        {
-            // Read the Data.
-            ZeroMemory(pszOutBuffer, dwSize + 1);
-
-            if (!WinHttpReadData(hRequest, (LPVOID)pszOutBuffer,
-                dwSize, &dwDownloaded))
-            {
-                printf("Error %u in WinHttpReadData.\n",
-                    GetLastError());
-            }
-            else
-            {
-                //printf("%s", pszOutBuffer);
-                //return std::string(pszOutBuffer);
-                // Data in vFileContent
-                output = std::string(pszOutBuffer);
-                vFileContent.push_back(pszOutBuffer);
-            }
-
-            // Free the memory allocated to the buffer.
-            delete[] pszOutBuffer;
-        }
-
-    } while (dwSize > 0);
-    
-    if (hRequest) WinHttpCloseHandle(hRequest);
-    if (hConnect) WinHttpCloseHandle(hConnect);
-    if (hSession) WinHttpCloseHandle(hSession);
-    return output;
+	WinHttpReadData(hRequest, (LPVOID)pszOutBuffer,
+		dwSize, &dwDownloaded);
+	output = pszOutBuffer;
+	output.resize(dwDownloaded, 0);
+	if (hRequest) WinHttpCloseHandle(hRequest);
+	if (hConnect) WinHttpCloseHandle(hConnect);
+	if (hSession) WinHttpCloseHandle(hSession);
+	return output;
 }
 
 /* Calls all of the above functions in one location in a json format*/
