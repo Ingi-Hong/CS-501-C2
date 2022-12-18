@@ -68,7 +68,6 @@ def create_token():
 @jwt_required()
 def handle_execute():
     try:
-        print("Enterring execute")
         target_implant_id = int(request.form.get('target_implant_id'))
         command = request.form.get('command')
         created_on = datetime.now(tz=None).isoformat()
@@ -79,13 +78,8 @@ def handle_execute():
                    'created_on', 'status', 'creator']
 
         data = target_implant_id, command, created_on, status, current_user
-        print("About to send query")
-        print(data)
-        print(current_user)
         query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
-        print(f"data: {data}")
         db_resp = tools.executeInsertQuery(query, data)
-        print(db_resp)
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(f"Failure sending commands: {error}")
