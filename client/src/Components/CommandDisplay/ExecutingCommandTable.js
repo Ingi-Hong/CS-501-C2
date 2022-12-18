@@ -3,7 +3,7 @@ function ExecutingCommandTable(props) {
   return (
     <div
       style={{
-        maxHeight: "1000px",
+        maxHeight: "500px",
         overflowWrap: "normal",
         overflowX: "scroll",
       }}
@@ -23,8 +23,12 @@ function ExecutingCommandTable(props) {
           {commandList &&
             commandList.map((commands) => (
               <tr className="active" key={commands}>
-                <td>{commands[0]}</td>
-                <td style={{ wordWrap: "break-word" }}>{commands[2]}</td>
+                <td style={{ width: "1px", whiteSpace: "nowrap" }}>
+                  {commands[0]}
+                </td>
+                <td style={{ wordWrap: "break-word", width: "100%" }}>
+                  {commands[2]}
+                </td>
                 <td>{commands[3]}</td>
               </tr>
             ))}

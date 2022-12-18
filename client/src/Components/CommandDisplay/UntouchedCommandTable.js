@@ -1,8 +1,17 @@
 function UntouchedCommandTable(props) {
   var commandList = props.commandList;
   return (
-    <div style={{ maxHeight: '1000px', overflowWrap: "normal", overflowX: "scroll" }}>
-      <table className="table" style={{tableLayout: 'fixed', width: '100%', overflowWrap: "normal"}}>
+    <div
+      style={{
+        maxHeight: "500px",
+        overflowWrap: "normal",
+        overflowX: "scroll",
+      }}
+    >
+      <table
+        className="table"
+        style={{ tableLayout: "fixed", width: "100%", overflowWrap: "normal" }}
+      >
         <thead>
           <tr>
             <th>Task ID</th>
@@ -14,8 +23,12 @@ function UntouchedCommandTable(props) {
           {commandList &&
             commandList.map((commands) => (
               <tr className="active" key={commands}>
-                <td style={{width: '1px', whiteSpace: 'nowrap'}}>{commands[0]}</td>
-                <td style={{ wordWrap: 'break-word', width: '100%'}}>{commands[2]}</td>
+                <td style={{ width: "1px", whiteSpace: "nowrap" }}>
+                  {commands[0]}
+                </td>
+                <td style={{ wordWrap: "break-word", width: "100%" }}>
+                  {commands[2]}
+                </td>
                 <td>{commands[3]}</td>
               </tr>
             ))}

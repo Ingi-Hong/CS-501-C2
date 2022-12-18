@@ -84,6 +84,7 @@ function CommandDisplay(props) {
         return filterCommandList(commandList);
       });
       setDisplayItems(filtered_commands);
+      console.log("Executed Commands: " +filtered_commands.executed);
     } catch (error) {
       console.log("ERROR FETCHING DATA: " + error);
       setError(error.message);

