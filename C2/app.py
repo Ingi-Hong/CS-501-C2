@@ -171,53 +171,6 @@ def client_get_commands():
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
-@app.route("/get_untouched", methods=["POST"])
-def get_untouched():
-    data = request.json
-    id = data['id']
-    try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"untouched\")")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
-    except Exception as error:
-        print("failed to retrieve data on untouched")
-        print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
-
-# List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
-@app.route("/get_executing", methods=["POST"])
-def get_executing():
-    data = request.json
-    id = data['id']
-    try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executing\")")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
-    except Exception as error:
-        print("failed to retrieve data on get_executing")
-        print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
-
-# List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
-@app.route("/get_executed", methods=["POST"])
-def get_executed():
-    data = request.json
-    id = data['id']
-    try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executed\")")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
-    except Exception as error:
-        print("failed to retrieve data on get_executed")
-        print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side TODO
 
