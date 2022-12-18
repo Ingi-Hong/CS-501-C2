@@ -3,7 +3,7 @@ function ExecutedCommandTable(props) {
   return (
     <div
       style={{
-        maxHeight: "900px",
+        maxHeight: "500px",
         overflowWrap: "normal",
         overflowX: "scroll",
       }}

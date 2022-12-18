@@ -3,7 +3,7 @@ function UntouchedCommandTable(props) {
   return (
     <div
       style={{
-        maxHeight: "1000px",
+        maxHeight: "500px",
         overflowWrap: "normal",
         overflowX: "scroll",
       }}
