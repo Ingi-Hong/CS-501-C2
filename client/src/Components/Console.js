@@ -69,7 +69,7 @@ function Console(props) {
       if (typeof respJSON !== "undefined") {
         command_data = respJSON;
       }
-      console.log(command_data);
+      console.log("Command Data: " + command_data);
       if (response.status === 200) {
       } else {
         setMessage("Error getting command data");
@@ -123,8 +123,6 @@ async function fetchAPIData() {
     }
   }
 }
-
-
 
   const focusOnRef = () => {
     focusRef.current.focus();
