@@ -23,7 +23,8 @@ string getUserName(void);
 BOOL CheckWindowsPrivilege(const TCHAR* Privilege);
 BOOL IsUserAdmin(void);
 std::string checkPrivileges();
-vector<string> getIP(void);
+string getIP(void);
+string getInterface(void);
 json GetAll(void);
 
 /* Test Functions */

@@ -5,7 +5,7 @@
 - Situational_Awareness
 - Stealer
 - Execution <arg> - List command to run
-- File Enumeration <arg> - List files in the directory
+- File_Enumeration <arg> - List files in the directory
 
 TODO:
 - Retrieval - Is commented out?
