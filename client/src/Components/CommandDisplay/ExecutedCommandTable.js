@@ -38,7 +38,7 @@ function ExecutedCommandTable(props) {
                   {commands[5]}
                 </td>
                 <td>{commands[7]}</td>
-                <td>{commands[6]}</td>
+                <td>{commands[6].toString()}</td>
               </tr>
             ))}
         </tbody>
