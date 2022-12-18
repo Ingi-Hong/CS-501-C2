@@ -46,8 +46,6 @@ def logout():
         return "couldn't logout...", 500, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Logs user into system
-
-
 @app.route('/login', methods=["POST"])
 def create_token():
     access_token = ""
