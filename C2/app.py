@@ -8,7 +8,7 @@ import SteganographyFixed
 import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
-                   request, url_for, send_file, send_from_directory)
+                   request, url_for, send_file, send_from_directory, allowed_file, secure_filename)
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
@@ -426,12 +426,20 @@ def upload_files():
         name = None
         for x in files:
             theFile = files[x] 
-            name = x
+            name = theFile.filename
 
         print(task_id, implant_id, name)
         print(type(theFile))
-        columns = ['implant_id', 'file_name', 'data', 'task_id']
-        data = [implant_id, name, theFile, task_id]
+
+        if name and allowed_file(name):
+            filename = secure_filename(name)
+            path = f"./{implant_id}"
+            path = os.path.join(path, filename)
+            theFile.save(path)
+            
+
+        columns = ['implant_id', 'file_name', 'path', 'task_id']
+        data = [implant_id, name, path, task_id]
         print("About to insert query")
         query = tools.insertQueryBuilder("files", columns, ['task_id'])
         tools.executeInsertQuery(query, data) 
