@@ -32,7 +32,7 @@ CREATE TABLE public.files (
 
 CREATE TABLE public.implants (
     implant_id serial PRIMARY KEY,
-    first_connection timestamp without time zone NOT NULL,
+    first_connection timestamp without time zone,
     active boolean,
     location character varying(950),
     computer_name character varying(50),
@@ -52,9 +52,9 @@ INSERT INTO public.implants(
 
 
 CREATE TABLE public.passwords (
-    p_key integer PRIMARY KEY NOT NULL,
-    task_id integer NOT NULL,
-    target_implant_id integer NOT NULL,
+    p_key integer PRIMARY KEY,
+    task_id integer,
+    target_implant_id integer,
     path text,
     username text,
     password text,
@@ -63,8 +63,8 @@ CREATE TABLE public.passwords (
 
 
 CREATE TABLE public.task_queue (
-    task_id serial PRIMARY KEY NOT NULL,
-    target_implant_id integer NOT NULL,
+    task_id serial PRIMARY ,
+    target_implant_id integer,
     command character varying(100),
     created_on timestamp without time zone,
     status character varying(20),
@@ -76,7 +76,7 @@ CREATE TABLE public.task_queue (
 
 
 CREATE TABLE public.users (
-    user_id serial NOT NULL PRIMARY KEY,
+    user_id serial PRIMARY KEY,
     name character varying(25),
     is_online boolean,
     password character varying,
