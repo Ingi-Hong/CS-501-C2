@@ -1,7 +1,4 @@
-#include <Windows.h>
-#include <TlHelp32.h>
-#include <string>
-#include <TCHAR.H>
+#include "Injection.h"
 
 using namespace std;
 
@@ -104,10 +101,14 @@ void createProcess(std::string path) {
     si.wShowWindow = SW_HIDE;
     PROCESS_INFORMATION pi;
     CreateProcessA(path.c_str(), NULL, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
 }
 
 int main() {
+    std::wstring s = L"cmd.exe";
+    std::string b = "C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\InjectedDLL.dll";
     createProcess("C:\\Windows\\System32\\cmd.exe");
-    InjectDll(L"cmd.exe", "InjectedDLL.dll");
+    InjectDll(s.c_str(), b.c_str());
     UnLoadDll(L"cmd.exe", L"InjectedDLL.dll");
 }
