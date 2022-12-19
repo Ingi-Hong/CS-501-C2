@@ -385,7 +385,7 @@ def get_history():
 def upload_files():
     print("Recieved upload_file")
     try:
-        id = request.headers['id']
+        print(request.headers)
         file = request.files
         print(id)
         print(file)
