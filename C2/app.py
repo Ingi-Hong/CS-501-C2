@@ -266,16 +266,33 @@ def handle_passwords():
         print(e)
         return e, 400, {'Access-Control-Allow-Origin': config.clientURL}
 
-# Route for implant to post a new symmetric key
-@app.route("/new_symkey", methods=["POST"])
-def getsymkey():
-    try:
-        data = request.get_json(force=True)
-        print()
-        print("response:")
-        data = data['data']
 
-        RsaDecryption.decrypt(data)
+# Implant response endpoint, in json
+# Implant response endpoint, in json
+
+# Addisons Worktime -
+# Attempting to add encryption
+
+    
+## Route for implant to post new symkey
+@app.route("/new_symkey", methods=["POST"])
+@cross_origin()
+def new_symkey():
+    print("Received response")
+    if (request.content_length < 256):
+        data = request.get_data()
+        # print(data)
+        # print(len(data))
+        datastr = data.decode("utf-8")
+        databytes = bytes.fromhex(datastr)
+        data = RsaDecryption.rsadecrypt(databytes)
+        print("response:")
+        print(data)
+        print(str(data))
+        print(jsonify(data))
+        """
+        target_implant_id = data['target_implant_id']
+        task_id = data['task_id']
         response_data = data['response_data']
         success = data['success']
         command = data['command']
@@ -299,68 +316,11 @@ def getsymkey():
         return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
 
     except Exception as error:
-        print()
-        print()
         print(error)
-        print()
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-
-
-# Implant response endpoint, in json
-# Implant response endpoint, in json
-
-# Addisons Worktime -
-# Attempting to add encryption
-
-    
-## For getting new symkey
-@app.route("/new_symkey", methods=["POST"])
-@cross_origin()
-def new_symkey():
-    print("Received response")
-    if (request.content_length < 256):
-        try:
-            data = request.get_data()
-            # print(data)
-            # print(len(data))
-            datastr = data.decode("utf-8")
-            databytes = bytes.fromhex(datastr)
-            data = RsaDecryption.rsadecrypt(databytes)
-            print("response:")
-            print(data)
-            print(str(data))
-            print(jsonify(data))
-            """
-            target_implant_id = data['target_implant_id']
-            task_id = data['task_id']
-            response_data = data['response_data']
-            success = data['success']
-            command = data['command']
-            print("checking command: " + command)
-            print("Querying now")
-            # DUMP BACK INTO TASK_QUEUE
-
-            if success in ["success", "Success"]:
-                success = True
-            else:
-                success = False
-
-            query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-            if query == []:
-                print("\n\nupdate task queue worked\n\n")
-            time = datetime.now()
-            print(response_data, success, time, task_id)
-            response = tools.executeGenericVar(
-                query, [response_data, success, time, task_id])
-            print(response)
-            return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
-
-        except Exception as error:
-            print(error)
-            return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-    else:
-        return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-        """
+else:
+    return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
+    """
 
 # Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
