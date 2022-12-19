@@ -1,5 +1,5 @@
 import ctypes
-
+from datetime import datetime
 import config
 from psycopg2 import connect, sql
 
@@ -85,7 +85,6 @@ def executeMany(query, values):
     except Exception as error:
         print(f"error on execute Many: {error}")
     
-
 # Executes a select query
 def executeSelectQueryVars(query, variables):
     try:
@@ -100,6 +99,7 @@ def executeSelectQueryVars(query, variables):
     except Exception as e:
         print(f"error on execute select query: {e}")
 
+
 def executeSelectQuery(query):
     try:
         conn, cursor = load()
@@ -109,13 +109,12 @@ def executeSelectQuery(query):
         cursor.close()
         conn.close()
         return returnThis
-
     except Exception as e:
-        print(f"error on execute select query: {e}")
+        print(f"\n\nerror on execute select query: {e}\n\n")
 
+def updateLastSeen(id: int):
+    time = [datetime.now(tz=None)] 
+    column = ["last_seen"]
 
-def main():
-    pass
-
-if __name__ == '__main__':
-    main()
+    query = insertQueryBuilder("implants", column, ["implant_id"])
+    response = executeInsertQuery(query, time) 
