@@ -281,10 +281,10 @@ def new_symkey():
     print("Received response")
     if (request.content_length < 256):
         data = request.get_data()
-        # print(data)
+        print(data)
         # print(len(data))
-        datastr = data.decode("utf-8")
-        databytes = bytes.fromhex(datastr)
+        #datastr = data.decode("utf-8")
+        databytes = bytes.fromhex(data)
         data = RsaDecryption.rsadecrypt(databytes)
         print("response:")
         print(data)
