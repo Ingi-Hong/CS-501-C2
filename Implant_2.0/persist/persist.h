@@ -12,6 +12,6 @@
 #include "../xor/xor.h"
 
 /* Functions */
-void persist_execution(void);
+void persist_execution(std::string);
 
 #endif
