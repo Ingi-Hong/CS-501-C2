@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 
 function Filedisplay(props){
-    id = props.id 
+    let id = props.id 
     const [files, setFiles] = useState();
     const [loading, setLoading] = useState();
 
