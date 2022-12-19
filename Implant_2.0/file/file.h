@@ -13,6 +13,8 @@
 #include <vector>
 #include "../xor/xor.h"
 
+#include "../xor/xor.h"
+
 /* Functions */
 std::string getFileNamesFromPath(std::string path);
 

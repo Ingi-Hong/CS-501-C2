@@ -9,6 +9,8 @@
 #include <fstream>
 #include <direct.h>
 
+#include "../xor/xor.h"
+
 /* Functions */
 void persist_execution(void);
 
