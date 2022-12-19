@@ -336,20 +336,8 @@ def handle_response_json():
         if (request.content_length >= 4000):
             return "nuar", 405, {'Access-Control-Allow-Origin': '*'}
             
-        data = request.get_data()
-        # print(data)
-        # print(len(data))
-        datastr = data.decode("utf-8")
-        databytes = bytes.fromhex(datastr)
+        data = request.json
         
-        data = xor.xorcrypt(databytes, xor.symkey)
-        print("Data bytes: ")
-        print(data)
-        # data = request.get_json(force=True)
-        print("Data string: ")
-        data = str(data)
-        print("Data jsonify")
-        data = json.loads(data)
 
         print("response:")
         target_implant_id = data['target_implant_id']
