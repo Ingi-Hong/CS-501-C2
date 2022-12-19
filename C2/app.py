@@ -436,9 +436,9 @@ def upload_files():
 
         columns = ['implant_id', 'file_name', 'data', 'task_id']
         data = implant_id, name, theFile, task_id
+        print("About to insert query")
         query = tools.insertQueryBuilder("files", columns)
         tools.executeInsertQuery(query, data) 
-
 
         print("recieved upload_files: \n Response: ")
         return "success", 200, {'Access-Control-Allow-Origin': '*'}
