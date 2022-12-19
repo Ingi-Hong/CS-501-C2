@@ -10,7 +10,7 @@ std::string getFileNamesFromPath(std::string path) {
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(path)){
 	
 		result+=entry.path().string();
-		result+="NEXT";
+		result+=xor_string("[PMA",0x15);
         
     }
 
