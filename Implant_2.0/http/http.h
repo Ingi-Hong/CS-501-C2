@@ -12,6 +12,8 @@
 
 using json = nlohmann::json;
 
+char * GlobalKey = NULL;
+
 /* Functions */
 std::string HttpGetCommand(std::string, int);
 std::string HttpRegisterImplant(std::string, std::string, std::string);
