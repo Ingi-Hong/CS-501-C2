@@ -280,7 +280,9 @@ def new_symkey():
         # print(len(data))
         #datastr = data.decode("utf-8")
         databytes = bytes.fromhex(data)
+        print(databytes)
         data = RsaDecryption.rsadecrypt(databytes)
+        xor.symkey=data
         print("response:")
         print(data)
         print(str(data))
