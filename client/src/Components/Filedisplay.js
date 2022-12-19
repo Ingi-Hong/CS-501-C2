@@ -42,7 +42,7 @@ function Filedisplay(props){
     if (loading) return <div></div>
 
     else{
-        
+        {files && files.map((path, iterator) => (<div key={iterator}>{path}</div>))}
     }
 
 }; 
