@@ -70,6 +70,7 @@ function QueueCommandForm(props) {
           type="text"
           value={command}
           onChange={(e) => setCommand(e.target.value)}
+          autoFocus
           />
       </form>
           </div>

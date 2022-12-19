@@ -1,4 +1,5 @@
 function ExecutedCommandTable(props) {
+  console.log(props.commandList);
   var commandList = props.commandList;
   return (
     <div
@@ -36,8 +37,8 @@ function ExecutedCommandTable(props) {
                 <td style={{ wordWrap: "break-word", width: "100%" }}>
                   {commands[5]}
                 </td>
-                <td>{commands[-2]}</td>
-                <td>{commands[-3]}</td>
+                <td>{commands[7]}</td>
+                <td>{commands[6].toString()}</td>
               </tr>
             ))}
         </tbody>

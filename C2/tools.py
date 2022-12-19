@@ -14,9 +14,7 @@ def load():
     except:
         print("failed to connect")
 
-    print(f"Connection closed? {conn.closed}")
     return conn, cursor
-
 
 def insertQueryBuilder(tableName, columns):
 
@@ -51,10 +49,6 @@ def insertQueryBuilder(tableName, columns, returnStringList):
 def executeInsertQuery(query, variables):
     try:
         conn, cursor = load()
-        print()
-        print("executing: ")
-        print(query.as_string(cursor), variables)
-        print()
         cursor.execute(query, variables)
         conn.commit()
         response = cursor.fetchall()
@@ -73,20 +67,29 @@ def executeGenericVar(query, variables):
         response = cursor.fetchall()
         cursor.close()
         conn.close()   
-        print("response from query: " + response) 
         return response 
     except Exception as error:
         print(f"error on execute generic query: {error}")
 
+def executeMany(query, values):
+    try:
+        conn, cursor = load()
+        cursor.executemany(query, values)
+        conn.commit()
+
+        response = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        return response
+    except Exception as error:
+        print(f"error on execute Many: {error}")
+    
 
 # Executes a select query
 def executeSelectQueryVars(query, variables):
     try:
         conn, cursor = load()
-        print()
-        print("executing: ")
-        print(query)
-        print()
         cursor.execute(query, (variables),)
         conn.commit()
         returnThis = cursor.fetchall()
@@ -100,10 +103,6 @@ def executeSelectQueryVars(query, variables):
 def executeSelectQuery(query):
     try:
         conn, cursor = load()
-        print()
-        print("executing: ")
-        print(query)
-        print()
         cursor.execute(query)
         conn.commit()
         returnThis = cursor.fetchall()

