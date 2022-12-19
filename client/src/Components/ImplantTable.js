@@ -26,7 +26,6 @@ function ImplantTable(props) {
       );
       let respJSON = await response.json();
       setData(respJSON);
-      console.log("display this data: " + respJSON);
       if (response.status === 200) {
       } else {
         setMessage("Error getting implant data");

