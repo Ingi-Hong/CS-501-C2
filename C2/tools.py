@@ -1,8 +1,8 @@
-import ctypes
 from datetime import datetime
 import config
 from psycopg2 import connect, sql
 
+# Tools I used in the app.py server. 
 
 # Returns a conn and a cursor
 def load():

