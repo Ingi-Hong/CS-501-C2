@@ -415,6 +415,25 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
+
+#Displays files to client
+@app.route("/get_files", methods=["POST"])
+def get_files():
+    try: 
+        data = request.json
+        id = data['id']
+        query = (f"SELECT path from files where target_implant_id = {id}")
+
+        dbresp = tools.executeSelectQuery(query)
+
+        return dbresp, 200, {'Access-Control-Allow-Origin': '*'}
+    except Exception as e:
+        print(e)
+        return e, 405, {'Access-Control-Allow-Origin': '*'}
+
+    
+
+
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     print("Recieved upload_file")
