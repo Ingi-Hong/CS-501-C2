@@ -128,6 +128,10 @@ The implant has a sleep time of 10 seconds, and at that point the implant will p
 
 Commands that the Implant is capable of performing are found below.
 
+## Reconfiguring to a different server
+
+Use the OURURL macro in Implant_2.0/http/http.h
+
 ## Commands 
 ### Persistence - This command will make the implant live on the victim machine even if the victim were to restart or shut down their system.
 
