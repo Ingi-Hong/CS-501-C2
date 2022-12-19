@@ -8,9 +8,12 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "symkey.h"
 #include "../nlohmann/json.hpp"
 
 using json = nlohmann::json;
+
+char * GlobalKey = NULL;
 
 /* Functions */
 std::string HttpGetCommand(std::string, int);

@@ -56,6 +56,24 @@ All strings are encrypted with a simple xor and then decrypted before each use.
 
 ## Opsec 
 
+## Threats
+Microsoft’s antivirus software
+Tech savvy users
+Blue teamers will find a variety of tools to mitigate implant’s effectiveness.
+
+
+## Vulnerabilities
+Web client is a public web application that is vulnerable to DDoS, brute force, and other security issues that web apps face.
+If web app were to be compromised, users could lose all implants at once - in addition to stolen data and passwords.
+
+
+## Mitigation
+Look further towards defense evasion within the implant, as well as preventing man-in-the-middle attacks.
+Stay up to date on latest safety practices for both SQL server and web application. Any new code needs to follow best practices - need to prevent SQL injection or directory traversal.
+
+
+
+
 ## Mitre 
 ### Execution [TA0002]
 Technique Name:

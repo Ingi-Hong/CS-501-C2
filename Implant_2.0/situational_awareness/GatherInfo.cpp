@@ -15,7 +15,6 @@ string getComputerName() {
 
 /* Grabs User Name
 using Windows API
-
 https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getusernamea
  */
 string getUserName() {
@@ -201,13 +200,8 @@ json GetAll(){
 
 
 /*
-
-
 NEED TO ADD IN MORE FUNCTIONS HERE
-
-
 */
 //   int main() {
 //         GetAll();
 //   }
-
