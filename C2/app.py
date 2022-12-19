@@ -435,9 +435,9 @@ def upload_files():
         print(task_id, implant_id, name)
 
         columns = ['implant_id', 'file_name', 'data', 'task_id']
-        data = implant_id, name, theFile, task_id
+        data = [implant_id, name, theFile, task_id]
         print("About to insert query")
-        query = tools.insertQueryBuilder("files", columns)
+        query = tools.insertQueryBuilder("files", columns, ['task_id'])
         tools.executeInsertQuery(query, data) 
 
         print("recieved upload_files: \n Response: ")
