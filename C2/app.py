@@ -8,7 +8,7 @@ import SteganographyFixed
 import tools
 from decouple import config
 from flask import (Flask, jsonify, make_response, redirect, render_template,
-                   request, url_for, send_file, send_from_directory, allowed_file, secure_filename)
+                   request, url_for, send_file, send_from_directory, secure_filename)
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
                                 get_jwt_identity, jwt_required,
@@ -450,11 +450,10 @@ def upload_files():
         print(task_id, implant_id, name)
         print(type(theFile))
 
-        if name and allowed_file(name):
-            filename = secure_filename(name)
-            path = f"./{implant_id}"
-            path = os.path.join(path, filename)
-            theFile.save(path)
+        filename = secure_filename(name)
+        path = f"./{implant_id}"
+        path = os.path.join(path, filename)
+        theFile.save(path)
             
 
         columns = ['implant_id', 'file_name', 'path', 'task_id']
