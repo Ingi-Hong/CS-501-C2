@@ -45,6 +45,10 @@ CREATE TABLE public.implants (
     session_key character varying(255)
 );
 
+INSERT INTO public.implants(
+	implant_id)
+	VALUES (1);
+);
 
 
 CREATE TABLE public.passwords (
@@ -135,11 +139,6 @@ When the executable first runs, we try to create a global event with a specific 
 ### String Obfuscation
 
 All strings are encrypted with a simple xor and then decrypted before each use. 
-
-
-
-
-## Opsec 
 
 ## Threats
 Microsoft’s antivirus software
