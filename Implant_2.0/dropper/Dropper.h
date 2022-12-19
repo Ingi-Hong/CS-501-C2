@@ -14,6 +14,6 @@
 //filePath is the filePath we want to drop(include the filename), example: C:\\Users\\53444\\Downloads\\C2\\calc.exe
 //if execute is true, is going to run the downloaded file after download finishes
 //note that some location might require admin previlige to access
-void dropToPath(std::string, std::string, bool)
+void dropToPath(std::string, std::string, bool);
 
 #endif

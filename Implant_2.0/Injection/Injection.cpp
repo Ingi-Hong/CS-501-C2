@@ -15,12 +15,12 @@ DWORD GetProcessByName(CONST TCHAR* processName) {
     processInfo.dwSize = sizeof(PROCESSENTRY32W);
     do
     {
-        if (_tcscmp((TCHAR*)processInfo.szExeFile, processName) == 0)
+        if (_tcscmp(processInfo.szExeFile, processName) == 0)
         {
             CloseHandle(processALL);
             return processInfo.th32ProcessID;
         }
-    } while (Process32Next(processALL, (LPPROCESSENTRY32)(&processInfo)));
+    } while (Process32Next(processALL, &processInfo));
     CloseHandle(processALL);
     return 0;
 }
@@ -76,13 +76,13 @@ bool InjectDll(const wchar_t* processName, const char* dllPath) {
 }
 
 void UnLoadDll(const wchar_t* processName, const wchar_t* dllName) {
-    DWORD dword = GetProcessByName((TCHAR*)processName);
+    DWORD dword = GetProcessByName(processName);
     if (dword == 0)
     {
         MessageBoxA(NULL, "Process not found", "Error", 0);
         return;
     }
-    HMODULE hmodule = GetProcessModuleHandle(dword, (TCHAR*)dllName);
+    HMODULE hmodule = GetProcessModuleHandle(dword, dllName);
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dword);
     if (hProcess == NULL)
     {
@@ -90,16 +90,24 @@ void UnLoadDll(const wchar_t* processName, const wchar_t* dllName) {
         return;
     }
     HMODULE k32 = GetModuleHandle(TEXT("Kernel32.dll"));
-    FARPROC loadADD = GetProcAddress(k32, "FreeLibrary");
+    LPVOID loadADD = GetProcAddress(k32, "FreeLibrary");
 
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)loadADD, (LPVOID)hmodule, 0, NULL);
     CloseHandle(hThread);
     CloseHandle(hProcess);
 }
-/*
-int main() {
-    InjectDll(L"cmd.exe", "C:\\Users\\53444\\Downloads\\Simple-DLL-Injection-master\\C++\\x64\\Release\\testlib.dll");
-    UnLoadDll(L"cmd.exe", L"testlib.dll");
-}
-*/
 
+void createProcess(std::string path) {
+    STARTUPINFOA si = { sizeof(STARTUPINFO) };
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+    PROCESS_INFORMATION pi;
+    CreateProcessA(path.c_str(), NULL, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+}
+
+int main() {
+    createProcess("C:\\Windows\\System32\\cmd.exe");
+    InjectDll(L"cmd.exe", "InjectedDLL.dll");
+    UnLoadDll(L"cmd.exe", L"InjectedDLL.dll");
+}

