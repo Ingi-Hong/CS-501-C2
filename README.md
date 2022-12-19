@@ -4,8 +4,12 @@
 
 ### C2 
 Inside /C2 run
-```pip install -r requirements.txt```
-Then run flask run. You need to set up an .env file with the nescesary variables for the PostgreSQL database. 
+```pip install -r requirements.txt```.
+
+
+Then run ```flask run```. 
+
+You need to set up an .env file with the nescesary variables for the PostgreSQL database. 
 
 .env: 
 ```env
