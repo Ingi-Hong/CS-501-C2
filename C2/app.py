@@ -87,8 +87,6 @@ def handle_execute():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant, with steg
-
-
 @app.route("/get_qcommands", methods=["POST"])
 def get_qcommands():
     data = request.json
@@ -127,8 +125,6 @@ def get_qcommands():
         return error, {'Access-Control-Allow-Origin': config.clientURL}
 
 # List all commands for a particular implant, in json
-
-
 @app.route("/get_commands", methods=["POST"])
 def get_commands():
     data = request.json
@@ -433,7 +429,7 @@ def upload_files():
             name = x
 
         print(task_id, implant_id, name)
-
+        print(type(theFile))
         columns = ['implant_id', 'file_name', 'data', 'task_id']
         data = [implant_id, name, theFile, task_id]
         print("About to insert query")
