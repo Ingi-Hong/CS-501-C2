@@ -385,9 +385,8 @@ def get_history():
 def upload_files():
     print("Recieved upload_file")
     try:
-        print(request.headers.keys())
+        print(request.headers.get('id'))
         file = request.files
-        print(id)
         print(file)
         print("recieved upload_files: \n Response: ")
         return "success", 200, {'Access-Control-Allow-Origin': '*'}
