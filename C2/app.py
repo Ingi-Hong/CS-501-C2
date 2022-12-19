@@ -217,7 +217,7 @@ def handle_response_stealer():
         print("After calling wyatts wonderland")
         task_id = data['task_id']
         target_implant_id = data['target_implant_id'] 
-        tools.updateLastSeen(target_implant_id)
+        # tools.updateLastSeen(target_implant_id)
         success = data['success']
         if success in ['Success', 'success']:
             success = True
