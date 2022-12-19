@@ -277,7 +277,8 @@ def new_symkey():
     try:
         if (request.content_length < 512):
             data = request.get_data()
-            print(data)
+            for x in range(len(data)):
+                print(data[x])
             # print(len(data))
             datastr = data.decode("utf-8")
             for x in (range(len(datastr))):
