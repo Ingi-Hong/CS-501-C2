@@ -10,14 +10,14 @@ int main(){
     // std::cout << result << std::endl;
     // result = xor_string("mPMK]\\AGF", 0x28);
     // std::cout << result << std::endl;
-        s = "/get_commands";
-    result = xor_string(s, 0x15);
-    std::cout << result << std::endl;   
-            s = "/register_implant";
-    result = xor_string(s, 0x15);
-    std::cout << result << std::endl;   
-            s = "GABBAGOOL" ;
-    result = xor_string(s, 0x15);
+    //     s = "/get_commands";
+    // result = xor_string(s, 0x15);
+    // std::cout << result << std::endl;   
+    //         s = "/register_implant";
+    // result = xor_string(s, 0x15);
+    // std::cout << result << std::endl;   
+            s = "/response_json" ;
+    result = xor_string(s, 0x14);
     std::cout << result << std::endl;   
 
 
@@ -28,7 +28,7 @@ int main(){
     // std::cout << xor_string("xMZ[A[\\MFKM",0x28) << std::endl;
     
     // /response_json
-    // std::cout << xor_string("tZM[XGF[MwB[GF",0x28) << std::endl;
+    std::cout << xor_string(";fqgd{zgqK~g{z",0x14) << std::endl;
 
     // failed    
     // std::cout << xor_string("NIADML",0x28) << std::endl;
@@ -108,9 +108,9 @@ int main(){
     
 // std::cout << xor_string("a8^vgqv^WqgpKlkvOrpNmemlQapkrv,`cv",0x02) << std::endl;
 
-std::cout << xor_string(":rpaJvzxxt{qf",0x15) << std::endl;
-std::cout << xor_string(":gpr|fapgJ|xeyt{a",0x15) << std::endl;
-std::cout << xor_string("RTWWTRZZY",0x15) << std::endl;
+// std::cout << xor_string(":rpaJvzxxt{qf",0x15) << std::endl;
+// std::cout << xor_string(":gpr|fapgJ|xeyt{a",0x15) << std::endl;
+// std::cout << xor_string("RTWWTRZZY",0x15) << std::endl;
 
     // std::string s = "Hello World!";
     // std::string result = xor_string(s, 0x42);
