@@ -2,7 +2,7 @@ import { useState } from "react";
 import CommandDisplay from "../Components/CommandDisplay/CommandDisplay";
 import Console from "../Components/Console";
 import ImplantTable from "../Components/ImplantTable";
-import QueueCommandForm from "../Components/QueueCommandForm";
+import Filedisplay from "../Components/Filedisplay";
 import Passworddisplay from "../Components/Passworddisplay";
 
 function Interface() {
@@ -23,8 +23,12 @@ function Interface() {
           <CommandDisplay id={ID} />
         </div>
 
-        <div className="column col -12">
+        <div className="column col-12">
           <Passworddisplay id={ID} />
+        </div>
+
+        <div className="column col-12">
+          <Filedisplay id={ID}/>
         </div>
       </div>
     </div>
