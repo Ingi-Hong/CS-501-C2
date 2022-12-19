@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
      //if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
        // 
     //  exit(0);
-    }
+    
 
     //char * GlobalKey = newsymkey();
     //printf("NOTHING SUSPICIOUS HERE\n");

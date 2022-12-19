@@ -1,3 +1,4 @@
+#include "xor.h"
 using namespace std;
 
 int KEY = 0x24;
