@@ -30,6 +30,4 @@ char* newsymkey(){
 
 
 
-int main(){
-    return;
-}
+

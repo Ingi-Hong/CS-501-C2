@@ -8,7 +8,7 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "symkey.h"
+#include "../symkey.h"
 #include "../nlohmann/json.hpp"
 
 using json = nlohmann::json;

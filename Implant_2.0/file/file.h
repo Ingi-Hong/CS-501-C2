@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <stdbool.h>
 #include <vector>
+#include "../xor/xor.h"
 
 #include "../xor/xor.h"
 
