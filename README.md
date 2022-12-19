@@ -156,7 +156,9 @@ If web app were to be compromised, users could lose all implants at once - in ad
 Look further towards defense evasion within the implant, as well as preventing man-in-the-middle attacks.
 Stay up to date on latest safety practices for both SQL server and web application. Any new code needs to follow best practices - need to prevent SQL injection or directory traversal.
 
+## ER Diagram
 
+<img src="er_diagram.png" alt="ER Diagram" title="ER Diagram">
 
 
 ## Mitre 
