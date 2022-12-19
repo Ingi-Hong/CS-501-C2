@@ -1,5 +1,4 @@
 function ExecutedCommandTable(props) {
-  console.log(props.commandList);
   var commandList = props.commandList;
   return (
     <div

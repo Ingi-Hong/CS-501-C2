@@ -76,7 +76,6 @@ function CommandDisplay(props) {
       setIsLoading(true);
 
       var implantStuff = await getImplants();
-      console.log(implantStuff);
       const array = await Promise.all(
         implantStuff.map((element) => getCommandData(element[0]))
       );
@@ -84,7 +83,6 @@ function CommandDisplay(props) {
         return filterCommandList(commandList);
       });
       setDisplayItems(filtered_commands);
-      console.log("Executed Commands: " + filtered_commands.executed);
     } catch (error) {
       console.log("ERROR FETCHING DATA: " + error);
       setError(error.message);
