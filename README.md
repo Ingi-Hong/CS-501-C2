@@ -158,7 +158,7 @@ Stay up to date on latest safety practices for both SQL server and web applicati
 
 ## ER Diagram
 
-<img src="er_diagram.png" alt="ER Diagram" title="ER Diagram">
+<img src="er_diagram.jpg" alt="ER Diagram" title="ER Diagram">
 
 
 ## Mitre 
