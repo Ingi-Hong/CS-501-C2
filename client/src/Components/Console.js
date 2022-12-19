@@ -69,7 +69,6 @@ function Console(props) {
       if (typeof respJSON !== "undefined") {
         command_data = respJSON;
       }
-      console.log("Command Data: " + command_data);
       if (response.status === 200) {
       } else {
         setMessage("Error getting command data");
@@ -84,7 +83,6 @@ function Console(props) {
     setLoading(true);
     try {
       let command_data = await getCommandData(id_value);
-      console.log("This is command data: " + command_data);
       setHistory(command_data);
     } catch (error) {
       console.log("Error with console!: " + error);

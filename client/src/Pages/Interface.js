@@ -3,6 +3,7 @@ import CommandDisplay from "../Components/CommandDisplay/CommandDisplay";
 import Console from "../Components/Console";
 import ImplantTable from "../Components/ImplantTable";
 import QueueCommandForm from "../Components/QueueCommandForm";
+import Passworddisplay from "../Components/Passworddisplay";
 
 function Interface() {
   const [refresh, setRefresh] = useState("plee");
@@ -19,7 +20,11 @@ function Interface() {
         </div>
 
         <div className="column col-12">
-          <CommandDisplay id={ID}/>
+          <CommandDisplay id={ID} />
+        </div>
+
+        <div className="column col -12">
+          <Passworddisplay id={ID} />
         </div>
       </div>
     </div>
