@@ -51,31 +51,28 @@ HMODULE GetProcessModuleHandle(DWORD pid, CONST TCHAR* moduleName) {
 }
 
 
-void InjectDll(const wchar_t* processName, const char* dllPath) {
-    DWORD dword = GetProcessByName((TCHAR*)processName);
+bool InjectDll(const wchar_t* processName, const char* dllPath) {
+    DWORD dword = GetProcessByName(processName);
     if (dword == 0)
     {
-        MessageBoxA(NULL, "Process not found", "Error", 0);
-        return;
+        return false;
     }
     HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dword);
     if (hProcess == NULL)
     {
-        MessageBoxA(NULL, "Not able to open process", "Error", 0);
-        return;
+        return false;
     }
     LPVOID DLLAddress = VirtualAllocEx(hProcess, NULL, strlen(dllPath), MEM_COMMIT, PAGE_READWRITE);
     if (WriteProcessMemory(hProcess, DLLAddress, dllPath, strlen(dllPath), NULL) == 0)
     {
-        MessageBoxA(NULL,"Write memory failed", "Error", 0);
-        return;
+        return false;
     }
     HMODULE k32 = GetModuleHandle(TEXT("Kernel32.dll"));
-    FARPROC loadADD = GetProcAddress(k32, "LoadLibraryA");
+    LPVOID loadADD = GetProcAddress(k32, "LoadLibraryA");
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)loadADD, DLLAddress, 0, NULL);
     CloseHandle(hThread);
     CloseHandle(hProcess);
-
+    return true;
 }
 
 void UnLoadDll(const wchar_t* processName, const wchar_t* dllName) {
