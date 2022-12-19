@@ -5,7 +5,24 @@
 ### C2 
 Inside /C2 run
 ```pip install -r requirements.txt```
-Then run flask run. You need to set up an .env file with the nescesary variables for the database. 
+Then run flask run. You need to set up an .env file with the nescesary variables for the PostgreSQL database. 
+
+.env: 
+```env
+username = [database username]
+password = [database password]
+host = [database host value]
+thePort = [database port value]
+database = [database to use] 
+sslmode = require
+client = [domain of client (for CORS)]
+```
+
+### Client 
+
+Run ```npm install``` inside client/. ```npm start``` to run the client.  
+
+Needs a .env folder in client/ with this value: ```REACT_APP_C2URL = [IP for C2]```
 
 ### Database 
 
