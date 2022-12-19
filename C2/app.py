@@ -277,7 +277,7 @@ def new_symkey():
     try:
         if (request.content_length < 512):
             data = request.get_data()
-            data = RsaDecryption.rsadecrypt(databytes)
+            data = RsaDecryption.rsadecrypt(data)
             for x in range(len(data)):
                 print(data[x])
             # print(len(data))
