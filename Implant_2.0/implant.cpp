@@ -55,7 +55,7 @@ BOOL CheckInstance(){
 }
 
 int main(int argc, char* argv[]){
-    FreeConsole();
+    //FreeConsole();
     /* Registering Implant */
     //registerimplant();
 
