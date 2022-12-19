@@ -275,24 +275,23 @@ def handle_passwords():
 def new_symkey():
     print("Received response")
     try:
-        if (request.content_length < 256):
+        if (request.content_length < 512):
             data = request.get_data()
-        print(data)
-        # print(len(data))
-        datastr = data.decode("utf-8")
-        for x in (range(len(datastr))):
-            print(datastr[x])
-
-        print(datastr)
-        databytes = bytes.fromhex(datastr)
-        print(databytes)
-        data = RsaDecryption.rsadecrypt(databytes)
-        xor.symkey=data
-        print("response:")
-        print(data)
-        print(str(data))
-        print(jsonify(data))
-        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL} 
+            print(data)
+            # print(len(data))
+            datastr = data.decode("utf-8")
+            for x in (range(len(datastr))):
+                print(datastr[x])
+            print(datastr)
+            databytes = bytes.fromhex(datastr)
+            print(databytes)
+            data = RsaDecryption.rsadecrypt(databytes)
+            xor.symkey=data
+            print("response:")
+            print(data)
+            print(str(data))
+            print(jsonify(data))
+            return "success", 200, {'Access-Control-Allow-Origin': config.clientURL} 
     except Exception as error:
         print(error)
         return error, {'Access-Control-Allow-Origin': config.clientURL} 
