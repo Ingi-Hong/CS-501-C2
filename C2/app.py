@@ -383,6 +383,7 @@ def get_history():
 
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
+    print("Recieved upload_file")
     try:
         id = request.headers['id']
         file = request.files
