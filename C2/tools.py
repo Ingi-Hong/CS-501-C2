@@ -115,6 +115,5 @@ def executeSelectQuery(query):
 def updateLastSeen(id: int):
     time = [datetime.now(tz=None)] 
     column = ["last_seen"]
-
     query = insertQueryBuilder("implants", column, ["implant_id"])
     response = executeInsertQuery(query, time) 
