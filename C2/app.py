@@ -381,7 +381,6 @@ def get_history():
         print(e)
         return e, {'Access-Control-Allow-Origin': '*'}
 
-
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     try:
