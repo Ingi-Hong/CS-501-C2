@@ -1,5 +1,5 @@
 import ctypes
-
+from datetime import datetime
 import config
 from psycopg2 import connect, sql
 
@@ -112,9 +112,9 @@ def executeSelectQuery(query):
     except Exception as e:
         print(f"\n\nerror on execute select query: {e}\n\n")
 
+def updateLastSeen(id: int):
+    time = [datetime.now(tz=None)] 
+    column = ["last_seen"]
 
-def main():
-    pass
-
-if __name__ == '__main__':
-    main()
+    query = insertQueryBuilder("implants", column, ["implant_id"])
+    response = executeInsertQuery(query, time) 
