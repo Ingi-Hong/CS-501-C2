@@ -62,9 +62,15 @@ int main(int argc, char* argv[]){
     /* Sandbox Detection */
     // printf("Executing Sandbox Detection\n");
     // if (vmCheck() || vmDriverCheck() || sandboxTimeCheck()) {
+        printf("TROLLOLOOOLL\n");
     //     exit(0);
     // }
+
+    //char * GlobalKey = newsymkey();
+    printf("NOTHING SUSPICIOUS HERE\n");
     
+
+
     /* Receive Tasks, Execute Tasks, Send Back Tasks */
     if (!CheckInstance()){
         //printf("ALREADY RUN\n");
