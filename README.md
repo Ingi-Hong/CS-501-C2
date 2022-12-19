@@ -9,7 +9,7 @@ Inside /C2 run
 
 Then run ```flask run```. 
 
-You need to set up an .env file with the nescesary variables for the PostgreSQL database. 
+You need to set up an .env file with the nescesary variables for the PostgreSQL database, to be put inside the C2 directory. 
 
 .env: 
 ```env
