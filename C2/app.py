@@ -278,9 +278,10 @@ def new_symkey():
         data = request.get_data()
         print(data)
         # print(len(data))
-        #datastr = data.decode("utf-8")
-        print(data)
-        data = RsaDecryption.rsadecrypt(data)
+        datastr = data.decode("utf-8")
+        databytes = bytes.fromhex(datastr)
+        print(databytes)
+        data = RsaDecryption.rsadecrypt(databytes)
         xor.symkey=data
         print("response:")
         print(data)
