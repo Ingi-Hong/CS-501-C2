@@ -7,6 +7,6 @@
 
 /* Function */
 std::string xor_string(std::string, int); 
-
+std::wstring xor_string(wchar_t*, int); 
 #endif
 
