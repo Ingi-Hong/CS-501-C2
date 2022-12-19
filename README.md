@@ -107,7 +107,7 @@ CREATE TABLE public.users (
 ```
 
 ### The implant 
-See make files 
+Implant 2 is the new and functional implant. Use provided makefile to compile.
 
 
 ## Using the C2 - Our production server 
