@@ -55,8 +55,8 @@ json getAllResults(const char * temp){
         res["username"] = (char *) sqlite3_column_text(pStmt, 1);
         
 
-        free(d);
-        free(encryptedPass.pbData);
+        //free(d);
+        //free(encryptedPass.pbData);
         rc = sqlite3_step(pStmt);
         data.push_back(res);
     }
@@ -114,8 +114,8 @@ json getAllCookies(const char * temp){
         //free(encryptedPass.pbData);
         rc = sqlite3_step(pStmt);
         data.push_back(res);
-        free(d);
-        free(encryptedPass.pbData );
+        //free(d);
+        //free(encryptedPass.pbData );
     }
     rc = sqlite3_finalize(pStmt);
     sqlite3_close(db);

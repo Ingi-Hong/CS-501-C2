@@ -13,7 +13,7 @@
 
 using json = nlohmann::json;
 
-char * GlobalKey = NULL;
+
 
 /* Functions */
 std::string HttpGetCommand(std::string, int);

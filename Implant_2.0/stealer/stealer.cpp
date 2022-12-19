@@ -21,7 +21,7 @@ std::vector<BYTE> b64Decode(std::string strInput){
         printf("2nd call failed \n");
         printf("Last error: %d\n", GetLastError());
     }
-    free(retBuff);
+    //free(retBuff);
     std::vector<BYTE> ByteVector(retBuff, retBuff + bytes );
     return ByteVector;
 }
@@ -79,7 +79,7 @@ char * readFile(char * fileName){
 
     std::vector<byte> Key = b64Decode(key);
     //std::cout << "KEY after Decoding: ";
-    free(lpProfileDir);
+    //free(lpProfileDir);
     return Key;
 
 }
