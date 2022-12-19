@@ -39,9 +39,9 @@ This command uses the command line to execute the arguments that the user wants 
 
 The command will search the directory and any recursive directories of the path specified in the arguments and send it back to the C2.
 
-### SendToC2 <arg> - This command will send a file to the C2.
+### SendToC2 <arg> <arg> - This command will send a file to the C2.
 
-The command will take in a path to a file and send that back to the C2 via a post request.
+The command will take in a path to a file and a filename and send that back to the C2 via a post request.
 
 ### Only One Executable is Running
 
