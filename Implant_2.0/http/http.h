@@ -13,6 +13,7 @@
 
 using json = nlohmann::json;
 
+#define OURURL L"sea-lion-app-f5nrq.ondigitalocean.app"
 
 
 /* Functions */

