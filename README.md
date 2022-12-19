@@ -107,7 +107,7 @@ CREATE TABLE public.users (
 ```
 
 ### The implant 
-Implant 2 is the new and functional implant. Use provided makefile to compile.
+Implant 2 is the new and functional implant. Use provided makefile to compile. Use windows for windows or apple for mac. DO NOT USE windows2.
 
 
 ## Using the C2 - Our production server 
